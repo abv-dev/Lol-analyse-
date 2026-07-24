@@ -9,10 +9,12 @@ rank et région.
 - **3 workers asyncio indépendants**, un par routing régional :
   `europe` (échantillonne euw1), `asia` (kr), `americas` (na1).
 - Chaque worker a **son propre rate limiter** (les limites Riot sont par
-  région) : fenêtres glissantes 18 req/s et 90 req/2min (marge de 10 % sur
-  les limites 20/s et 100/2min d'une clé personnelle). Un 429 bloque la
-  région le temps du header `Retry-After` ; les 5xx sont retentés avec
-  backoff exponentiel.
+  région) : fenêtres glissantes avec marge de 10 % sur les limites 20/s et
+  100/2min d'une clé personnelle — 18 req/s et 90 req/2min sur asia et
+  americas, **14 req/s et 72 req/2min sur europe** pour laisser du budget à
+  lol-live-coach (voir ci-dessous). Un 429 bloque la région le temps du
+  header `Retry-After` ; les 5xx sont retentés avec backoff exponentiel.
+  Overrides possibles via `RATE_LIMIT_<REGION>` dans `.env`.
 - **Sampling** : League-Exp-V4 par buckets de tiers — `IRON_BRONZE`,
   `SILVER_GOLD`, `PLAT_EMERALD`, `DIAMOND_PLUS` — en round-robin pour un
   dataset équilibré. Pour chaque joueur : puuid → 20 derniers match ids
@@ -69,6 +71,17 @@ Index : `matches(patch, tier_bucket_source)`, `participants(champion_id, patch)`
 - La **Personal API Key expire toutes les 24h** : le collecteur s'arrête
   avec un log explicite sur 401/403 ; régénérer la clé, mettre à jour
   `.env`, relancer `./start.sh`.
+
+## Cohabitation avec lol-live-coach (même clé API)
+
+Les rate limits Riot sont **par clé et par région**. Si lol-live-coach tourne
+sur le même serveur avec la même `RIOT_API_KEY` (euw1 → routing europe), le
+collecteur et le coach partagent le budget europe. C'est pour ça que le
+collecteur se limite par défaut à 14 req/s / 72 req/2min sur europe : le
+coach garde ~25 req/2min pour ses briefs live et analyses post-game sans se
+prendre de 429. Si un pic arrive quand même, le collecteur encaisse le 429
+(Retry-After) et cède la place. **Quand tu régénères la clé (expiration
+24h), mets à jour les deux `.env`** : celui du collecteur et celui du coach.
 
 ## Mention légale Riot
 

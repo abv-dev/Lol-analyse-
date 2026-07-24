@@ -119,11 +119,15 @@ async def run_collector():
     log.info("lol-studies-collector démarré (pid %d)", os.getpid())
     try:
         async with aiohttp.ClientSession() as session:
-            # Un rate limiter indépendant PAR région (les limites Riot sont par région)
-            clients = {
-                region: RiotClient(session, cfg.api_key, RateLimiter(), log)
-                for region in REGIONS
-            }
+            # Un rate limiter indépendant PAR région (les limites Riot sont par région).
+            # Sur europe le budget est réduit : lol-live-coach partage la même clé.
+            clients = {}
+            for region in REGIONS:
+                per_s, per_2min = cfg.rate_limits[region]
+                log.info("[%s] budget requêtes : %d req/s, %d req/2min",
+                         region, per_s, per_2min)
+                limiter = RateLimiter([(per_s, 1.0), (per_2min, 120.0)])
+                clients[region] = RiotClient(session, cfg.api_key, limiter, log)
             tasks = [
                 asyncio.create_task(
                     patch_watcher(next(iter(clients.values())), db,
