@@ -6,6 +6,7 @@ import logging
 import logging.handlers
 import os
 import signal
+import time
 
 import aiohttp
 
@@ -79,9 +80,17 @@ async def region_worker(cfg: Config, db: Database, client: RiotClient,
             if not puuid:
                 await asyncio.sleep(30)
                 continue
+            # Fenêtre glissante calculée à chaque appel : Riot filtre côté
+            # serveur (startTime), les vieux matchs ne coûtent rien.
+            start_time = int(time.time()) - cfg.match_max_age_days * 86400
             match_ids = await client.match_ids(
-                region, puuid, cfg.matches_per_player, QUEUE_ID
+                region, puuid, cfg.matches_per_player, QUEUE_ID, start_time
             ) or []
+            if not match_ids:
+                # Joueur inactif sur la fenêtre : aucun détail dépensé
+                log.debug("[%s] %s… : aucun match depuis %d jours, joueur suivant",
+                          region, puuid[:12], cfg.match_max_age_days)
+                continue
             # Dédup AVANT de dépenser la requête de détail
             fresh = [mid for mid in match_ids if not db.has_match(mid)]
             skipped_dup += len(match_ids) - len(fresh)

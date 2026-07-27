@@ -62,6 +62,10 @@ class Config:
         self.log_level = os.environ.get("LOG_LEVEL", "INFO").upper()
         # Nombre de match ids demandés par joueur échantillonné
         self.matches_per_player = int(os.environ.get("MATCHES_PER_PLAYER", "20"))
+        # Fenêtre glissante de collecte : seuls les matchs plus récents que
+        # MATCH_MAX_AGE_DAYS sont demandés (filtre startTime côté Riot).
+        # Évite de remplir la base de vieux patchs via les joueurs inactifs.
+        self.match_max_age_days = int(os.environ.get("MATCH_MAX_AGE_DAYS", "28"))
         # Profondeur max de pagination League-Exp par tier/division avant de
         # passer à la suivante (diversité de l'échantillon)
         self.max_pages_per_division = int(os.environ.get("MAX_PAGES_PER_DIVISION", "30"))

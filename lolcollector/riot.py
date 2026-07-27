@@ -74,10 +74,16 @@ class RiotClient:
                f"/lol/league-exp/v4/entries/RANKED_SOLO_5x5/{tier}/{division}")
         return await self._get(url, params={"page": page})
 
-    async def match_ids(self, region: str, puuid: str, count: int, queue: int):
+    async def match_ids(self, region: str, puuid: str, count: int, queue: int,
+                        start_time: int | None = None):
+        """Liste d'ids Match-V5. `start_time` (epoch seconds) est filtré CÔTÉ
+        SERVEUR par Riot : les matchs plus vieux ne coûtent aucune requête."""
         url = (f"https://{region}.api.riotgames.com"
                f"/lol/match/v5/matches/by-puuid/{puuid}/ids")
-        return await self._get(url, params={"queue": queue, "count": count, "type": "ranked"})
+        params = {"queue": queue, "count": count, "type": "ranked"}
+        if start_time is not None:
+            params["startTime"] = start_time
+        return await self._get(url, params=params)
 
     async def match(self, region: str, match_id: str):
         url = f"https://{region}.api.riotgames.com/lol/match/v5/matches/{match_id}"

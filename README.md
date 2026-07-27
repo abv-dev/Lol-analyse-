@@ -25,9 +25,13 @@ rank et région.
   fenêtres). Tests : `python3 tests/test_ratelimit.py [--real]`.
 - **Sampling** : League-Exp-V4 par buckets de tiers — `IRON_BRONZE`,
   `SILVER_GOLD`, `PLAT_EMERALD`, `DIAMOND_PLUS` — en round-robin pour un
-  dataset équilibré. Pour chaque joueur : puuid → 20 derniers match ids
-  Match-V5 (queue 420) → détail des matchs **non encore en base** (la dédup
-  se fait avant de dépenser la requête de détail).
+  dataset équilibré. Pour chaque joueur : puuid → match ids Match-V5
+  (queue 420, 20 max) **limités à une fenêtre glissante de
+  `MATCH_MAX_AGE_DAYS` jours** (28 par défaut) via le paramètre `startTime`,
+  filtré côté serveur Riot — les vieux matchs des joueurs inactifs ne
+  coûtent aucune requête, et un joueur sans match dans la fenêtre est
+  ignoré immédiatement. Détail des matchs **non encore en base** ensuite
+  (la dédup se fait avant de dépenser la requête de détail).
 - **Curseurs persistés** (`sampling_state`) par région × bucket : après un
   crash ou un restart, le parcours du ladder reprend où il s'était arrêté.
 - **Patch** : `versions.json` de Data Dragon est relu au démarrage puis
@@ -74,6 +78,12 @@ Index : `matches(patch, tier_bucket_source)`, `participants(champion_id, patch)`
   récentes) sont surreprésentés ; le parcours du ladder par pages
   League-Exp n'est pas un tirage uniforme ; une plateforme par région
   (euw1/kr/na1) sert de proxy pour tout le routing.
+- **Fenêtre de collecte (biais voulu)** : seuls les matchs de moins de
+  `MATCH_MAX_AGE_DAYS` jours (28 par défaut) sont collectés — les joueurs
+  inactifs sont donc exclus de la collecte future. C'est assumé : le but
+  est d'étudier la méta courante, pas l'historique des inactifs. Les
+  matchs déjà en base, eux, sont conservés quel que soit leur âge (utiles
+  pour les études méta long terme).
 - Un même match peut être atteint via plusieurs joueurs : il n'est stocké
   qu'une fois, avec le bucket du **premier** joueur qui l'a fait découvrir.
 - La **Personal API Key expire toutes les 24h** : le collecteur s'arrête
