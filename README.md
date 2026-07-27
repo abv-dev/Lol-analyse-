@@ -1,5 +1,8 @@
 # lol-studies-collector
 
+> Ce repo contient aussi **[EloLab](site/README.md)** (`site/`), le site
+> Next.js qui publie les études produites à partir de ce dataset.
+
 Collecteur continu de matchs **ranked solo/duo (queue 420)** via l'API Riot,
 multi-régions, vers une base SQLite, pour des études pick/ban/winrate par
 rank et région.

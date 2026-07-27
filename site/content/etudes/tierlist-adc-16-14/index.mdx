@@ -1,0 +1,60 @@
+# Tierlist ADC — patch 16.14
+
+> **Données d'exemple.** Cette étude valide la chaîne de publication (MDX,
+> composants, graphiques) avec des chiffres factices mais plausibles. Elle sera
+> remplacée par les données réelles du collecteur.
+
+<StudyMeta />
+
+## Vue d'ensemble
+
+Sur l'ensemble des ranks et des trois régions, les ADC « simples et
+autosuffisants » dominent ce patch : les champions qui n'exigent pas de
+coordination avec le support performent nettement mieux que les hyper-carrys à
+condition d'équipe.
+
+<WinrateChart file="winrates.json" title="Winrate par champion — tous ranks confondus" />
+
+## Les picks du patch
+
+<ChampCard
+  name="Jinx"
+  role="ADC"
+  winrate={0.528}
+  pickrate={0.184}
+  banrate={0.092}
+  note="Meilleur winrate du rôle. Scaling fiable et resets décisifs en fin de partie."
+/>
+
+<ChampCard
+  name="Miss Fortune"
+  role="ADC"
+  winrate={0.521}
+  pickrate={0.152}
+  banrate={0.034}
+  note="Lane forte, ultime déterminant en teamfight. Excellente en bas élo."
+/>
+
+<ChampCard
+  name="Aphelios"
+  role="ADC"
+  winrate={0.466}
+  pickrate={0.078}
+  banrate={0.011}
+  note="Pire winrate de l'échantillon : demande trop de coordination pour la solo queue."
+/>
+
+## Focus bas élo (Fer → Or)
+
+L'écart se creuse encore en bas élo : les champions à exécution simple gagnent
+1 à 2 points de winrate supplémentaires, tandis que les ADC techniques
+(Zeri, Aphelios) s'effondrent sous 45 %.
+
+<WinrateChart file="winrates_bas_elo.json" title="Winrate par champion — Fer à Or uniquement" />
+
+## Lecture et limites
+
+Le niveau d'une partie est approximé par le bucket du joueur échantillonné
+(voir la [méthodologie](/methodologie)). Les pickrates sont calculés par
+rapport au nombre de parties du groupe étudié ; un champion peu joué a un
+intervalle de confiance plus large sur son winrate.
