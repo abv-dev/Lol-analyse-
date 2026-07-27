@@ -18,10 +18,10 @@ from .sampler import BucketSampler
 STATS_LOG_EVERY = 50  # log de progression toutes les N insertions par région
 
 
-def setup_logging(log_dir: str) -> logging.Logger:
+def setup_logging(log_dir: str, level: str = "INFO") -> logging.Logger:
     os.makedirs(log_dir, exist_ok=True)
     logger = logging.getLogger("collector")
-    logger.setLevel(logging.INFO)
+    logger.setLevel(getattr(logging, level, logging.INFO))
     fmt = logging.Formatter("%(asctime)s %(levelname)s %(message)s")
     file_handler = logging.handlers.RotatingFileHandler(
         os.path.join(log_dir, "collector.log"),
@@ -105,7 +105,7 @@ async def region_worker(cfg: Config, db: Database, client: RiotClient,
 async def run_collector():
     cfg = Config()
     cfg.require_api_key()
-    log = setup_logging(cfg.log_dir)
+    log = setup_logging(cfg.log_dir, cfg.log_level)
     db = Database(cfg.db_path)
 
     with open(cfg.pid_file, "w", encoding="utf-8") as fh:
@@ -126,7 +126,7 @@ async def run_collector():
                 per_s, per_2min = cfg.rate_limits[region]
                 log.info("[%s] budget requêtes : %d req/s, %d req/2min",
                          region, per_s, per_2min)
-                limiter = RateLimiter([(per_s, 1.0), (per_2min, 120.0)])
+                limiter = RateLimiter([(per_s, 1.0), (per_2min, 120.0)], name=region)
                 clients[region] = RiotClient(session, cfg.api_key, limiter, log)
             tasks = [
                 asyncio.create_task(

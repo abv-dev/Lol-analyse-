@@ -9,12 +9,17 @@ rank et région.
 - **3 workers asyncio indépendants**, un par routing régional :
   `europe` (échantillonne euw1), `asia` (kr), `americas` (na1).
 - Chaque worker a **son propre rate limiter** (les limites Riot sont par
-  région) : fenêtres glissantes avec marge de 10 % sur les limites 20/s et
-  100/2min d'une clé personnelle — 18 req/s et 90 req/2min sur asia et
-  americas, **14 req/s et 72 req/2min sur europe** pour laisser du budget à
-  lol-live-coach (voir ci-dessous). Un 429 bloque la région le temps du
-  header `Retry-After` ; les 5xx sont retentés avec backoff exponentiel.
-  Overrides possibles via `RATE_LIMIT_<REGION>` dans `.env`.
+  région) : fenêtres **glissantes** (quand une fenêtre est pleine on attend
+  uniquement l'expiration de la requête la plus ancienne — jamais de vidange
+  complète ni de sleep fixe par requête). Budgets par défaut, avec marge sur
+  les limites 20/s et 100/2min d'une clé personnelle : 18 req/s et 84 req/2min
+  (~42 req/min) sur asia et americas, **14 req/s et 68 req/2min (~34 req/min)
+  sur europe** pour laisser du budget à lol-live-coach (voir ci-dessous).
+  Un 429 bloque la région le temps du header `Retry-After` ; les 5xx sont
+  retentés avec backoff exponentiel ; un 404 (match supprimé) ne déclenche
+  aucun backoff. Overrides via `RATE_LIMIT_<REGION>` dans `.env` ;
+  `LOG_LEVEL=DEBUG` trace chaque acquire (attente décidée + occupation des
+  fenêtres). Tests : `python3 tests/test_ratelimit.py [--real]`.
 - **Sampling** : League-Exp-V4 par buckets de tiers — `IRON_BRONZE`,
   `SILVER_GOLD`, `PLAT_EMERALD`, `DIAMOND_PLUS` — en round-robin pour un
   dataset équilibré. Pour chaque joueur : puuid → 20 derniers match ids

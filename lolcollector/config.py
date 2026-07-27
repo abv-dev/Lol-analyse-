@@ -25,13 +25,14 @@ QUEUE_ID = 420  # ranked solo/duo
 
 # Limites de requêtes par région : (req/s, req/2min).
 # Riot limite PAR CLÉ et PAR RÉGION (20/s, 100/2min pour une clé personnelle).
-# Défaut = marge de 10 %. Sur europe, on réserve en plus du budget pour
-# lol-live-coach qui tourne sur la MÊME clé (euw1) : ses briefs live et
-# analyses post-game ne doivent pas se prendre de 429 à cause du collecteur.
+# Cible en régime réel : ~42 req/min par région (84/2min, marge sur les
+# 50/min de la clé), et ~34 req/min sur europe (68/2min) car lol-live-coach
+# tourne sur la MÊME clé (euw1) : ses briefs live et analyses post-game ne
+# doivent pas se prendre de 429 à cause du collecteur.
 DEFAULT_RATE_LIMITS = {
-    "europe": (14, 72),
-    "asia": (18, 90),
-    "americas": (18, 90),
+    "europe": (14, 68),
+    "asia": (18, 84),
+    "americas": (18, 84),
 }
 
 DDRAGON_VERSIONS_URL = "https://ddragon.leagueoflegends.com/api/versions.json"
@@ -57,6 +58,8 @@ class Config:
         self.db_path = os.environ.get("DB_PATH", "data/matches.db")
         self.log_dir = os.environ.get("LOG_DIR", "logs")
         self.pid_file = os.environ.get("PID_FILE", "collector.pid")
+        # DEBUG pour tracer chaque acquire du rate limiter (attente + occupation)
+        self.log_level = os.environ.get("LOG_LEVEL", "INFO").upper()
         # Nombre de match ids demandés par joueur échantillonné
         self.matches_per_player = int(os.environ.get("MATCHES_PER_PLAYER", "20"))
         # Profondeur max de pagination League-Exp par tier/division avant de
