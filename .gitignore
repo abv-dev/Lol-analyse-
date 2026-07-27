@@ -1,6 +1,6 @@
 .env
-data/
-logs/
+/data/
+/logs/
 collector.pid
 __pycache__/
 *.pyc
