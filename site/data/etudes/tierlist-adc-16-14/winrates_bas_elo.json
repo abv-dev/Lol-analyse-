@@ -1,0 +1,12 @@
+[
+  { "champion": "Jinx", "winrate": 0.541, "pickrate": 0.203 },
+  { "champion": "Miss Fortune", "winrate": 0.536, "pickrate": 0.187 },
+  { "champion": "Ashe", "winrate": 0.518, "pickrate": 0.146 },
+  { "champion": "Kai'Sa", "winrate": 0.488, "pickrate": 0.194 },
+  { "champion": "Caitlyn", "winrate": 0.499, "pickrate": 0.181 },
+  { "champion": "Ezreal", "winrate": 0.462, "pickrate": 0.173 },
+  { "champion": "Vayne", "winrate": 0.497, "pickrate": 0.128 },
+  { "champion": "Lucian", "winrate": 0.481, "pickrate": 0.084 },
+  { "champion": "Zeri", "winrate": 0.449, "pickrate": 0.041 },
+  { "champion": "Aphelios", "winrate": 0.443, "pickrate": 0.052 }
+]
