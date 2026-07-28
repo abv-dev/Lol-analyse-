@@ -90,6 +90,27 @@ Index : `matches(patch, tier_bucket_source)`, `participants(champion_id, patch)`
   avec un log explicite sur 401/403 ; régénérer la clé, mettre à jour
   `.env`, relancer `./start.sh`.
 
+## Jalons Todoist (`milestone_check.py`)
+
+Script cron autonome (stdlib uniquement) qui surveille le volume collecté :
+
+- à chaque seuil de `MILESTONES` franchi **sur le patch courant** (vu par le
+  collecteur via ddragon), il crée une tâche Todoist p2 « EloLab : N matchs
+  collectés en X.Y » dans le projet `TODOIST_PROJECT_NAME` (« LoL Studies »,
+  résolu par nom via l'API), avec la répartition région × bucket ;
+- si aucun match n'a été inséré depuis 3 h, tâche p1 « EloLab : le collecteur
+  semble arrêté » (une seule fois tant que la panne dure, réarmée à la reprise) ;
+- un seuil n'est notifié qu'une fois par patch (état dans
+  `data/milestones_done.json`) ; nouveau patch → seuils de nouveau notifiables ;
+- idempotent et silencieux quand rien à signaler ; logs dans
+  `logs/milestones.log`. Nécessite `TODOIST_API_TOKEN` dans `.env`.
+
+Ligne cron à installer (`crontab -e`, toutes les 30 min) :
+
+```cron
+*/30 * * * * cd /home/aristide/lol-studies-collector && /usr/bin/python3 milestone_check.py
+```
+
 ## Cohabitation avec lol-live-coach (même clé API)
 
 Les rate limits Riot sont **par clé et par région**. Si lol-live-coach tourne
