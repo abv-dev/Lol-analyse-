@@ -49,7 +49,7 @@ cp .env.example .env                   # puis renseigner RIOT_API_KEY
 ./start.sh                             # nohup, logs dans logs/
 ./stop.sh                              # arrêt gracieux
 python3 collector.py stats             # état du dataset
-python3 collector.py export --study tierlist --patch 16.14 --out tierlist.csv
+python3 collector.py export --study tierlist --out /tmp/export   # patch courant auto
 ```
 
 ## Schéma SQLite (`data/matches.db`)
@@ -66,7 +66,51 @@ python3 collector.py export --study tierlist --patch 16.14 --out tierlist.csv
   first_baron, dragon_kills, baron_kills, tower_kills, herald_kills)`
 - `sampling_state`, `meta` : état interne (curseurs, version ddragon)
 
-Index : `matches(patch, tier_bucket_source)`, `participants(champion_id, patch)`.
+Index : `matches(patch, tier_bucket_source)`, `participants(champion_id, patch)`,
+plus trois **index couvrants d'export** créés automatiquement au premier
+export (`matches(patch, region, tier_bucket_source, match_id)`,
+`participants(match_id, champion_id, win)`, `bans(match_id, champion_id)`) —
+les requêtes d'agrégation ne touchent jamais les tables, uniquement les
+index (vérifié par `EXPLAIN QUERY PLAN` à chaque export).
+
+## Publication d'une étude EloLab (à chaque patch)
+
+1. **Exporter** depuis le serveur (patch courant détecté via Data Dragon,
+   jamais codé en dur — `--patch X.Y` pour un patch passé) :
+
+   ```bash
+   python3 collector.py export --study tierlist --out /tmp/export-tierlist
+   ```
+
+   Produit `tierlist.json` (champion × bucket × région : games, wins,
+   winrate + intervalle de Wilson à 95 %, pick/ban rates,
+   `insufficient_sample` sous 200 games) et `meta.json` (patch, période de
+   collecte, échantillon total et par cellule, régions). Le premier export
+   crée les index (une seule fois, quelques minutes sur une grosse base) ;
+   les suivants prennent quelques dizaines de secondes.
+
+2. **Déposer les données** dans le repo (slug = patch avec des tirets) :
+
+   ```bash
+   mkdir -p site/data/etudes/tierlist/16-15
+   cp /tmp/export-tierlist/*.json site/data/etudes/tierlist/16-15/
+   ```
+
+3. **Créer le contenu** `site/content/etudes/tierlist/16-15/` :
+   `index.mdx` (partir de la version du patch précédent) + `meta.json`
+   (title, date, patch, patch_sensitive, sample_size, regions, collected_at,
+   tags — build en échec si un champ manque).
+
+4. **Vérifier et publier** :
+
+   ```bash
+   cd site && npm run build     # doit passer, sinon le meta.json est incomplet
+   git checkout -b etude/tierlist-16-15 && git add site/ && git commit && git push
+   ```
+
+   La PR mergée déclenche le déploiement Vercel ; `/etudes/tierlist`
+   redirige automatiquement vers le nouveau patch, l'ancienne version reste
+   accessible à son URL datée, et le sélecteur de patch liste l'archive.
 
 ## Limites connues (assumées)
 

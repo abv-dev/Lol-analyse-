@@ -1,0 +1,76 @@
+# Tier list — patch 16.15
+
+> **Jeu de données provisoire.** Ces JSON ont été produits par la commande
+> d'export du pipeline sur un échantillon de validation, pas encore sur la
+> base de production. Avant publication : régénérer avec
+> `python3 collector.py export --study tierlist --out site/data/etudes/tierlist/16-15`
+> sur le serveur, re-committer, et relire les chiffres cités ci-dessous.
+> Supprimer ensuite cet encart.
+
+<StudyMeta />
+
+## Comment lire cette étude
+
+Chaque winrate est donné avec son **intervalle de confiance de Wilson à
+95 %** : un champion à 51,4 % `[50,4 – 52,4]` est réellement au-dessus de
+50 % ; un champion à 51 % `[47 – 55]` ne dit rien. Les cellules sous
+**200 games** restent affichées mais sont grisées : elles ne permettent pas
+de conclure. C'est la règle de la maison — des données, pas des impressions.
+Le niveau d'une partie est approximé par le bucket du joueur échantillonné
+(voir la [méthodologie](/methodologie)).
+
+## Vue d'ensemble
+
+Sur les 36 000 matchs de l'échantillon, le patch 16.15 est remarquablement
+resserré : parmi les champions les plus joués, aucun ne sort de la bande
+48,5 – 51,5 % de winrate global. Pas de champion cassé — mais des écarts
+nets une fois qu'on regarde par bucket et qu'on croise avec les bans.
+
+<WinrateChart top={12} title="Winrate des 12 champions les plus joués — toutes régions et tous ranks" />
+
+## Ce que disent les chiffres
+
+**Jax est le pick le plus rentable du patch** : 51,4 % de winrate
+`[50,4 – 52,4]` sur 10 149 games, avec 28,2 % de pick rate. L'intervalle de
+confiance est entièrement au-dessus de 50 % — ce n'est pas du bruit.
+Swain (51,0 % `[49,7 – 52,3]`) et Miss Fortune (50,9 % `[49,9 – 52,0]`)
+complètent le podium des champions à volume significatif.
+
+**Le ban le plus dépensé du patch est massivement Yasuo** : banni dans
+83,5 % des parties, pour un winrate de… 50,7 % quand il passe. Zed suit à
+65,8 % de bans (50,2 % de winrate). Deux bans « d'agacement » plus que de
+puissance : les chiffres ne justifient pas un tel taux.
+
+**Le vrai signal négatif est ailleurs** : Vayne ferme la marche des
+champions joués avec 48,5 % `[47,4 – 49,7]` (7 132 games) tout en mangeant
+34,0 % de bans, et Yone est à 48,8 % `[47,8 – 49,8]` malgré 44,5 % de bans.
+Bannir des champions sous les 50 % est le luxe le plus mal investi du
+ladder.
+
+**L'écart bas élo / haut élo reste réel mais modeste ce patch** : Garen
+passe de 51,0 % en Fer–Or (6 331 games) à 49,2 % en Platine+ (5 030 games),
+soit -1,8 point — le profil classique du champion simple qui punit les
+erreurs d'exécution, moins fréquentes en haut de ladder.
+
+**Là où l'échantillon ne permet pas de conclure** : 4 cellules sont sous
+les 200 games, toutes en Diamant+ Amériques (la cellule la moins fournie :
+1 400 matchs) — par exemple Zeri (111 games) et Aphelios (159 games). Elles
+apparaissent grisées dans le tableau, sans winrate mis en avant : c'est
+volontaire.
+
+## Le tableau complet
+
+Trie par winrate, pick rate ou ban rate ; filtre par bucket de rank et par
+région. Les agrégats « tous buckets / toutes régions » recombinent les games
+et victoires des cellules (jamais de moyenne de pourcentages) et recalculent
+l'intervalle de confiance.
+
+<TierTable />
+
+## Limites
+
+Volume par cellule très inégal (de 1 400 matchs en Diamant+ Amériques à
+3 900 en Argent–Or Europe) : les filtres serrés élargissent les intervalles
+de confiance. Le bucket d'une partie est celui du joueur qui l'a fait
+découvrir au collecteur — approximation documentée dans la
+[méthodologie](/methodologie), avec les biais d'échantillonnage connus.

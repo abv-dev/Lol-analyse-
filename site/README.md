@@ -20,16 +20,28 @@ npm run dev        # http://localhost:3000
 npm run build      # build statique — échoue si une étude est mal formée
 ```
 
-## Convention d'étude
+## URLs et convention d'étude
 
-Une étude = un dossier `content/etudes/[slug]/` contenant **obligatoirement** :
+Les études sont **versionnées par patch** :
+
+- `/etudes/tierlist/16-15` — version datée, **permanente**
+- `/etudes/tierlist` — URL canonique, **redirige vers la plus récente**
+- un sélecteur de patch en haut de page navigue dans l'archive
+
+Une étude = un dossier `content/etudes/[famille]/[patch-slug]/` (ex :
+`tierlist/16-15`, le slug = patch avec des tirets) contenant
+**obligatoirement** :
 
 - `index.mdx` — le contenu, avec les composants intégrés :
   - `<StudyMeta />` — encart patch / échantillon / régions / date de collecte,
     rempli automatiquement depuis `meta.json`
-  - `<ChampCard name="Jinx" winrate={0.528} pickrate={0.184} banrate={0.09} note="…" />`
-  - `<WinrateChart file="winrates.json" title="…" />` — graphique recharts
-    alimenté par `data/etudes/[slug]/winrates.json` (lu au build)
+  - `<TierTable />` — tableau triable (winrate/pick/ban/games) et filtrable
+    par bucket de rank et région, depuis `tierlist.json` + `meta.json`
+    d'export ; agrégats et intervalles de Wilson recalculés côté client,
+    cellules sous le seuil grisées
+  - `<WinrateChart top={12} title="…" />` — top des champions les plus joués
+    classés par winrate (échantillons suffisants uniquement)
+  - `<ChampCard name="Jax" winrate={0.514} … />` — carte ponctuelle
 - `meta.json` — métadonnées **requises** :
 
 ```json
@@ -49,13 +61,15 @@ Une étude = un dossier `content/etudes/[slug]/` contenant **obligatoirement** :
 c'est ce contrat qui pilotera plus tard le rafraîchissement automatique des
 études `patch_sensitive` à chaque nouveau patch.
 
-Les données chiffrées vivent dans `data/etudes/[slug]/*.json` — produites par
-[lol-studies-collector](../README.md) (`collector.py export`).
+Les données chiffrées vivent dans `data/etudes/[famille]/[patch-slug]/`
+(`tierlist.json` + `meta.json`) — produites par
+[lol-studies-collector](../README.md) (`collector.py export`). La procédure
+de publication complète est dans le README racine.
 
 ## Pages
 
 - `/` — liste des études (titre, date, patch, tags), plus récentes en premier
-- `/etudes/[slug]` — page d'étude MDX
+- `/etudes/[famille]/[patch]` — étude versionnée ; `/etudes/[famille]` — canonique
 - `/methodologie` — sampling par bucket de rank, approximation du tier, limites
 - Footer : mention légale Riot obligatoire (texte exact du boilerplate)
 
