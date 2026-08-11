@@ -17,12 +17,26 @@ export interface WinrateDatum {
   pickrate?: number; // 0..1
 }
 
-/** Barres de winrate par champion, ligne de référence à 50 %. */
-export default function WinrateChart({ data, title }: { data: WinrateDatum[]; title?: string }) {
+/**
+ * Barres de winrate par champion, ligne de référence à 50 %.
+ *
+ * Le nombre de champions du titre est composé à partir des données réelles
+ * (`data.length`) et jamais écrit à la main : titre et graphique ne peuvent
+ * plus diverger. `subtitle` porte le contexte (« toutes régions, tous ranks »).
+ */
+export default function WinrateChart({
+  data,
+  subtitle,
+}: {
+  data: WinrateDatum[];
+  subtitle?: string;
+}) {
   const rows = data.map((d) => ({ ...d, winratePct: +(d.winrate * 100).toFixed(1) }));
+  const caption = `Winrate des ${rows.length} champions les plus joués`
+    + (subtitle ? ` — ${subtitle}` : "");
   return (
     <figure className="not-prose my-8">
-      {title && <figcaption className="mb-3 text-sm font-medium text-zinc-300">{title}</figcaption>}
+      <figcaption className="mb-3 text-sm font-medium text-zinc-300">{caption}</figcaption>
       <div className="h-80 w-full rounded-lg border border-zinc-800 bg-zinc-900/60 p-4">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={rows} margin={{ top: 8, right: 8, left: -16, bottom: 8 }}>

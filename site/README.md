@@ -32,6 +32,12 @@ Une étude = un dossier `content/etudes/[famille]/[patch-slug]/` (ex :
 `tierlist/16-15`, le slug = patch avec des tirets) contenant
 **obligatoirement** :
 
+> ⚠️ **Props MDX : toujours des chaînes.** Écrire `<WinrateChart top="14" />`,
+> **jamais** `top={14}` : ce pipeline MDX n'évalue pas les expressions JSX, la
+> prop arriverait `undefined` et la valeur par défaut s'appliquerait **sans
+> aucune erreur** (le graphique affichait 12 champions sous un titre annonçant
+> 14). Les composants convertissent explicitement (`Number(top)`).
+
 - `index.mdx` — le contenu, avec les composants intégrés :
   - `<StudyMeta />` — encart patch / échantillon / régions / date de collecte,
     rempli automatiquement depuis `meta.json`
