@@ -1,76 +1,172 @@
 # Tier list — patch 16.15
 
-> **Jeu de données provisoire.** Ces JSON ont été produits par la commande
-> d'export du pipeline sur un échantillon de validation, pas encore sur la
-> base de production. Avant publication : régénérer avec
-> `python3 collector.py export --study tierlist --out site/data/etudes/tierlist/16-15`
-> sur le serveur, re-committer, et relire les chiffres cités ci-dessous.
-> Supprimer ensuite cet encart.
-
 <StudyMeta />
 
 ## Comment lire cette étude
 
 Chaque winrate est donné avec son **intervalle de confiance de Wilson à
-95 %** : un champion à 51,4 % `[50,4 – 52,4]` est réellement au-dessus de
-50 % ; un champion à 51 % `[47 – 55]` ne dit rien. Les cellules sous
-**200 games** restent affichées mais sont grisées : elles ne permettent pas
-de conclure. C'est la règle de la maison — des données, pas des impressions.
+95 %**, calculé sur la taille d'échantillon réelle de la sélection. Un
+champion à 52,7 % `[52,2 – 53,2]` est réellement au-dessus de 50 % : tout
+l'intervalle l'est. Un champion à 49,8 % `[49,6 – 50,1]` ne dit rien —
+l'intervalle contient encore 50 %. Sur les 173 champions du dataset, **71
+sont significativement au-dessus de 50 %, 49 significativement en dessous,
+et 53 restent indistinguables d'une pièce lancée en l'air**.
+
 Le niveau d'une partie est approximé par le bucket du joueur échantillonné
 (voir la [méthodologie](/methodologie)).
 
-## Vue d'ensemble
+## Les champions les plus joués ne sont pas ceux qui gagnent
 
-Sur les 36 000 matchs de l'échantillon, le patch 16.15 est remarquablement
-resserré : parmi les champions les plus joués, aucun ne sort de la bande
-48,5 – 51,5 % de winrate global. Pas de champion cassé — mais des écarts
-nets une fois qu'on regarde par bucket et qu'on croise avec les bans.
+C'est le résultat le plus net du patch, et il est massif. Voici les dix
+champions les plus pick du dataset — ils totalisent 155 % de présence
+cumulée, soit en moyenne un et demi par partie :
 
-<WinrateChart top={12} title="Winrate des 12 champions les plus joués — toutes régions et tous ranks" />
+| Champion | Pick rate | Winrate (IC 95 %) | Games |
+| --- | --- | --- | --- |
+| Kai'Sa | 19,13 % | 49,80 % `[49,55 – 50,05]` | 150 427 |
+| Yone | 18,61 % | 49,63 % `[49,38 – 49,89]` | 146 376 |
+| Sylas | 17,68 % | 48,85 % `[48,59 – 49,12]` | 139 049 |
+| Lux | 16,28 % | 50,12 % `[49,85 – 50,40]` | 128 012 |
+| Caitlyn | 15,63 % | 49,11 % `[48,84 – 49,39]` | 122 953 |
+| Yasuo | 14,32 % | 49,45 % `[49,16 – 49,74]` | 112 602 |
+| Séraphine | 14,03 % | 51,08 % `[50,79 – 51,38]` | 110 318 |
+| Ezreal | 13,47 % | 46,69 % `[46,39 – 46,99]` | 105 968 |
+| Miss Fortune | 13,37 % | 50,05 % `[49,75 – 50,36]` | 105 125 |
+| Jhin | 12,79 % | 49,38 % `[49,07 – 49,69]` | 100 567 |
 
-## Ce que disent les chiffres
+**Un seul de ces dix champions est statistiquement au-dessus de 50 %** :
+Séraphine, à 51,08 %. Six sont significativement en dessous, trois sont
+indistinguables de 50 %. Sur des échantillons de 100 000 à 150 000 parties,
+ce ne sont pas des marges d'erreur : les intervalles font ±0,3 point.
 
-**Jax est le pick le plus rentable du patch** : 51,4 % de winrate
-`[50,4 – 52,4]` sur 10 149 games, avec 28,2 % de pick rate. L'intervalle de
-confiance est entièrement au-dessus de 50 % — ce n'est pas du bruit.
-Swain (51,0 % `[49,7 – 52,3]`) et Miss Fortune (50,9 % `[49,9 – 52,0]`)
-complètent le podium des champions à volume significatif.
+Le cas **Ezreal** est le plus frappant : 8ᵉ pick rate du jeu avec 13,47 %
+de présence, et **46,69 %** `[46,39 – 46,99]` de winrate sur 105 968
+parties. Plus de cent mille games à trois points sous l'équilibre. **Kai'Sa**,
+champion le plus joué du patch avec 19,13 % de présence et 150 427 parties,
+plafonne à 49,80 % — son intervalle mord encore sur 50 %, autrement dit
+elle ne fait ni gagner ni perdre.
 
-**Le ban le plus dépensé du patch est massivement Yasuo** : banni dans
-83,5 % des parties, pour un winrate de… 50,7 % quand il passe. Zed suit à
-65,8 % de bans (50,2 % de winrate). Deux bans « d'agacement » plus que de
-puissance : les chiffres ne justifient pas un tel taux.
+## Ceux qui gagnent, et dont personne ne parle
 
-**Le vrai signal négatif est ailleurs** : Vayne ferme la marche des
-champions joués avec 48,5 % `[47,4 – 49,7]` (7 132 games) tout en mangeant
-34,0 % de bans, et Yone est à 48,8 % `[47,8 – 49,8]` malgré 44,5 % de bans.
-Bannir des champions sous les 50 % est le luxe le plus mal investi du
-ladder.
+Pendant ce temps, les meilleurs winrates du patch (à volume significatif,
+≥ 5 000 parties) appartiennent à des champions au pick rate modeste :
 
-**L'écart bas élo / haut élo reste réel mais modeste ce patch** : Garen
-passe de 51,0 % en Fer–Or (6 331 games) à 49,2 % en Platine+ (5 030 games),
-soit -1,8 point — le profil classique du champion simple qui punit les
-erreurs d'exécution, moins fréquentes en haut de ladder.
+| Champion | Winrate (IC 95 %) | Games | Pick rate | Ban rate |
+| --- | --- | --- | --- | --- |
+| Shyvana | 52,67 % `[52,19 – 53,15]` | 41 219 | 5,24 % | 3,99 % |
+| Rell | 52,46 % `[51,89 – 53,03]` | 29 171 | 3,71 % | 0,95 % |
+| Leona | 52,33 % `[51,95 – 52,71]` | 67 527 | 8,59 % | 8,41 % |
+| Zilean | 52,08 % `[51,47 – 52,70]` | 25 134 | 3,20 % | 1,15 % |
+| Illaoi | 52,01 % `[51,45 – 52,57]` | 30 675 | 3,90 % | 9,56 % |
+| Rammus | 51,99 % `[51,26 – 52,73]` | 17 598 | 2,24 % | 4,19 % |
 
-**Là où l'échantillon ne permet pas de conclure** : 4 cellules sont sous
-les 200 games, toutes en Diamant+ Amériques (la cellule la moins fournie :
-1 400 matchs) — par exemple Zeri (111 games) et Aphelios (159 games). Elles
-apparaissent grisées dans le tableau, sans winrate mis en avant : c'est
-volontaire.
+**Shyvana** est le meilleur winrate du patch sur gros volume, avec un
+intervalle entièrement au-dessus de 52 % — et elle n'est jouée que dans
+5,24 % des parties, bannie dans 4 %. **Rell** fait 52,46 % avec un ban rate
+de **0,95 %** : moins d'une partie sur cent la voit interdite. Le contraste
+avec la liste précédente est brutal : trois points de winrate séparent
+Shyvana d'Ezreal, et c'est Ezreal qui est joué trois fois plus.
+
+<WinrateChart top={14} title="Winrate des 14 champions les plus joués — toutes régions, tous ranks" />
+
+**Ce que les bans ne visent pas.** Le champion le plus banni du patch est
+Locke, interdit dans **52,42 %** des parties pour un winrate de 46,09 %
+`[45,71 – 46,48]` — soit l'un des cinq pires du jeu. Mel suit avec 38,22 %
+de bans pour 46,37 % `[46,02 – 46,71]`. Deux des champions les plus
+massivement bannis du patch sont donc, mesure faite, deux des plus
+perdants. À l'inverse, aucun des six champions du tableau ci-dessus ne
+dépasse 9,6 % de ban.
+
+## Fer–Bronze contre Diamant+ : ce qu'une tier list globale efface
+
+Un winrate global mélange des populations qui ne jouent pas le même jeu.
+Sur les 155 champions disposant d'au moins 3 000 parties **dans chacun des
+deux buckets** (179 422 matchs en Fer–Bronze, 261 342 en Diamant+),
+**l'écart absolu moyen entre les deux niveaux est de 1,83 point, et 55
+champions dépassent 2 points d'écart**. C'est l'ordre de grandeur qui
+sépare un champion « fort » d'un champion « faible » : le rank pèse autant
+que l'équilibrage.
+
+**Yuumi est le cas extrême du patch, et de loin** :
+
+| Bucket | Winrate (IC 95 %) | Games |
+| --- | --- | --- |
+| Fer–Bronze | 35,17 % `[34,31 – 36,05]` | 11 532 |
+| Diamant+ | 47,13 % `[46,23 – 48,04]` | 11 729 |
+
+**Presque douze points d'écart** (+11,96), sur des échantillons comparables
+de plus de 11 000 parties chacun. Les deux intervalles sont séparés par un
+gouffre : ce n'est pas du bruit. Et même à son meilleur niveau, Yuumi reste
+sous les 50 % — elle est simplement moins catastrophique en haut de ladder.
+Elle est pourtant jouée davantage en Fer–Bronze (6,43 % de pick) qu'en
+Diamant+ (4,49 %), exactement là où elle fonctionne le moins.
+
+Derrière, le même profil : **Rengar** +7,51 points (41,17 % `[40,06 –
+42,29]` sur 7 452 parties en Fer–Bronze → 48,68 % `[47,80 – 49,57]` sur
+12 127 en Diamant+), **Riven** +6,27, **Qiyana** +6,06, **Kha'Zix** +4,71,
+**Lee Sin** +4,20 (45,58 % `[44,72 – 46,44]` → 49,78 % `[49,28 – 50,28]`).
+
+Dans l'autre sens, des champions que le haut de ladder punit :
+
+| Champion | Fer–Bronze | Diamant+ | Écart |
+| --- | --- | --- | --- |
+| Yorick | 53,24 % `[52,32 – 54,17]` (11 250) | 48,62 % `[47,55 – 49,70]` (8 350) | −4,62 |
+| Bel'Veth | 53,25 % `[51,91 – 54,58]` (5 341) | 49,02 % `[48,24 – 49,80]` (15 763) | −4,23 |
+| Sion | 52,28 % `[51,05 – 53,52]` (6 281) | 48,33 % `[47,49 – 49,18]` (13 449) | −3,95 |
+| Malzahar | 52,96 % `[52,14 – 53,78]` (14 206) | 49,04 % `[48,14 – 49,95]` (11 688) | −3,91 |
+| Briar | 53,19 % `[52,43 – 53,96]` (16 327) | 49,47 % `[48,50 – 50,43]` (10 377) | −3,73 |
+
+Yorick est un champion à 53 % en Fer–Bronze et à 48,6 % en Diamant+ : deux
+verdicts opposés pour un même champion, que sa ligne globale réconcilie en
+une moyenne qui ne décrit personne.
+
+**Le cas Shyvana mérite la même précaution** : meilleur winrate global du
+patch, mais 54,03 % `[53,09 – 54,97]` en Fer–Bronze contre 50,79 %
+`[49,83 – 51,75]` en Diamant+ (−3,24). Elle reste au-dessus de 50 % partout
+— c'est ce qui la distingue de Yorick — mais l'ampleur du bénéfice dépend
+franchement du niveau. **Leona et Rell**, elles, tiennent leur niveau
+partout : Leona à 52,60 % `[51,77 – 53,44]` en Fer–Bronze et 52,58 %
+`[51,93 – 53,24]` en Diamant+ (écart : 0,02 point), Rell à 52,94 % et
+52,42 %. Ce sont les picks les plus robustes du patch, tous niveaux
+confondus.
+
+**Mel** cumule les deux problèmes : 48,01 % `[47,45 – 48,57]` en Fer–Bronze,
+44,21 % `[43,40 – 45,01]` en Diamant+ (−3,80) — et 16,85 % de pick rate en
+Fer–Bronze, où elle est le 4ᵉ champion le plus joué du bucket.
+
+## Et par région ?
+
+Les écarts régionaux sont nettement plus faibles que les écarts de rank.
+Shyvana affiche 52,56 % `[51,79 – 53,32]` en Europe, 52,63 % `[51,44 –
+53,82]` en Asie, 52,79 % `[52,06 – 53,52]` aux Amériques : trois intervalles
+qui se recouvrent presque intégralement. Leona pareil (52,57 % / 52,38 % /
+52,01 %). L'exception notable est **Kai'Sa**, à 50,59 % `[50,22 – 50,95]`
+en Asie contre 49,06 % `[48,58 – 49,55]` en Europe et 49,02 % `[48,50 –
+49,54]` aux Amériques — le seul des champions examinés dont l'écart
+régional soit statistiquement net.
 
 ## Le tableau complet
 
-Trie par winrate, pick rate ou ban rate ; filtre par bucket de rank et par
-région. Les agrégats « tous buckets / toutes régions » recombinent les games
-et victoires des cellules (jamais de moyenne de pourcentages) et recalculent
-l'intervalle de confiance.
+Trie par winrate, pick rate, ban rate ou volume ; filtre par bucket de rank
+et par région. Les agrégats « tous buckets / toutes régions » recombinent
+les parties et les victoires des cellules — jamais une moyenne de
+pourcentages — et recalculent l'intervalle de confiance sur l'échantillon
+résultant. Attention en filtrant : un champion à 52 % sur toutes régions
+peut devenir non concluant sur une seule cellule.
 
 <TierTable />
 
 ## Limites
 
-Volume par cellule très inégal (de 1 400 matchs en Diamant+ Amériques à
-3 900 en Argent–Or Europe) : les filtres serrés élargissent les intervalles
-de confiance. Le bucket d'une partie est celui du joueur qui l'a fait
-découvrir au collecteur — approximation documentée dans la
-[méthodologie](/methodologie), avec les biais d'échantillonnage connus.
+Ces chiffres décrivent des **corrélations, pas des recommandations de
+jeu** : un winrate élevé peut refléter le champion, la population qui le
+choisit, ou les compositions dans lesquelles il apparaît. Cette étude ne
+mesure ni les builds, ni les runes, ni les matchups — nous ne les avons pas
+collectés, nous n'en dirons donc rien.
+
+Le bucket d'une partie est celui du joueur échantillonné qui l'a fait
+découvrir au collecteur, pas le rank moyen des dix joueurs : les
+comparaisons Fer–Bronze / Diamant+ portent sur des populations de parties,
+avec la marge d'approximation décrite dans la
+[méthodologie](/methodologie), aux côtés des biais d'échantillonnage
+connus.
