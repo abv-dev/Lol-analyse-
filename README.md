@@ -99,14 +99,23 @@ index (vérifié par `EXPLAIN QUERY PLAN` à chaque export).
 3. **Créer le contenu** `site/content/etudes/tierlist/16-15/` :
    `index.mdx` (partir de la version du patch précédent) + `meta.json`
    (title, date, patch, patch_sensitive, sample_size, regions, collected_at,
-   tags — build en échec si un champ manque).
+   tags — build en échec si un champ manque). La rédaction suit la
+   [charte éditoriale](docs/editorial.md) ; le skill
+   `.claude/skills/elolab-redaction/` l'applique automatiquement dans une
+   session Claude Code.
 
 4. **Vérifier et publier** :
 
    ```bash
+   python3 scripts/verify_study.py site/content/etudes/tierlist/16-15
    cd site && npm run build     # doit passer, sinon le meta.json est incomplet
-   git checkout -b etude/tierlist-16-15 && git add site/ && git commit && git push
+   git checkout -b etude/tierlist-16-15 && git add . && git commit && git push
    ```
+
+   `verify_study.py` est le garde-fou de la promesse « des données, pas des
+   impressions » : il extrait chaque nombre du MDX et le vérifie contre les
+   JSON exportés, en tenant compte du champion dont parle le paragraphe.
+   Il sort en **code 1** si un chiffre ne concorde pas.
 
    La PR mergée déclenche le déploiement Vercel ; `/etudes/tierlist`
    redirige automatiquement vers le nouveau patch, l'ancienne version reste
