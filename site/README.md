@@ -79,6 +79,45 @@ de publication complète est dans le README racine.
 - `/methodologie` — sampling par bucket de rank, approximation du tier, limites
 - Footer : mention légale Riot obligatoire (texte exact du boilerplate)
 
+## Variables d'environnement
+
+| Variable | Rôle |
+| --- | --- |
+| `NEXT_PUBLIC_KOFI_URL` | Lien de soutien (ex. `https://ko-fi.com/elolab`). **Absente = le bloc de soutien ne s'affiche pas du tout**, aucune trace dans le HTML. |
+| `NEXT_PUBLIC_SITE_URL` | Base absolue des métadonnées (`og:image`, canoniques). À défaut, l'URL de production Vercel, sinon `https://elolab.vercel.app`. |
+
+En local : `site/.env.local` (non versionné). Sur Vercel : *Settings → Environment Variables*.
+
+## Identité visuelle
+
+Les assets de `public/` sont **générés**, pas édités à la main :
+
+```bash
+pip install pillow
+python3 scripts/build_brand_assets.py
+```
+
+Sources à la racine de `site/`, versionnées pour que la génération soit
+reproductible : `elolab-logo.png` (logotype) et `elolab-histogramme.png`
+(histogramme seul). Le script recadre
+au plus près du motif et produit `elolab-logo.png`, `elolab-histogramme.png`,
+`favicon.ico` (16/32/48), `apple-touch-icon.png`, `icon-192.png`,
+`icon-512.png` et `og.png` (1200×630).
+
+**Fond** — les sources ont un fond `#0f1014`, le site est en `#09090b`
+(`bg-zinc-950`) : posées telles quelles, elles dessineraient un rectangle plus
+clair autour du logo. Le script **rend donc le fond transparent** (alpha
+calculé par luminance, avec dé-mélange des bords antialiasés pour éviter un
+liseré). Les icônes destinées aux OS et la carte OG gardent au contraire un
+fond **opaque `#09090b`** : un motif blanc transparent disparaîtrait sur une
+barre d'onglets claire, et les réseaux sociaux ne gèrent pas la transparence.
+Si le fond du site change, mettre à jour `SITE_BG` dans le script et
+régénérer.
+
+**En-tête** — le `Elo` du logotype est tracé en filet très fin et décroche en
+dessous de 640 px : `components/Logo.tsx` bascule alors sur l'histogramme seul
++ le nom en texte. Bascule purement CSS (`sm:`), sans JavaScript.
+
 ## Déploiement Vercel
 
 Le site vit dans le sous-dossier `site/` du repo :

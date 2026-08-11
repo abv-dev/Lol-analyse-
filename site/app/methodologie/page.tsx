@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Support from "@/components/Support";
 
 export const metadata: Metadata = {
   title: "Méthodologie",
@@ -8,6 +9,7 @@ export const metadata: Metadata = {
 
 export default function MethodologiePage() {
   return (
+    <>
     <article className="prose prose-invert prose-zinc max-w-none prose-headings:text-zinc-100 prose-a:text-accent">
       <h1>Méthodologie</h1>
       <p>
@@ -68,5 +70,7 @@ export default function MethodologiePage() {
         être rafraîchies à chaque nouveau patch.
       </p>
     </article>
+    <Support />
+    </>
   );
 }
