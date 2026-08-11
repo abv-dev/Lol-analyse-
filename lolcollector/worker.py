@@ -15,7 +15,8 @@ from .db import Database
 from .ratelimit import RateLimiter
 from .riot import FatalApiError, RiotClient
 from .sampler import BucketSampler
-from .timeline import is_sampled, mark_timeline, store_timeline
+from .db import patch_of
+from .timeline import PatchQuota, is_sampled, mark_timeline, store_timeline
 
 STATS_LOG_EVERY = 50  # log de progression toutes les N insertions par région
 
@@ -73,9 +74,13 @@ async def region_worker(cfg: Config, db: Database, client: RiotClient,
     inserted = 0
     skipped_dup = 0
     timelines = 0
+    quota = PatchQuota(db, cfg.timeline_target_per_patch)
+    quota_logged: dict[str, bool] = {}
 
-    log.info("[%s] worker démarré (plateforme %s, timelines %.0f%%)",
-             region, platform, cfg.timeline_sample_rate * 100)
+    log.info("[%s] worker démarré (plateforme %s, timelines %.0f%% "
+             "avec plafond de %d par patch)",
+             region, platform, cfg.timeline_sample_rate * 100,
+             cfg.timeline_target_per_patch)
     while not stop_event.is_set():
         bucket = next(bucket_cycle)
         try:
@@ -103,12 +108,23 @@ async def region_worker(cfg: Config, db: Database, client: RiotClient,
                 data = await client.match(region, match_id)
                 if data and db.store_match(data, region, platform, bucket):
                     inserted += 1
-                    # Timeline : seulement pour la fraction échantillonnée
-                    if is_sampled(match_id, cfg.timeline_sample_rate):
+                    # Timeline : fraction échantillonnée, et tant que le
+                    # plafond du patch n'est pas atteint
+                    match_patch = patch_of((data.get("info") or {}).get("gameVersion", ""))
+                    if quota.reached(match_patch):
+                        if not quota_logged.get(match_patch):
+                            log.info("[%s] plafond de timelines atteint pour le "
+                                     "patch %s (%d) — collecte suspendue jusqu'au "
+                                     "patch suivant", region, match_patch,
+                                     cfg.timeline_target_per_patch)
+                            quota_logged[match_patch] = True
+                        mark_timeline(db, match_id, "skipped")
+                    elif is_sampled(match_id, cfg.timeline_sample_rate):
                         try:
                             tl = await client.match_timeline(region, match_id)
                             if tl:
                                 n_ev, n_fr = store_timeline(db, match_id, tl)
+                                quota.record_stored(match_patch)
                                 timelines += 1
                                 log.debug("[%s] timeline %s : %d events, %d frames",
                                           region, match_id, n_ev, n_fr)

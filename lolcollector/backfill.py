@@ -25,13 +25,13 @@ from .config import REGIONS, Config
 from .db import Database, patch_of
 from .ratelimit import RateLimiter
 from .riot import FatalApiError, RiotClient
-from .timeline import is_sampled, mark_timeline, store_timeline
+from .timeline import is_sampled, mark_timeline, store_timeline, stored_count_for_patch
 from .worker import setup_logging
 
 PROGRESS_EVERY = 50
 
 
-def candidates(db: Database, limit: int, rate: float):
+def candidates(db: Database, limit: int, rate: float, target_per_patch: int = 0):
     """Matchs sans timeline connue, patch courant d'abord, puis récents.
 
     Le filtre d'échantillonnage est appliqué en Python (fonction de hash) :
@@ -55,6 +55,15 @@ def candidates(db: Database, limit: int, rate: float):
     for patch in seen_patches:
         if len(selected) >= limit:
             break
+        # Le plafond par patch s'applique aussi au backfill : sinon il
+        # contournerait la limite que la collecte en direct respecte.
+        room = limit - len(selected)
+        if target_per_patch > 0:
+            already = stored_count_for_patch(db, patch)
+            room = min(room, max(0, target_per_patch - already))
+            if room == 0:
+                continue
+        taken = 0
         # on lit par lots : beaucoup de matchs seront hors échantillon
         cursor = db.conn.execute(
             "SELECT m.match_id, m.region FROM matches m"
@@ -65,7 +74,8 @@ def candidates(db: Database, limit: int, rate: float):
         for match_id, region in cursor:
             if is_sampled(match_id, rate):
                 selected.append((match_id, region))
-                if len(selected) >= limit:
+                taken += 1
+                if taken >= room or len(selected) >= limit:
                     break
     return selected
 
@@ -99,10 +109,14 @@ async def run_backfill(limit: int, share: float) -> int:
     log = setup_logging(cfg.log_dir, cfg.log_level)
     db = Database(cfg.db_path)
     try:
-        jobs = candidates(db, limit, cfg.timeline_sample_rate)
+        jobs = candidates(db, limit, cfg.timeline_sample_rate,
+                          cfg.timeline_target_per_patch)
         if not jobs:
             log.info("backfill : aucune timeline à récupérer")
-            print("Aucune timeline à récupérer (tout l'échantillon est traité).")
+            print("Aucune timeline à récupérer : tout l'échantillon est traité, "
+                  "ou le plafond par patch "
+                  f"(TIMELINE_TARGET_PER_PATCH={cfg.timeline_target_per_patch}) "
+                  "est atteint.")
             return 0
 
         by_region: dict[str, list[str]] = {}

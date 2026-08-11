@@ -138,3 +138,43 @@ for share, label in ((0.33, "33 %"), (1.0, "100 %")):
                            (2190000, "base entière (2,19 M matchs)")):
         print(f"  {label} de {lbl} : {per_match*n_matches*share/1024**3:.1f} Go")
 print("\nTESTS TIMELINE OK")
+
+# --- 9) plafond par patch (PatchQuota)
+from lolcollector.timeline import PatchQuota, stored_count_for_patch
+shutil.rmtree("quota", ignore_errors=True); os.makedirs("quota")
+db3 = Database("quota/q.db")
+now3 = int(time.time()); c3 = db3.conn.cursor()
+for i in range(50):
+    c3.execute("INSERT OR IGNORE INTO matches VALUES (?,?,?,?,?,?,?,?,?)",
+        (f"Q_{i}", "europe", "euw1", "16.15.1.1", "16.15", 1800, 0, "SILVER_GOLD", now3))
+db3.conn.commit()
+q = PatchQuota(db3, target=5, refresh_every=1000)
+stored = 0
+for i in range(50):
+    if q.reached("16.15"):
+        break
+    store_timeline(db3, f"Q_{i}", fake_timeline(f"Q_{i}", 20))
+    q.record_stored("16.15"); stored += 1
+assert stored == 5, f"plafond non respecté : {stored} stockées pour une cible de 5"
+assert stored_count_for_patch(db3, "16.15") == 5
+assert q.reached("16.15") is True
+# nouveau patch : compteurs remis à zéro, collecte reprise
+for i in range(10):
+    c3.execute("INSERT OR IGNORE INTO matches VALUES (?,?,?,?,?,?,?,?,?)",
+        (f"R_{i}", "europe", "euw1", "16.16.1.1", "16.16", 1800, 0, "SILVER_GOLD", now3))
+db3.conn.commit()
+assert q.reached("16.16") is False, "le plafond ne repart pas à zéro au patch suivant"
+# target 0 => illimité
+assert PatchQuota(db3, target=0).reached("16.15") is False
+print("OK  plafond : 5/5 stockées puis arrêt, remise à zéro au patch suivant, 0 = illimité")
+
+# --- 10) backfill borné par le plafond
+from lolcollector.backfill import candidates as bf_candidates
+db3.set_meta("ddragon_current", "16.15.1")
+c = bf_candidates(db3, 10_000, 1.0, target_per_patch=5)
+assert not any(m.startswith("Q_") for m, _ in c), "backfill ignore le plafond du patch"
+assert all(m.startswith("R_") for m, _ in c), c[:3]
+c2 = bf_candidates(db3, 10_000, 1.0, target_per_patch=0)
+assert any(m.startswith("Q_") for m, _ in c2), "sans plafond, tout doit être candidat"
+print(f"OK  backfill borné : patch plein exclu, {len(c)} candidats sur le patch suivant")
+db3.close()

@@ -115,10 +115,18 @@ frames (10 joueurs × ~30 minutes).
 | 1.00 | 20,4 Go | 56,9 Go |
 
 La base fait déjà ~6 Go : à 0.33 sur le seul patch courant, elle **double**.
-Prévoir l'espace disque avant de lancer une rétro-collecte massive, ou
-descendre le taux. Les `timeline_frames` représentent l'essentiel du volume
-(299 lignes/match contre 95 pour les events) : c'est le premier levier si la
-place manque.
+Les `timeline_frames` représentent l'essentiel du volume (299 lignes/match
+contre 95 pour les events).
+
+**C'est pourquoi le taux ne pilote pas seul la collecte** :
+`TIMELINE_TARGET_PER_PATCH` (**200 000** par défaut) plafonne le nombre de
+timelines stockées **par patch**. Une fois le plafond atteint, la collecte de
+timelines s'arrête (un log l'indique une fois), les matchs continuent d'être
+collectés normalement, et **tout repart automatiquement au patch suivant**.
+Sans ce plafond, à ~157 k matchs/jour, un taux de 0.33 remplirait ~25 Go en
+deux semaines. À 200 000 timelines : **~5,2 Go par patch**, borné. Mettre `0`
+pour désactiver le plafond (déconseillé). Le plafond s'applique aussi au
+backfill, qui le contournerait sinon.
 
 ### Rétro-collecte
 
@@ -135,6 +143,25 @@ fraction (`--share`, 0.3 par défaut) du budget régional : lancé pendant que
 le collecteur tourne, il se contente de ~30 % des requêtes de la région et
 n'affame pas les workers. Les limites Riot étant par clé et par région, cette
 part est à ajuster selon ce qu'on veut privilégier.
+
+### Purge des vieux patchs
+
+```bash
+python3 collector.py prune --keep-patches 2 [--exports site/data/etudes] [--yes]
+```
+
+Supprime les **matchs bruts** des patchs au-delà des N derniers, avec leurs
+participants, bans, objectifs et timelines, puis compacte la base (`VACUUM`)
+en annonçant l'espace libéré.
+
+**Garde-fou** : un patch n'est purgé que si un **export agrégé existe** pour
+lui (`site/data/etudes/<famille>/<patch-slug>/meta.json`). Les patchs sans
+export sont listés et laissés intacts — les supprimer serait une perte
+définitive. C'est cohérent avec l'architecture du site : **les études
+publiées ne dépendent que des JSON exportés, jamais de la base**, donc un
+patch exporté puis purgé reste consultable en ligne.
+
+Confirmation interactive par défaut ; `--yes` pour un usage en cron.
 
 ### Correction : voidgrubs ≠ Rift Herald
 

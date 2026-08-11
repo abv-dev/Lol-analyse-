@@ -117,6 +117,53 @@ def mark_timeline(db, match_id: str, status: str) -> None:
     db.conn.commit()
 
 
+def stored_count_for_patch(db, patch: str) -> int:
+    """Timelines effectivement stockées pour un patch (statut 'ok')."""
+    row = db.conn.execute(
+        "SELECT COUNT(*) FROM timeline_state t"
+        " JOIN matches m ON m.match_id = t.match_id"
+        " WHERE m.patch = ? AND t.status = 'ok'", (patch,)
+    ).fetchone()
+    return row[0] if row else 0
+
+
+class PatchQuota:
+    """Plafond de timelines par patch, avec compteur mis en cache.
+
+    Le comptage SQL n'est refait qu'au changement de patch ou tous les
+    `refresh_every` stockages : sur une base de plusieurs Go, compter à chaque
+    match coûterait plus cher que la collecte elle-même.
+    """
+
+    def __init__(self, db, target: int, refresh_every: int = 200):
+        self.db = db
+        self.target = target
+        self.refresh_every = refresh_every
+        self._patch: str | None = None
+        self._count = 0
+        self._since_refresh = 0
+
+    def _sync(self, patch: str) -> None:
+        self._patch = patch
+        self._count = stored_count_for_patch(self.db, patch)
+        self._since_refresh = 0
+
+    def reached(self, patch: str) -> bool:
+        if self.target <= 0:
+            return False
+        if patch != self._patch:
+            # nouveau patch : les compteurs repartent de zéro
+            self._sync(patch)
+        elif self._since_refresh >= self.refresh_every:
+            self._sync(patch)
+        return self._count >= self.target
+
+    def record_stored(self, patch: str) -> None:
+        if patch == self._patch:
+            self._count += 1
+            self._since_refresh += 1
+
+
 def has_timeline_state(db, match_id: str) -> bool:
     row = db.conn.execute(
         "SELECT 1 FROM timeline_state WHERE match_id = ?", (match_id,)).fetchone()
