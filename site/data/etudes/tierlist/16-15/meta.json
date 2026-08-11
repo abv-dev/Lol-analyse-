@@ -1,11 +1,11 @@
 {
  "study": "tierlist",
  "patch": "16.15",
- "ddragon_version": null,
- "exported_at": "2026-08-10",
+ "ddragon_version": "16.15.1",
+ "exported_at": "2026-08-11",
  "collected_from": "2026-07-29",
- "collected_to": "2026-07-30",
- "total_matches": 36000,
+ "collected_to": "2026-08-11",
+ "total_matches": 786509,
  "regions": [
   "americas",
   "asia",
@@ -16,62 +16,62 @@
   {
    "region": "americas",
    "bucket": "DIAMOND_PLUS",
-   "matches": 1400
+   "matches": 76054
   },
   {
    "region": "americas",
    "bucket": "IRON_BRONZE",
-   "matches": 2900
+   "matches": 55071
   },
   {
    "region": "americas",
    "bucket": "PLAT_EMERALD",
-   "matches": 2700
+   "matches": 60196
   },
   {
    "region": "americas",
    "bucket": "SILVER_GOLD",
-   "matches": 3400
+   "matches": 59730
   },
   {
    "region": "asia",
    "bucket": "DIAMOND_PLUS",
-   "matches": 2900
+   "matches": 86766
   },
   {
    "region": "asia",
    "bucket": "IRON_BRONZE",
-   "matches": 2600
+   "matches": 65988
   },
   {
    "region": "asia",
    "bucket": "PLAT_EMERALD",
-   "matches": 3800
+   "matches": 57695
   },
   {
    "region": "asia",
    "bucket": "SILVER_GOLD",
-   "matches": 3600
+   "matches": 57663
   },
   {
    "region": "europe",
    "bucket": "DIAMOND_PLUS",
-   "matches": 2100
+   "matches": 98522
   },
   {
    "region": "europe",
    "bucket": "IRON_BRONZE",
-   "matches": 3300
+   "matches": 58363
   },
   {
    "region": "europe",
    "bucket": "PLAT_EMERALD",
-   "matches": 3400
+   "matches": 57424
   },
   {
    "region": "europe",
    "bucket": "SILVER_GOLD",
-   "matches": 3900
+   "matches": 53037
   }
  ]
 }
