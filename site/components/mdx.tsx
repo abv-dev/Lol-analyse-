@@ -1,22 +1,62 @@
 import type { MDXComponents } from "mdx/types";
 import ChampCard from "@/components/ChampCard";
 import StudyMeta from "@/components/StudyMeta";
+import TierTable from "@/components/TierTable";
 import WinrateChart, { type WinrateDatum } from "@/components/charts/WinrateChart";
 import { readStudyData, type Etude } from "@/lib/etudes";
+import { wilsonCi, type TierCell, type TierExportMeta } from "@/lib/stats";
+
+/** Agrège tierlist.json (cellules champion × bucket × région) par champion. */
+function aggregateForChart(rows: TierCell[], minGames: number, top: number): WinrateDatum[] {
+  const byChamp = new Map<string, { games: number; wins: number }>();
+  for (const r of rows) {
+    const acc = byChamp.get(r.champion_name) ?? { games: 0, wins: 0 };
+    acc.games += r.games;
+    acc.wins += r.wins;
+    byChamp.set(r.champion_name, acc);
+  }
+  return Array.from(byChamp.entries())
+    .filter(([, a]) => a.games >= minGames)
+    .sort((a, b) => b[1].games - a[1].games) // les plus joués…
+    .slice(0, top)
+    .map(([champion, a]) => ({ champion, winrate: a.wins / a.games }))
+    .sort((a, b) => b.winrate - a.winrate); // …classés par winrate
+}
 
 /**
  * Composants disponibles dans les MDX d'étude, liés à l'étude courante :
- * - <StudyMeta /> lit meta.json automatiquement (aucune prop à passer)
- * - <WinrateChart file="winrates.json" /> lit /data/etudes/[slug]/winrates.json
- *   au build (SSG) et hydrate le graphique recharts côté client
+ * - <StudyMeta /> lit meta.json de l'étude automatiquement
+ * - <TierTable /> : tableau triable/filtrable depuis tierlist.json + meta.json
+ *   d'export (data/etudes/[famille]/[patch]/), agrégats et IC recalculés
+ * - <WinrateChart top={12} /> : top des champions les plus joués, classés par
+ *   winrate (échantillons suffisants uniquement)
+ * - <ChampCard /> : carte champion ponctuelle
  */
 export function mdxComponents(etude: Etude): MDXComponents {
+  const data = <T,>(file: string) => readStudyData<T>(etude.family, etude.patchSlug, file);
   return {
     StudyMeta: () => <StudyMeta meta={etude.meta} />,
     ChampCard,
-    WinrateChart: ({ file, title }: { file: string; title?: string }) => {
-      const data = readStudyData<WinrateDatum[]>(etude.slug, file);
-      return <WinrateChart data={data} title={title} />;
+    TierTable: ({ file = "tierlist.json" }: { file?: string }) => {
+      const rows = data<TierCell[]>(file);
+      const meta = data<TierExportMeta>("meta.json");
+      return <TierTable rows={rows} meta={meta} />;
+    },
+    WinrateChart: ({
+      file = "tierlist.json",
+      top = 12,
+      title,
+    }: {
+      file?: string;
+      top?: number;
+      title?: string;
+    }) => {
+      const rows = data<TierCell[]>(file);
+      const meta = data<TierExportMeta>("meta.json");
+      return <WinrateChart data={aggregateForChart(rows, meta.min_cell_games, top)} title={title} />;
     },
   };
 }
+
+// réexporté pour les tests éventuels
+export { wilsonCi };

@@ -1,0 +1,11 @@
+{
+  "title": "Tier list — patch 16.15",
+  "description": "Winrate, pick et ban par champion, bucket de rank et région, sur les matchs ranked solo du patch 16.15. Intervalles de confiance à 95 % sur tous les winrates.",
+  "date": "2026-08-10",
+  "patch": "16.15",
+  "patch_sensitive": true,
+  "sample_size": 36000,
+  "regions": ["europe", "asia", "americas"],
+  "collected_at": "2026-07-30",
+  "tags": ["Tier list", "Tous rôles", "Tous ranks", "EUW · KR · NA"]
+}

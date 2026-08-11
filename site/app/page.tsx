@@ -18,7 +18,9 @@ export default function Home() {
         {etudes.length === 0 ? (
           <p className="text-zinc-500">Aucune étude publiée pour l&apos;instant.</p>
         ) : (
-          etudes.map((etude) => <StudyCard key={etude.slug} etude={etude} />)
+          etudes.map((etude) => (
+            <StudyCard key={`${etude.family}/${etude.patchSlug}`} etude={etude} />
+          ))
         )}
       </div>
     </div>

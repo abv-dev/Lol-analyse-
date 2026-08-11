@@ -10,10 +10,10 @@ function formatDate(iso: string) {
 }
 
 export default function StudyCard({ etude }: { etude: Etude }) {
-  const { slug, meta } = etude;
+  const { family, patchSlug, meta } = etude;
   return (
     <Link
-      href={`/etudes/${slug}`}
+      href={`/etudes/${family}/${patchSlug}`}
       className="block rounded-lg border border-zinc-800 bg-zinc-900/60 p-5 transition hover:border-accent-dim hover:bg-zinc-900"
     >
       <div className="flex items-baseline justify-between gap-4">

@@ -21,13 +21,18 @@ def main() -> None:
     sub.add_parser("run", help="lance les 3 workers régionaux (europe/asia/americas)")
     sub.add_parser("stats", help="matchs par région × bucket × patch, débit, taille db")
 
-    export_parser = sub.add_parser("export", help="export CSV agrégé pour une étude")
+    export_parser = sub.add_parser(
+        "export", help="export JSON d'une étude pour le site EloLab")
     export_parser.add_argument("--study", required=True, choices=["tierlist"],
                                help="étude à exporter")
-    export_parser.add_argument("--patch", required=True,
-                               help="patch ciblé, ex: 16.14")
-    export_parser.add_argument("--out", default=None,
-                               help="fichier CSV de sortie (défaut: stdout)")
+    export_parser.add_argument("--patch", default=None,
+                               help="patch ciblé (ex: 16.15) ; défaut : patch "
+                                    "courant détecté via Data Dragon")
+    export_parser.add_argument("--out", required=True,
+                               help="répertoire de sortie (tierlist.json + meta.json)")
+    export_parser.add_argument("--min-games", type=int, default=200,
+                               help="sous ce nombre de games, une cellule est "
+                                    "marquée insufficient_sample (défaut: 200)")
 
     args = parser.parse_args()
     cfg = Config()
@@ -44,7 +49,8 @@ def main() -> None:
     elif args.command == "export":
         from lolcollector.export import export_tierlist
         if args.study == "tierlist":
-            export_tierlist(cfg.db_path, args.patch, args.out)
+            export_tierlist(cfg.db_path, args.patch, args.out,
+                            min_games=args.min_games)
 
 
 if __name__ == "__main__":
