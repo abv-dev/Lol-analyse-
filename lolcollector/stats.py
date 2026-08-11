@@ -42,6 +42,35 @@ def print_stats(db_path: str) -> None:
     print(f"Matchs totaux  : {total}")
     print(f"Débit          : {last_hour} matchs/h (dernière heure), "
           f"{last_24h} sur 24h (~{last_24h / 24:.0f}/h)")
+
+    # Couverture timeline du patch courant. Les comptes passent par l'index
+    # idx_tl_state_status et par (patch, …) : pas de scan des tables de
+    # timeline, qui sont les plus volumineuses de la base.
+    if ddragon:
+        current_patch = ".".join(ddragon[0].split(".")[:2])
+        patch_matches = conn.execute(
+            "SELECT COUNT(*) FROM matches WHERE patch = ?", (current_patch,)
+        ).fetchone()[0]
+        stored, skipped, missing = 0, 0, 0
+        rows = conn.execute(
+            "SELECT t.status, COUNT(*) FROM timeline_state t"
+            " JOIN matches m ON m.match_id = t.match_id"
+            " WHERE m.patch = ? GROUP BY t.status", (current_patch,)
+        ).fetchall()
+        for status, count in rows:
+            if status == "ok":
+                stored = count
+            elif status == "skipped":
+                skipped = count
+            elif status == "missing":
+                missing = count
+        decided = stored + skipped + missing
+        pending = max(0, patch_matches - decided)
+        if patch_matches:
+            print(f"Timelines {current_patch}: {stored} stockées "
+                  f"({stored / patch_matches * 100:.1f} % des matchs du patch) ; "
+                  f"{skipped} hors échantillon, {missing} absentes chez Riot, "
+                  f"{pending} en attente")
     print()
 
     rows = conn.execute(

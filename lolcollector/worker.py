@@ -15,6 +15,7 @@ from .db import Database
 from .ratelimit import RateLimiter
 from .riot import FatalApiError, RiotClient
 from .sampler import BucketSampler
+from .timeline import is_sampled, mark_timeline, store_timeline
 
 STATS_LOG_EVERY = 50  # log de progression toutes les N insertions par région
 
@@ -71,8 +72,10 @@ async def region_worker(cfg: Config, db: Database, client: RiotClient,
     bucket_cycle = itertools.cycle(BUCKETS.keys())  # round-robin entre buckets
     inserted = 0
     skipped_dup = 0
+    timelines = 0
 
-    log.info("[%s] worker démarré (plateforme %s)", region, platform)
+    log.info("[%s] worker démarré (plateforme %s, timelines %.0f%%)",
+             region, platform, cfg.timeline_sample_rate * 100)
     while not stop_event.is_set():
         bucket = next(bucket_cycle)
         try:
@@ -100,15 +103,36 @@ async def region_worker(cfg: Config, db: Database, client: RiotClient,
                 data = await client.match(region, match_id)
                 if data and db.store_match(data, region, platform, bucket):
                     inserted += 1
+                    # Timeline : seulement pour la fraction échantillonnée
+                    if is_sampled(match_id, cfg.timeline_sample_rate):
+                        try:
+                            tl = await client.match_timeline(region, match_id)
+                            if tl:
+                                n_ev, n_fr = store_timeline(db, match_id, tl)
+                                timelines += 1
+                                log.debug("[%s] timeline %s : %d events, %d frames",
+                                          region, match_id, n_ev, n_fr)
+                            else:
+                                mark_timeline(db, match_id, "missing")
+                        except FatalApiError:
+                            raise
+                        except Exception as exc:
+                            # une timeline ratée ne doit pas coûter le match
+                            log.warning("[%s] timeline %s échouée : %s",
+                                        region, match_id, exc)
+                    else:
+                        mark_timeline(db, match_id, "skipped")
                     if inserted % STATS_LOG_EVERY == 0:
-                        log.info("[%s] %d matchs insérés (%d doublons évités)",
-                                 region, inserted, skipped_dup)
+                        log.info("[%s] %d matchs insérés (%d doublons évités, "
+                                 "%d timelines)", region, inserted, skipped_dup,
+                                 timelines)
         except FatalApiError:
             raise
         except Exception as exc:
             log.error("[%s] erreur worker (bucket %s) : %s", region, bucket, exc)
             await asyncio.sleep(5)
-    log.info("[%s] worker arrêté (%d matchs insérés cette session)", region, inserted)
+    log.info("[%s] worker arrêté (%d matchs insérés, %d timelines cette session)",
+             region, inserted, timelines)
 
 
 async def run_collector():

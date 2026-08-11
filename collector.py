@@ -21,6 +21,16 @@ def main() -> None:
     sub.add_parser("run", help="lance les 3 workers régionaux (europe/asia/americas)")
     sub.add_parser("stats", help="matchs par région × bucket × patch, débit, taille db")
 
+    backfill_parser = sub.add_parser(
+        "backfill-timelines",
+        help="récupère les timelines de matchs déjà en base (patch courant d'abord)")
+    backfill_parser.add_argument("--limit", type=int, default=1000,
+                                 help="nombre max de timelines à récupérer (défaut: 1000)")
+    backfill_parser.add_argument("--share", type=float, default=0.3,
+                                 help="part du budget de requêtes régional allouée "
+                                      "au backfill, pour ne pas affamer les workers "
+                                      "(défaut: 0.3)")
+
     export_parser = sub.add_parser(
         "export", help="export JSON d'une étude pour le site EloLab")
     export_parser.add_argument("--study", required=True, choices=["tierlist"],
@@ -41,6 +51,12 @@ def main() -> None:
         from lolcollector.worker import run_collector
         try:
             asyncio.run(run_collector())
+        except KeyboardInterrupt:
+            pass
+    elif args.command == "backfill-timelines":
+        from lolcollector.backfill import run_backfill
+        try:
+            return asyncio.run(run_backfill(args.limit, args.share))
         except KeyboardInterrupt:
             pass
     elif args.command == "stats":

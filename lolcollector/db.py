@@ -55,8 +55,46 @@ CREATE TABLE IF NOT EXISTS team_objectives (
     dragon_kills INTEGER,
     baron_kills  INTEGER,
     tower_kills  INTEGER,
-    herald_kills INTEGER,
+    herald_kills INTEGER,   -- objectives.riftHerald : Rift Herald UNIQUEMENT
+    horde_kills  INTEGER,   -- objectives.horde : voidgrubs (larves du Néant)
     PRIMARY KEY (match_id, team_id)
+);
+
+-- Timelines (Match-V5 /timelines), échantillonnées : voir TIMELINE_SAMPLE_RATE.
+CREATE TABLE IF NOT EXISTS timeline_events (
+    match_id        TEXT NOT NULL,
+    timestamp_ms    INTEGER,
+    type            TEXT,
+    team_id         INTEGER,
+    killer_id       INTEGER,
+    victim_id       INTEGER,
+    monster_type    TEXT,
+    monster_subtype TEXT,
+    lane_type       TEXT,
+    building_type   TEXT,
+    position_x      INTEGER,
+    position_y      INTEGER
+);
+
+CREATE TABLE IF NOT EXISTS timeline_frames (
+    match_id       TEXT NOT NULL,
+    minute         INTEGER,
+    participant_id INTEGER,
+    total_gold     INTEGER,
+    current_gold   INTEGER,
+    xp             INTEGER,
+    level          INTEGER,
+    cs             INTEGER,
+    position_x     INTEGER,
+    position_y     INTEGER
+);
+
+-- Matchs dont la timeline a été traitée : évite de re-dépenser une requête.
+-- status : 'ok' (stockée), 'skipped' (hors échantillon), 'missing' (404 Riot).
+CREATE TABLE IF NOT EXISTS timeline_state (
+    match_id    TEXT PRIMARY KEY,
+    status      TEXT NOT NULL,
+    fetched_at  INTEGER
 );
 
 CREATE TABLE IF NOT EXISTS sampling_state (
@@ -83,7 +121,23 @@ CREATE INDEX IF NOT EXISTS idx_bans_match
     ON bans (match_id);
 CREATE INDEX IF NOT EXISTS idx_matches_inserted
     ON matches (inserted_at);
+
+-- Index pensés pour les requêtes d'étude temporelle
+CREATE INDEX IF NOT EXISTS idx_tl_frames_match_minute
+    ON timeline_frames (match_id, minute);
+CREATE INDEX IF NOT EXISTS idx_tl_events_match_type
+    ON timeline_events (match_id, type);
+CREATE INDEX IF NOT EXISTS idx_tl_events_type_ts
+    ON timeline_events (type, timestamp_ms);
+CREATE INDEX IF NOT EXISTS idx_tl_state_status
+    ON timeline_state (status);
 """
+
+# Colonnes ajoutées après coup : appliquées à une base existante sans la
+# recréer (la base de production fait plusieurs Go).
+MIGRATIONS = [
+    ("team_objectives", "horde_kills", "ALTER TABLE team_objectives ADD COLUMN horde_kills INTEGER"),
+]
 
 
 def patch_of(game_version: str) -> str:
@@ -101,7 +155,17 @@ class Database:
         self.conn.execute("PRAGMA journal_mode=WAL")
         self.conn.execute("PRAGMA synchronous=NORMAL")
         self.conn.executescript(SCHEMA)
+        self._migrate()
         self.conn.commit()
+
+    def _migrate(self) -> None:
+        """Applique les colonnes ajoutées après coup (base existante)."""
+        for table, column, sql in MIGRATIONS:
+            existing = {
+                row[1] for row in self.conn.execute(f"PRAGMA table_info({table})")
+            }
+            if column not in existing:
+                self.conn.execute(sql)
 
     def close(self):
         self.conn.close()
@@ -188,16 +252,20 @@ class Database:
                         return 1 if value else 0
                     return value or 0
 
+                # riftHerald = Rift Herald ; horde = voidgrubs. Deux objectifs
+                # distincts dans Match-V5, à ne surtout pas confondre.
                 cur.execute(
                     "INSERT OR REPLACE INTO team_objectives (match_id, team_id,"
                     " first_blood, first_tower, first_dragon, first_baron,"
-                    " dragon_kills, baron_kills, tower_kills, herald_kills)"
-                    " VALUES (?,?,?,?,?,?,?,?,?,?)",
+                    " dragon_kills, baron_kills, tower_kills, herald_kills,"
+                    " horde_kills)"
+                    " VALUES (?,?,?,?,?,?,?,?,?,?,?)",
                     (match_id, team_id,
                      o("champion", "first"), o("tower", "first"),
                      o("dragon", "first"), o("baron", "first"),
                      o("dragon", "kills"), o("baron", "kills"),
-                     o("tower", "kills"), o("riftHerald", "kills")),
+                     o("tower", "kills"), o("riftHerald", "kills"),
+                     o("horde", "kills")),
                 )
             self.conn.commit()
             return True
