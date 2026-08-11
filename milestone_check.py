@@ -14,6 +14,10 @@ logs dans logs/milestones.log. Aucune dépendance hors stdlib (urllib).
   tâche p1, une seule fois tant que la panne dure.
 - État persisté dans data/milestones_done.json :
   {"milestones": {"16.14": [50000]}, "outage_notified": false}
+- `--dry-run` : valide le token et l'accès au projet sans rien créer.
+
+API : Todoist unifiée v1 (https://api.todoist.com/api/v1). L'ancienne REST v2
+est retirée (410 Gone). Plusieurs seuils en attente => un seul récapitulatif.
 """
 
 import json
@@ -24,6 +28,7 @@ import sqlite3
 import sys
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -31,7 +36,9 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from lolcollector.config import Config  # noqa: E402
 from lolcollector.db import patch_of  # noqa: E402
 
-TODOIST_API = "https://api.todoist.com/rest/v2"
+# API Todoist unifiée v1 — l'ancienne REST v2 (api.todoist.com/rest/v2) a été
+# retirée par Todoist et renvoie HTTP 410 Gone.
+TODOIST_API = "https://api.todoist.com/api/v1"
 DEFAULT_MILESTONES = "50000,100000,250000,500000"
 DEFAULT_PROJECT_NAME = "LoL Studies"
 OUTAGE_AFTER_HOURS = 3
@@ -86,8 +93,18 @@ def save_state(path: str, state: dict) -> None:
 
 
 # ---------------------------------------------------------------------------
-# Todoist (API REST v2, urllib uniquement)
+# Todoist (API unifiée v1, urllib uniquement)
 # ---------------------------------------------------------------------------
+
+class TodoistError(Exception):
+    """Erreur HTTP Todoist, avec code et corps de réponse pour le diagnostic."""
+
+    def __init__(self, status: int, body: str, endpoint: str):
+        self.status = status
+        self.body = body
+        self.endpoint = endpoint
+        super().__init__(f"HTTP {status} sur {endpoint} : {body[:500]}")
+
 
 def todoist_request(token: str, method: str, endpoint: str, payload: dict | None = None):
     data = json.dumps(payload).encode("utf-8") if payload is not None else None
@@ -100,25 +117,49 @@ def todoist_request(token: str, method: str, endpoint: str, payload: dict | None
             "Content-Type": "application/json",
         },
     )
-    with urllib.request.urlopen(req, timeout=30) as resp:
-        body = resp.read().decode("utf-8")
-        return json.loads(body) if body else None
+    try:
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            body = resp.read().decode("utf-8")
+            return json.loads(body) if body else None
+    except urllib.error.HTTPError as exc:
+        # Lire le corps AVANT de lever : indispensable pour diagnostiquer un
+        # 4xx (token invalide, endpoint retiré, payload rejeté…)
+        error_body = exc.read().decode("utf-8", errors="replace")
+        raise TodoistError(exc.code, error_body, endpoint) from exc
 
 
 def resolve_project_id(token: str, name: str) -> str | None:
-    """Résout l'id du projet par son nom (jamais d'id en dur)."""
-    projects = todoist_request(token, "GET", "/projects") or []
+    """Résout l'id du projet par son nom (jamais d'id en dur).
+    L'API v1 pagine par curseur : {"results": [...], "next_cursor": ...}."""
     wanted = name.strip().casefold()
-    for project in projects:
-        if project.get("name", "").strip().casefold() == wanted:
-            return project["id"]
-    return None
+    cursor = None
+    while True:
+        endpoint = "/projects?limit=200"
+        if cursor:
+            endpoint += f"&cursor={urllib.parse.quote(cursor, safe='')}"
+        page = todoist_request(token, "GET", endpoint) or {}
+        for project in page.get("results", []):
+            if project.get("name", "").strip().casefold() == wanted:
+                return project["id"]
+        cursor = page.get("next_cursor")
+        if not cursor:
+            return None
+
+
+def _log_todoist_error(log: logging.Logger, exc: Exception, context: str) -> None:
+    """Logge un échec Todoist avec le code ET le corps de la réponse (4xx),
+    ou l'erreur réseau — un simple « injoignable » ne se diagnostique pas."""
+    if isinstance(exc, TodoistError):
+        log.error("%s : Todoist HTTP %d sur %s — corps : %s",
+                  context, exc.status, exc.endpoint, exc.body[:500] or "(vide)")
+    else:
+        log.error("%s : Todoist injoignable (%s)", context, exc)
 
 
 def create_task(token: str, project_id: str, content: str, description: str,
                 priority_p: int) -> None:
     """Crée une tâche échue aujourd'hui. priority_p est au sens Todoist UI
-    (p1 = plus haute) ; l'API REST inverse l'échelle : p1 -> 4, p2 -> 3."""
+    (p1 = plus haute) ; l'API inverse l'échelle : p1 -> 4, p2 -> 3."""
     todoist_request(token, "POST", "/tasks", {
         "content": content,
         "description": description,
@@ -197,34 +238,43 @@ def main() -> int:
         project_name = os.environ.get("TODOIST_PROJECT_NAME", DEFAULT_PROJECT_NAME)
         try:
             project_id = resolve_project_id(token, project_name)
-        except (urllib.error.URLError, urllib.error.HTTPError) as exc:
-            log.error("Todoist injoignable (%s), on retentera au prochain run", exc)
+        except (TodoistError, urllib.error.URLError) as exc:
+            _log_todoist_error(log, exc, "résolution du projet")
             return 1
         if not project_id:
             log.error("projet Todoist %r introuvable", project_name)
             return 1
 
-        # Jalons de volume — un seuil n'est marqué fait QU'APRÈS création réussie
-        for milestone in crossed:
-            stage = STUDY_STAGES.get(
-                milestone, "étape d'étude suivante prête à être lancée")
+        # Jalons de volume — marqués faits QU'APRÈS création réussie de la
+        # tâche. Plusieurs seuils en attente (ex : rattrapage après une panne
+        # de notification) => UN SEUL message récapitulatif.
+        if crossed:
+            top = max(crossed)
+            stage = STUDY_STAGES.get(top, "étape d'étude suivante prête à être lancée")
+            content = f"EloLab : {top} matchs collectés en {patch}"
+            recap = ""
+            if len(crossed) > 1:
+                seuils = ", ".join(str(m) for m in sorted(crossed))
+                recap = (f"Rattrapage : seuils {seuils} franchis depuis la "
+                         f"dernière notification réussie.\n\n")
             description = (
+                f"{recap}"
                 f"Répartition région × bucket au franchissement "
                 f"({patch_count} matchs sur le patch {patch}, {total} au total) :\n"
                 f"{region_bucket_breakdown(conn, patch)}\n\n"
                 f"Le dataset est prêt pour l'étape d'étude correspondante : {stage}."
             )
             try:
-                create_task(token, project_id,
-                            f"EloLab : {milestone} matchs collectés en {patch}",
-                            description, priority_p=2)
-            except (urllib.error.URLError, urllib.error.HTTPError) as exc:
-                log.error("création de tâche échouée pour le seuil %d (%s), "
-                          "on retentera au prochain run", milestone, exc)
+                create_task(token, project_id, content, description, priority_p=2)
+            except (TodoistError, urllib.error.URLError) as exc:
+                _log_todoist_error(
+                    log, exc, f"création de tâche pour les seuils {sorted(crossed)}, "
+                              "on retentera au prochain run")
                 return 1
-            done_for_patch.append(milestone)
+            done_for_patch.extend(crossed)
             save_state(spath, state)
-            log.info("seuil %d notifié pour le patch %s", milestone, patch)
+            log.info("seuils %s notifiés pour le patch %s (message unique)",
+                     sorted(crossed), patch)
 
         # Alerte panne — une seule fois tant que la panne dure
         if outage_to_notify:
@@ -240,8 +290,8 @@ def main() -> int:
                 create_task(token, project_id,
                             "EloLab : le collecteur semble arrêté",
                             description, priority_p=1)
-            except (urllib.error.URLError, urllib.error.HTTPError) as exc:
-                log.error("création de l'alerte panne échouée (%s)", exc)
+            except (TodoistError, urllib.error.URLError) as exc:
+                _log_todoist_error(log, exc, "création de l'alerte panne")
                 return 1
             state["outage_notified"] = True
             save_state(spath, state)
@@ -252,5 +302,34 @@ def main() -> int:
         conn.close()
 
 
+def dry_run() -> int:
+    """Teste l'authentification et l'accès au projet sans rien créer."""
+    cfg = Config()
+    log = setup_logging(cfg.log_dir)
+    token = os.environ.get("TODOIST_API_TOKEN", "")
+    if not token:
+        print("DRY-RUN ÉCHEC : TODOIST_API_TOKEN manquant dans .env")
+        return 1
+    project_name = os.environ.get("TODOIST_PROJECT_NAME", DEFAULT_PROJECT_NAME)
+    try:
+        project_id = resolve_project_id(token, project_name)
+    except (TodoistError, urllib.error.URLError) as exc:
+        _log_todoist_error(log, exc, "dry-run")
+        if isinstance(exc, TodoistError):
+            print(f"DRY-RUN ÉCHEC : HTTP {exc.status} sur {exc.endpoint} — "
+                  f"{exc.body[:300] or '(corps vide)'}")
+        else:
+            print(f"DRY-RUN ÉCHEC : réseau ({exc})")
+        return 1
+    if not project_id:
+        print(f"DRY-RUN ÉCHEC : authentification OK mais projet {project_name!r} "
+              "introuvable dans Todoist")
+        return 1
+    print(f"DRY-RUN OK : token valide, projet {project_name!r} trouvé "
+          f"(id {project_id}). Aucune tâche créée.")
+    log.info("dry-run OK (projet %s -> id %s)", project_name, project_id)
+    return 0
+
+
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(dry_run() if "--dry-run" in sys.argv else main())

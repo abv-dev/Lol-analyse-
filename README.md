@@ -148,6 +148,14 @@ Script cron autonome (stdlib uniquement) qui surveille le volume collecté :
   `data/milestones_done.json`) ; nouveau patch → seuils de nouveau notifiables ;
 - idempotent et silencieux quand rien à signaler ; logs dans
   `logs/milestones.log`. Nécessite `TODOIST_API_TOKEN` dans `.env`.
+  Utilise l'**API Todoist unifiée v1** (`api.todoist.com/api/v1` — l'ancienne
+  REST v2 est retirée et renvoie 410). Plusieurs seuils en attente (ex :
+  rattrapage après une panne de notification) donnent **un seul message
+  récapitulatif**. Valider la config en une commande :
+
+```bash
+python3 milestone_check.py --dry-run   # teste token + accès projet, ne crée rien
+```
 
 Ligne cron à installer (`crontab -e`, toutes les 30 min) :
 
