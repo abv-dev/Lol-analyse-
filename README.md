@@ -223,6 +223,64 @@ c'est attendu, et distinguable d'un vrai `0`.
    redirige automatiquement vers le nouveau patch, l'ancienne version reste
    accessible à son URL datée, et le sélecteur de patch liste l'archive.
 
+5. **Annoncer**, une fois le déploiement terminé (l'annonce pointe vers la
+   page en ligne, inutile de l'envoyer avant) :
+
+   ```bash
+   git pull                                # récupérer le contenu mergé
+   python3 scripts/notify_discord.py --dry-run   # relire l'embed
+   python3 scripts/notify_discord.py
+   ```
+
+   Le flux RSS, lui, ne demande rien : il est régénéré par le build Vercel.
+
+## Diffusion
+
+### Flux RSS — `/rss.xml`
+
+Généré au build depuis `site/content/etudes/**/meta.json` : titre,
+description, date, lien et patch (`<category>`) de chaque étude, les plus
+récentes en premier. Déclaré dans le `<head>` de toutes les pages
+(`<link rel="alternate" type="application/rss+xml">`) pour l'auto-découverte
+par les lecteurs, et lié discrètement depuis le footer.
+
+Deux détails qui évitent des faux positifs de mise à jour côté lecteurs :
+la `lastBuildDate` est celle de la dernière étude et non l'heure du build
+(sinon chaque redéploiement ferait passer le flux pour modifié), et les
+`pubDate` sont posées à midi UTC (à minuit, un lecteur à l'ouest de
+Greenwich afficherait la veille).
+
+### Annonce Discord — `scripts/notify_discord.py`
+
+Poste un embed par étude : titre, chapô, chiffre-clé (valeur, IC et taille
+d'échantillon), image OG et lien. Stdlib uniquement.
+
+```bash
+python3 scripts/notify_discord.py                  # annonce ce qui ne l'a pas été
+python3 scripts/notify_discord.py --dry-run        # affiche le payload, n'envoie rien
+python3 scripts/notify_discord.py --study tierlist/16-15
+python3 scripts/notify_discord.py --init           # marque tout comme annoncé
+```
+
+- **Configuration** : `DISCORD_WEBHOOK_URL` dans `.env`. Absente, le script
+  ne fait rien et **sort en 0** — une diffusion non configurée ne doit pas
+  casser un pipeline de publication. L'URL n'est jamais écrite en dur ni
+  journalisée (elle vaut mot de passe) ; un test le vérifie.
+- **Idempotence** : état dans `data/notify_discord.json`, écrit après
+  *chaque* envoi réussi et non en fin de lot — une coupure au milieu d'un
+  rattrapage ne fait pas repartir ce qui est déjà passé. `--force` pour
+  ré-annoncer volontairement.
+- **Garde-fou machine neuve** : `data/` est gitignoré, donc sur un clone
+  frais l'état est absent et tout l'historique passerait pour nouveau. Dans
+  ce cas précis (état absent **et** plus d'une étude en attente) le script
+  refuse d'envoyer et propose `--init` (tout marquer comme annoncé, sans
+  envoi) ou `--force`.
+- Un 429 est retenté en respectant `retry_after`, un 5xx avec un backoff.
+
+Tests : `python3 tests/test_notify_discord.py` (un vrai serveur HTTP local
+tient lieu de webhook — on vérifie ce qui part sur le réseau, pas ce que le
+script prétend faire).
+
 ## Limites connues (assumées)
 
 - **`tier_bucket_source` est une approximation** : c'est le bucket du joueur
