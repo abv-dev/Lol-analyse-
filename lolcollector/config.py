@@ -66,6 +66,16 @@ class Config:
         # MATCH_MAX_AGE_DAYS sont demandés (filtre startTime côté Riot).
         # Évite de remplir la base de vieux patchs via les joueurs inactifs.
         self.match_max_age_days = int(os.environ.get("MATCH_MAX_AGE_DAYS", "28"))
+        # Fraction des matchs dont la timeline est collectée (tirage
+        # déterministe sur le match_id). 1.0 = tous (débit de matchs divisé
+        # par ~2), 0 = aucune.
+        self.timeline_sample_rate = float(os.environ.get("TIMELINE_SAMPLE_RATE", "0.33"))
+        # Plafond dur : au-delà de ce nombre de timelines stockées pour le
+        # patch courant, la collecte de timelines s'arrête et ne reprend qu'au
+        # patch suivant. Sans lui, le taux seul remplit le disque (à 157k
+        # matchs/jour et 27,2 Ko/timeline, 0.33 fait ~25 Go en deux semaines).
+        self.timeline_target_per_patch = int(
+            os.environ.get("TIMELINE_TARGET_PER_PATCH", "200000"))
         # Profondeur max de pagination League-Exp par tier/division avant de
         # passer à la suivante (diversité de l'échantillon)
         self.max_pages_per_division = int(os.environ.get("MAX_PAGES_PER_DIVISION", "30"))

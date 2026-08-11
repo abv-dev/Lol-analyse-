@@ -89,6 +89,12 @@ class RiotClient:
         url = f"https://{region}.api.riotgames.com/lol/match/v5/matches/{match_id}"
         return await self._get(url)
 
+    async def match_timeline(self, region: str, match_id: str):
+        """Timeline d'un match (frames par minute + événements). None si 404."""
+        url = (f"https://{region}.api.riotgames.com"
+               f"/lol/match/v5/matches/{match_id}/timeline")
+        return await self._get(url)
+
     async def ddragon_versions(self):
         """versions.json de Data Dragon (hors rate limit Riot API)."""
         from .config import DDRAGON_VERSIONS_URL

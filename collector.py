@@ -21,6 +21,27 @@ def main() -> None:
     sub.add_parser("run", help="lance les 3 workers régionaux (europe/asia/americas)")
     sub.add_parser("stats", help="matchs par région × bucket × patch, débit, taille db")
 
+    backfill_parser = sub.add_parser(
+        "backfill-timelines",
+        help="récupère les timelines de matchs déjà en base (patch courant d'abord)")
+    backfill_parser.add_argument("--limit", type=int, default=1000,
+                                 help="nombre max de timelines à récupérer (défaut: 1000)")
+    backfill_parser.add_argument("--share", type=float, default=0.3,
+                                 help="part du budget de requêtes régional allouée "
+                                      "au backfill, pour ne pas affamer les workers "
+                                      "(défaut: 0.3)")
+
+    prune_parser = sub.add_parser(
+        "prune",
+        help="supprime les matchs bruts (et timelines) des vieux patchs déjà exportés")
+    prune_parser.add_argument("--keep-patches", type=int, default=2,
+                              help="nombre de patchs récents à conserver (défaut: 2)")
+    prune_parser.add_argument("--exports", default=None,
+                              help="répertoire des études exportées "
+                                   "(défaut: site/data/etudes)")
+    prune_parser.add_argument("--yes", action="store_true",
+                              help="ne pas demander de confirmation")
+
     export_parser = sub.add_parser(
         "export", help="export JSON d'une étude pour le site EloLab")
     export_parser.add_argument("--study", required=True, choices=["tierlist"],
@@ -43,6 +64,16 @@ def main() -> None:
             asyncio.run(run_collector())
         except KeyboardInterrupt:
             pass
+    elif args.command == "backfill-timelines":
+        from lolcollector.backfill import run_backfill
+        try:
+            return asyncio.run(run_backfill(args.limit, args.share))
+        except KeyboardInterrupt:
+            pass
+    elif args.command == "prune":
+        from lolcollector.prune import DEFAULT_EXPORTS_DIR, run_prune
+        return run_prune(cfg.db_path, args.keep_patches,
+                         args.exports or DEFAULT_EXPORTS_DIR, args.yes)
     elif args.command == "stats":
         from lolcollector.stats import print_stats
         print_stats(cfg.db_path)

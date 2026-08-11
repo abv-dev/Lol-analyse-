@@ -63,7 +63,19 @@ python3 collector.py export --study tierlist --out /tmp/export   # patch courant
 - `bans(match_id, team_id, champion_id, pick_turn)` — `champion_id = -1`
   signifie « pas de ban »
 - `team_objectives(match_id, team_id, first_blood, first_tower, first_dragon,
-  first_baron, dragon_kills, baron_kills, tower_kills, herald_kills)`
+  first_baron, dragon_kills, baron_kills, tower_kills, herald_kills,
+  horde_kills)` — `herald_kills` vient de `objectives.riftHerald` (**Rift
+  Herald uniquement**) et `horde_kills` de `objectives.horde` (**voidgrubs**) :
+  voir la correction documentée plus bas
+- `timeline_events(match_id, timestamp_ms, type, team_id, killer_id,
+  victim_id, monster_type, monster_subtype, lane_type, building_type,
+  position_x, position_y)` — types conservés : `CHAMPION_KILL`,
+  `ELITE_MONSTER_KILL`, `BUILDING_KILL`, `TURRET_PLATE_DESTROYED`
+- `timeline_frames(match_id, minute, participant_id, total_gold,
+  current_gold, xp, level, cs, position_x, position_y)` — une ligne par
+  joueur et par minute
+- `timeline_state(match_id, status, fetched_at)` — `ok` / `skipped` (hors
+  échantillon) / `missing` (404 Riot) : évite de re-dépenser une requête
 - `sampling_state`, `meta` : état interne (curseurs, version ddragon)
 
 Index : `matches(patch, tier_bucket_source)`, `participants(champion_id, patch)`,
@@ -72,6 +84,96 @@ export (`matches(patch, region, tier_bucket_source, match_id)`,
 `participants(match_id, champion_id, win)`, `bans(match_id, champion_id)`) —
 les requêtes d'agrégation ne touchent jamais les tables, uniquement les
 index (vérifié par `EXPLAIN QUERY PLAN` à chaque export).
+
+## Timelines (études temporelles)
+
+Le collecteur récupère aussi les **timelines** Match-V5 (`/timelines`) —
+objectifs horodatés, or et XP à la minute, positions — pour permettre des
+études comme « side au premier drake à or égal ».
+
+- **Échantillonnage** : une timeline coûte une requête supplémentaire par
+  match ; les collecter toutes diviserait par deux le débit de matchs. Seule
+  une fraction est prise, réglée par `TIMELINE_SAMPLE_RATE` (**0.33** par
+  défaut). Le tirage est **déterministe à partir du `match_id`**
+  (SHA-256, pas de `random`) : deux exécutions retiennent exactement les mêmes
+  matchs, la rétro-collecte porte sur le même sous-ensemble que la collecte en
+  direct, et baisser le taux ne fait que retirer des matchs (jamais en
+  échanger). Les tier lists gardent donc leur volume complet.
+- **Une timeline ratée ne coûte pas le match** : l'erreur est loggée, le match
+  reste en base, et le `timeline_state` permettra de réessayer.
+
+### Volume — à lire avant d'augmenter le taux
+
+Mesuré sur 300 timelines synthétiques de 18 à 40 minutes (index compris,
+après `VACUUM`) : **27,2 Ko par match**, soit ~95 événements retenus et ~299
+frames (10 joueurs × ~30 minutes).
+
+| Taux | Un patch (786 509 matchs) | Base entière (2,19 M matchs) |
+| --- | --- | --- |
+| 0.10 | 2,0 Go | 6,0 Go |
+| **0.33** (défaut) | **6,7 Go** | 18,8 Go |
+| 1.00 | 20,4 Go | 56,9 Go |
+
+La base fait déjà ~6 Go : à 0.33 sur le seul patch courant, elle **double**.
+Les `timeline_frames` représentent l'essentiel du volume (299 lignes/match
+contre 95 pour les events).
+
+**C'est pourquoi le taux ne pilote pas seul la collecte** :
+`TIMELINE_TARGET_PER_PATCH` (**200 000** par défaut) plafonne le nombre de
+timelines stockées **par patch**. Une fois le plafond atteint, la collecte de
+timelines s'arrête (un log l'indique une fois), les matchs continuent d'être
+collectés normalement, et **tout repart automatiquement au patch suivant**.
+Sans ce plafond, à ~157 k matchs/jour, un taux de 0.33 remplirait ~25 Go en
+deux semaines. À 200 000 timelines : **~5,2 Go par patch**, borné. Mettre `0`
+pour désactiver le plafond (déconseillé). Le plafond s'applique aussi au
+backfill, qui le contournerait sinon.
+
+### Rétro-collecte
+
+```bash
+python3 collector.py backfill-timelines --limit 5000 [--share 0.3]
+```
+
+Récupère les timelines de matchs **déjà en base**, patch courant en priorité
+puis les patchs précédents du plus récent au plus ancien, en ne prenant que
+les matchs retenus par l'échantillonnage déterministe.
+
+Le backfill a **son propre rate limiter par région**, dimensionné à une
+fraction (`--share`, 0.3 par défaut) du budget régional : lancé pendant que
+le collecteur tourne, il se contente de ~30 % des requêtes de la région et
+n'affame pas les workers. Les limites Riot étant par clé et par région, cette
+part est à ajuster selon ce qu'on veut privilégier.
+
+### Purge des vieux patchs
+
+```bash
+python3 collector.py prune --keep-patches 2 [--exports site/data/etudes] [--yes]
+```
+
+Supprime les **matchs bruts** des patchs au-delà des N derniers, avec leurs
+participants, bans, objectifs et timelines, puis compacte la base (`VACUUM`)
+en annonçant l'espace libéré.
+
+**Garde-fou** : un patch n'est purgé que si un **export agrégé existe** pour
+lui (`site/data/etudes/<famille>/<patch-slug>/meta.json`). Les patchs sans
+export sont listés et laissés intacts — les supprimer serait une perte
+définitive. C'est cohérent avec l'architecture du site : **les études
+publiées ne dépendent que des JSON exportés, jamais de la base**, donc un
+patch exporté puis purgé reste consultable en ligne.
+
+Confirmation interactive par défaut ; `--yes` pour un usage en cron.
+
+### Correction : voidgrubs ≠ Rift Herald
+
+Audit du parsing existant : `herald_kills` lisait bien `objectives.riftHerald`
+(donc le Rift Herald seul, **sans confusion**), mais `objectives.horde` — les
+**voidgrubs** — n'était **ni stocké ni lu** : ces objectifs étaient purement
+et simplement perdus. Une colonne `horde_kills` a été ajoutée à
+`team_objectives` (migration automatique par `ALTER TABLE` sur une base
+existante, sans la recréer). Côté timeline, `ELITE_MONSTER_KILL` conserve
+`monster_type`, où `HORDE` (voidgrubs) et `RIFTHERALD` restent distincts.
+Les matchs collectés **avant** cette correction ont `horde_kills` à `NULL` :
+c'est attendu, et distinguable d'un vrai `0`.
 
 ## Publication d'une étude EloLab (à chaque patch)
 
