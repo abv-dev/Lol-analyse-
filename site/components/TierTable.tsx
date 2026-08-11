@@ -12,6 +12,16 @@ import {
 
 type SortKey = "winrate" | "pick_rate" | "ban_rate" | "games";
 
+/** Minuscules sans accents ni apostrophes : « seraphine » trouve « Séraphine »,
+ *  « kaisa » trouve « Kai'Sa ». */
+function normalise(value: string): string {
+  return value
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/['''`.\s-]/g, "")
+    .toLowerCase();
+}
+
 interface AggRow {
   champion: string;
   games: number;
@@ -40,6 +50,7 @@ export default function TierTable({
 }) {
   const [bucket, setBucket] = useState<string>("ALL");
   const [region, setRegion] = useState<string>("ALL");
+  const [query, setQuery] = useState("");
   const [sortKey, setSortKey] = useState<SortKey>("winrate");
   const [descending, setDescending] = useState(true);
 
@@ -90,12 +101,16 @@ export default function TierTable({
       ban_rate: (r) => r.banRate,
       games: (r) => r.games,
     };
+    const needle = normalise(query);
+    const filtered = needle
+      ? aggRows.filter((r) => normalise(r.champion).includes(needle))
+      : aggRows;
     // Les cellules sous le seuil vont en bas quel que soit le tri
-    return [...aggRows].sort((a, b) => {
+    return [...filtered].sort((a, b) => {
       if (a.insufficient !== b.insufficient) return a.insufficient ? 1 : -1;
       return (key[sortKey](b) - key[sortKey](a)) * (descending ? 1 : -1);
     });
-  }, [aggRows, sortKey, descending]);
+  }, [aggRows, sortKey, descending, query]);
 
   const header = (label: string, keyName: SortKey) => (
     <th className="px-3 py-2 text-right">
@@ -118,6 +133,17 @@ export default function TierTable({
     <div className="not-prose my-8">
       <div className="mb-3 flex flex-wrap items-center gap-3 text-sm">
         <label className="flex items-center gap-2 text-zinc-400">
+          <span className="sr-only sm:not-sr-only">Champion</span>
+          <input
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Rechercher un champion…"
+            aria-label="Rechercher un champion"
+            className="w-52 rounded border border-zinc-700 bg-zinc-900 px-2 py-1.5 text-sm text-zinc-200 placeholder:text-zinc-600"
+          />
+        </label>
+        <label className="flex items-center gap-2 text-zinc-400">
           Rank
           <select value={bucket} onChange={(e) => setBucket(e.target.value)}
                   className={selectClass}>
@@ -139,6 +165,7 @@ export default function TierTable({
         </label>
         <span className="text-xs text-zinc-500">
           {denomMatches.toLocaleString("fr-FR")} matchs dans la sélection
+          {query && ` · ${sorted.length} champion${sorted.length > 1 ? "s" : ""} trouvé${sorted.length > 1 ? "s" : ""}`}
         </span>
       </div>
       <div className="overflow-x-auto rounded-lg border border-zinc-800">
@@ -154,6 +181,13 @@ export default function TierTable({
             </tr>
           </thead>
           <tbody className="divide-y divide-zinc-800/70">
+            {sorted.length === 0 && (
+              <tr>
+                <td colSpan={6} className="px-3 py-6 text-center text-zinc-500">
+                  Aucun champion ne correspond à « {query} ».
+                </td>
+              </tr>
+            )}
             {sorted.map((r) => (
               <tr key={r.champion}
                   className={r.insufficient ? "opacity-50" : "hover:bg-zinc-900/50"}>

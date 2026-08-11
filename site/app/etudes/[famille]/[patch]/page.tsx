@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { MDXRemote } from "next-mdx-remote/rsc";
+import remarkGfm from "remark-gfm";
 import PatchSelector from "@/components/PatchSelector";
 import { mdxComponents } from "@/components/mdx";
 import { getAllEtudes, getEtude } from "@/lib/etudes";
@@ -39,7 +40,13 @@ export default async function EtudePage({
     <div>
       <PatchSelector family={famille} current={patch} />
       <article className="prose prose-invert prose-zinc max-w-none prose-headings:text-zinc-100 prose-a:text-accent">
-        <MDXRemote source={etude.source} components={mdxComponents(etude)} />
+        {/* remark-gfm : sans lui, les tableaux markdown des études sont
+            rendus en texte brut avec les séparateurs |---| visibles. */}
+        <MDXRemote
+          source={etude.source}
+          components={mdxComponents(etude)}
+          options={{ mdxOptions: { remarkPlugins: [remarkGfm] } }}
+        />
       </article>
     </div>
   );

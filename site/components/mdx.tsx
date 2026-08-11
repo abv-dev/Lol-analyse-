@@ -42,18 +42,31 @@ export function mdxComponents(etude: Etude): MDXComponents {
       const meta = data<TierExportMeta>("meta.json");
       return <TierTable rows={rows} meta={meta} />;
     },
+    // ATTENTION : dans les MDX d'étude, les props se passent en CHAÎNE
+    // (top="14"), jamais en expression JSX (top={14}) — ce pipeline MDX
+    // n'évalue pas les expressions et la prop arriverait `undefined`, sans
+    // la moindre erreur. D'où la conversion explicite ci-dessous.
     WinrateChart: ({
       file = "tierlist.json",
-      top = 12,
-      title,
+      top,
+      subtitle,
     }: {
       file?: string;
-      top?: number;
-      title?: string;
+      top?: number | string;
+      subtitle?: string;
     }) => {
       const rows = data<TierCell[]>(file);
       const meta = data<TierExportMeta>("meta.json");
-      return <WinrateChart data={aggregateForChart(rows, meta.min_cell_games, top)} title={title} />;
+      const count = Number(top);
+      const limit = Number.isFinite(count) && count > 0 ? Math.floor(count) : 12;
+      // le titre (dont le nombre de champions) est composé par le composant
+      // depuis les données effectivement tracées
+      return (
+        <WinrateChart
+          data={aggregateForChart(rows, meta.min_cell_games, limit)}
+          subtitle={subtitle}
+        />
+      );
     },
   };
 }
