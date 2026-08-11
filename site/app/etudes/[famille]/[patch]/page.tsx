@@ -56,7 +56,7 @@ export default async function EtudePage({
   return (
     <div>
       <PatchSelector family={famille} current={patch} />
-      <article className="prose prose-invert prose-zinc max-w-none prose-headings:text-zinc-100 prose-a:text-accent">
+      <article className="etude prose prose-invert prose-zinc max-w-none prose-headings:text-zinc-100 prose-a:text-accent prose-a:underline-offset-2">
         {/* remark-gfm : sans lui, les tableaux markdown des études sont
             rendus en texte brut avec les séparateurs |---| visibles. */}
         <MDXRemote

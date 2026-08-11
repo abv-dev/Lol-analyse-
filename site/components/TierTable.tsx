@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { STAT_VARIANT } from "@/lib/statVariant";
 import {
   BUCKET_LABELS,
   REGION_LABELS,
@@ -11,6 +12,17 @@ import {
 } from "@/lib/stats";
 
 type SortKey = "winrate" | "pick_rate" | "ban_rate" | "games";
+
+/** Intervalle de confiance rendu selon la variante choisie pour tout le site
+ *  (voir components/Stat.tsx). */
+function ciLabel(low: number, high: number): string {
+  const l = (low * 100).toFixed(1).replace(".", ",");
+  const h = (high * 100).toFixed(1).replace(".", ",");
+  if (STAT_VARIANT === "plage") return `${l}–${h}`;
+  if (STAT_VARIANT === "exposant")
+    return `±${(((high - low) / 2) * 100).toFixed(2).replace(".", ",")}`;
+  return `[${l} – ${h}]`;
+}
 
 /** Minuscules sans accents ni apostrophes : « seraphine » trouve « Séraphine »,
  *  « kaisa » trouve « Kai'Sa ». */
@@ -168,11 +180,17 @@ export default function TierTable({
           {query && ` · ${sorted.length} champion${sorted.length > 1 ? "s" : ""} trouvé${sorted.length > 1 ? "s" : ""}`}
         </span>
       </div>
-      <div className="overflow-x-auto rounded-lg border border-zinc-800">
-        <table className="w-full min-w-[640px] text-sm">
-          <thead className="bg-zinc-900 text-xs uppercase tracking-wide text-zinc-500">
+      {/* 173 lignes : l'en-tête reste collé en haut du conteneur pendant le
+          défilement, sinon on perd le sens des colonnes au bout de 20 lignes. */}
+      <div className="max-h-[70vh] overflow-auto rounded-lg border border-zinc-800">
+        <table className="w-full min-w-[640px] border-collapse text-sm">
+          <thead className="sticky top-0 z-10 bg-zinc-900 text-xs uppercase tracking-wide text-zinc-500 shadow-[0_1px_0_0_theme(colors.zinc.700)]">
             <tr>
-              <th className="px-3 py-2 text-left">Champion</th>
+              {/* colonne collée à gauche : sur mobile le tableau défile
+                  horizontalement, le nom doit rester lisible */}
+              <th className="sticky left-0 z-20 bg-zinc-900 px-3 py-2 text-left">
+                Champion
+              </th>
               {header("Games", "games")}
               {header("Winrate", "winrate")}
               <th className="px-3 py-2 text-right">IC 95 %</th>
@@ -180,7 +198,11 @@ export default function TierTable({
               {header("Ban", "ban_rate")}
             </tr>
           </thead>
-          <tbody className="divide-y divide-zinc-800/70">
+          {/* Fonds OPAQUES (et non zinc-900/40) : la première colonne est
+              collée à gauche et hérite du fond de sa ligne — un fond
+              semi-transparent s'y appliquerait une seconde fois et se
+              verrait. */}
+          <tbody>
             {sorted.length === 0 && (
               <tr>
                 <td colSpan={6} className="px-3 py-6 text-center text-zinc-500">
@@ -188,10 +210,11 @@ export default function TierTable({
                 </td>
               </tr>
             )}
-            {sorted.map((r) => (
+            {sorted.map((r, i) => (
               <tr key={r.champion}
-                  className={r.insufficient ? "opacity-50" : "hover:bg-zinc-900/50"}>
-                <td className="px-3 py-2 font-medium text-zinc-200">
+                  className={`${i % 2 ? "bg-[#0f0f12]" : "bg-zinc-950"} ${
+                    r.insufficient ? "opacity-50" : "hover:brightness-125"}`}>
+                <td className="sticky left-0 bg-inherit px-3 py-2 font-medium text-zinc-200">
                   {r.champion}
                   {r.insufficient && (
                     <span className="ml-2 rounded bg-zinc-800 px-1.5 py-0.5 text-[10px] text-zinc-400">
@@ -207,8 +230,10 @@ export default function TierTable({
                     : r.winrate <= 0.48 ? "text-red-400" : "text-zinc-200"}`}>
                   {pct(r.winrate)}
                 </td>
-                <td className="px-3 py-2 text-right tabular-nums text-zinc-500">
-                  [{pct(r.ciLow)} – {pct(r.ciHigh)}]
+                {/* colonne secondaire : plus petite et plus atténuée que le
+                    winrate qu'elle qualifie */}
+                <td className="px-3 py-2 text-right text-xs tabular-nums text-zinc-500">
+                  {ciLabel(r.ciLow, r.ciHigh)}
                 </td>
                 <td className="px-3 py-2 text-right tabular-nums text-zinc-300">
                   {pct(r.pickRate)}

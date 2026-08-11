@@ -218,9 +218,34 @@ class StudyValues:
         return set(self.per_champion)
 
 
+# Composants qui PORTENT des chiffres dans leurs attributs (<Stat value="…"
+# ci="…" />, <KeyFigure … sample="…" />) : leurs valeurs sont remises en texte
+# avant que les balises soient supprimées, sinon elles échapperaient au
+# contrôle — c'est le texte publié, il doit être vérifié comme le reste.
+STAT_COMPONENT_RE = re.compile(
+    r"<(?:Stat|KeyFigure)\b([^>]*?)/?>", re.S)
+ATTR_RE = re.compile(r'(\w+)\s*=\s*"([^"]*)"')
+
+
+def inline_stat_components(text: str) -> str:
+    def expand(match: re.Match) -> str:
+        attrs = dict(ATTR_RE.findall(match.group(1)))
+        value = attrs.get("value", "")
+        unit = attrs.get("unit", "%")
+        ci = attrs.get("ci")
+        parts = [f"{value} {unit}"]
+        if ci:
+            parts.append(f"[{ci}]")
+        for extra in ("label", "sample"):
+            if attrs.get(extra):
+                parts.append(attrs[extra])
+        return " " + " ".join(parts) + " "
+    return STAT_COMPONENT_RE.sub(expand, text)
+
+
 STRIP_PATTERNS = [
     (re.compile(r"```.*?```", re.S), " "),        # blocs de code
-    (re.compile(r"<[^>]+>"), " "),                 # composants JSX (top={14}…)
+    (re.compile(r"<[^>]+>"), " "),                 # composants JSX restants
     (re.compile(r"\]\([^)]*\)"), "] "),             # cibles de liens
     (re.compile(r"\b\d{4}-\d{2}-\d{2}\b"), " "),   # dates ISO
 ]
@@ -238,7 +263,7 @@ def to_float(raw: str) -> float:
 
 
 def strip_noise(mdx: str) -> str:
-    text = mdx
+    text = inline_stat_components(mdx)
     for pattern, replacement in STRIP_PATTERNS:
         text = pattern.sub(replacement, text)
     return text

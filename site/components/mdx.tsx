@@ -1,5 +1,7 @@
 import type { MDXComponents } from "mdx/types";
 import ChampCard from "@/components/ChampCard";
+import KeyFigure from "@/components/KeyFigure";
+import Stat from "@/components/Stat";
 import StudyMeta from "@/components/StudyMeta";
 import TierTable from "@/components/TierTable";
 import WinrateChart, { type WinrateDatum } from "@/components/charts/WinrateChart";
@@ -37,6 +39,12 @@ export function mdxComponents(etude: Etude): MDXComponents {
   return {
     StudyMeta: () => <StudyMeta meta={etude.meta} />,
     ChampCard,
+    Stat,
+    KeyFigure,
+    // Chapô : premier paragraphe, légèrement plus grand
+    Chapo: ({ children }: { children?: React.ReactNode }) => (
+      <p className="etude-chapo">{children}</p>
+    ),
     TierTable: ({ file = "tierlist.json" }: { file?: string }) => {
       const rows = data<TierCell[]>(file);
       const meta = data<TierExportMeta>("meta.json");
