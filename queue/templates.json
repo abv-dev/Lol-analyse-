@@ -1,0 +1,134 @@
+{
+ "_doc": {
+  "role": "Gabarits des études RÉCURRENTES : celles qui reviennent à chaque patch, où seul le patch change. scripts/queue_sync.py les instancie dans queue/articles.json dès qu'un nouveau patch est détecté.",
+  "champs": {
+   "id": "identifiant du gabarit ; l'article instancié prend l'id « <id>-<patch-slug> »",
+   "titre_template": "{patch} est remplacé par le patch (16.15)",
+   "slug_template": "{patch-slug} est remplacé par le slug (16-15)",
+   "famille": "dossier d'étude sous site/content/etudes/",
+   "angle": "ce que l'article démontre ; {patch} y est aussi substitué",
+   "donnees_requises": "vérifié par scripts/queue_status.py avant de rendre l'article rédigeable",
+   "jour_prefere": "0 = lundi … 6 = dimanche. Indication d'étalement sur le cycle de patch, pas une contrainte : le publieur choisit d'abord selon l'état des données.",
+   "variantes": "un gabarit qui produit plusieurs articles par patch (la méta par rôle en produit cinq)"
+  },
+  "comptage": "11 gabarits — 8 en régime patch_courant (dont « méta par rôle » qui produit 5 articles via ses variantes) et 3 en régime comparatif. Soit 15 articles instanciés par patch, pour un cycle de patch d'environ deux semaines."
+ },
+ "templates": [
+  {
+   "id": "tierlist-globale",
+   "titre_template": "Tier list — patch {patch}",
+   "slug_template": "tierlist/{patch-slug}",
+   "famille": "tierlist",
+   "angle": "Le classement complet du patch {patch}, chaque winrate avec sa taille d'échantillon et son intervalle de confiance.",
+   "regime": "patch_courant",
+   "donnees_requises": ["matches", "participants"],
+   "jour_prefere": 0
+  },
+  {
+   "id": "tierlist-par-rank",
+   "titre_template": "Tier list par rank — patch {patch}",
+   "slug_template": "tierlist-rank/{patch-slug}",
+   "famille": "tierlist-rank",
+   "angle": "Ce qui gagne en Fer–Bronze ne gagne pas en Diamant+ : le classement du patch {patch} refait bucket par bucket.",
+   "regime": "patch_courant",
+   "donnees_requises": ["tier_bucket_source"],
+   "jour_prefere": 1
+  },
+  {
+   "id": "meta-role",
+   "titre_template": "Méta par poste — {role_label}, patch {patch}",
+   "slug_template": "meta-role/{role_slug}-{patch-slug}",
+   "famille": "meta-role",
+   "angle": "Qui gagne réellement au poste {role_label} sur le patch {patch}, une fois le rôle isolé — et ce que le classement tous rôles confondus masquait.",
+   "regime": "patch_courant",
+   "donnees_requises": ["team_position"],
+   "variantes": [
+    { "role": "TOP", "role_label": "Top", "role_slug": "top", "jour_prefere": 2 },
+    { "role": "JUNGLE", "role_label": "Jungle", "role_slug": "jungle", "jour_prefere": 3 },
+    { "role": "MIDDLE", "role_label": "Mid", "role_slug": "mid", "jour_prefere": 4 },
+    { "role": "BOTTOM", "role_label": "Bot (ADC)", "role_slug": "bot", "jour_prefere": 5 },
+    { "role": "UTILITY", "role_label": "Support", "role_slug": "support", "jour_prefere": 6 }
+   ]
+  },
+  {
+   "id": "bans-justifies",
+   "titre_template": "Les bans sont-ils justifiés ? Patch {patch}",
+   "slug_template": "bans-justifies/{patch-slug}",
+   "famille": "bans",
+   "angle": "Confronter le ban rate au winrate sur le patch {patch} : quels champions sont bannis pour ce qu'ils font, et lesquels pour leur réputation.",
+   "regime": "patch_courant",
+   "donnees_requises": ["bans"],
+   "jour_prefere": 1
+  },
+  {
+   "id": "champions-pieges",
+   "titre_template": "Champions pièges — patch {patch}",
+   "slug_template": "champions-pieges/{patch-slug}",
+   "famille": "champions-pieges",
+   "angle": "Les champions très joués dont l'intervalle de confiance est entièrement sous 50 % sur le patch {patch} : populaires et perdants, sur des échantillons qui ne laissent pas de doute.",
+   "regime": "patch_courant",
+   "donnees_requises": ["matches", "participants"],
+   "jour_prefere": 3
+  },
+  {
+   "id": "deep-dive-plus-banni",
+   "titre_template": "Le champion le plus banni du patch {patch}",
+   "slug_template": "deep-dive/{patch-slug}",
+   "famille": "deep-dive",
+   "angle": "Portrait chiffré du champion le plus banni du patch {patch} : par rank, par région, par poste, et ce que son winrate réel dit du ban.",
+   "regime": "patch_courant",
+   "donnees_requises": ["bans", "team_position"],
+   "jour_prefere": 4
+  },
+  {
+   "id": "duos-botlane",
+   "titre_template": "Duos de botlane — patch {patch}",
+   "slug_template": "duos-botlane/{patch-slug}",
+   "famille": "duos",
+   "angle": "Quelles associations ADC–support gagnent réellement sur le patch {patch}, à partir des paires réellement jouées dans la même équipe.",
+   "regime": "patch_courant",
+   "donnees_requises": ["team_position", "team_id"],
+   "jour_prefere": 5
+  },
+  {
+   "id": "comparaison-regionale",
+   "titre_template": "EUW, KR, NA : trois métas ? Patch {patch}",
+   "slug_template": "regions/{patch-slug}",
+   "famille": "regions",
+   "angle": "Mesurer l'écart réel entre les trois régions sur le patch {patch}, et distinguer les vraies différences de méta du bruit d'échantillonnage.",
+   "regime": "patch_courant",
+   "donnees_requises": ["region"],
+   "jour_prefere": 6
+  },
+  {
+   "id": "patch-change",
+   "titre_template": "Ce que le patch {patch} change",
+   "slug_template": "patch-compare/{patch-slug}",
+   "famille": "patch-compare",
+   "angle": "Les écarts de winrate entre le patch {patch} et le précédent, à échantillon comparable — en séparant ce qui bouge de ce qui semble bouger.",
+   "regime": "comparatif",
+   "donnees_requises": ["patch_precedent"],
+   "jour_prefere": 2
+  },
+  {
+   "id": "premieres-tendances",
+   "titre_template": "Premières tendances du patch {patch}",
+   "slug_template": "tendances/{patch-slug}",
+   "famille": "tendances",
+   "angle": "Ce que les premiers jours du patch {patch} laissent voir, et surtout ce qu'ils ne permettent pas encore de conclure.",
+   "regime": "comparatif",
+   "donnees_requises": ["matches"],
+   "jour_prefere": 0
+  },
+  {
+   "id": "vitesse-adoption",
+   "titre_template": "Vitesse d'adoption, patch {patch}",
+   "slug_template": "adoption/{patch-slug}",
+   "famille": "adoption",
+   "angle": "À quelle vitesse les joueurs adoptent les champions renforcés par le patch {patch}, et si le pick rate suit le winrate ou l'inverse.",
+   "regime": "comparatif",
+   "donnees_requises": ["patch_precedent"],
+   "jour_prefere": 4
+  }
+ ]
+}
