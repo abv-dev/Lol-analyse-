@@ -5,6 +5,7 @@ import PatchSelector from "@/components/PatchSelector";
 import Support from "@/components/Support";
 import { mdxComponents } from "@/components/mdx";
 import { getAllEtudes, getEtude } from "@/lib/etudes";
+import { FEED_ALTERNATE } from "@/lib/site";
 
 // SSG strict : toutes les versions d'études sont générées au build.
 export const dynamicParams = false;
@@ -29,7 +30,9 @@ export async function generateMetadata({
   return {
     title: meta.title,
     description: meta.description,
-    alternates: { canonical: url },
+    // FEED_ALTERNATE est réinjecté : Next remplace `alternates` au lieu de le
+    // fusionner, un canonical seul ferait disparaître la balise de flux.
+    alternates: { canonical: url, ...FEED_ALTERNATE },
     openGraph: {
       type: "article",
       title: `${meta.title} — EloLab`,

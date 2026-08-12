@@ -2,27 +2,25 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Footer from "@/components/Footer";
 import Logo from "@/components/Logo";
+import {
+  FEED_ALTERNATE,
+  SITE_DESCRIPTION as DESCRIPTION,
+  SITE_NAME,
+  SITE_TITLE as TITLE,
+  SITE_URL as siteUrl,
+} from "@/lib/site";
 import "./globals.css";
 
-const SITE_NAME = "EloLab";
-const TITLE = "EloLab — le laboratoire de données de la Faille";
-const DESCRIPTION =
-  "Études statistiques du jeu classé de League of Legends : pick, ban et winrate par rank et région, à partir d'un dataset de matchs ranked solo collecté en continu.";
-
-// Base absolue des URLs de métadonnées : sans elle, og:image reste relative
-// et n'est pas résolue par Discord, Slack ou Twitter.
-const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL ??
-  (process.env.VERCEL_PROJECT_PRODUCTION_URL
-    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-    : "https://elolab.vercel.app");
-
 export const metadata: Metadata = {
+  // Base absolue des URLs de métadonnées : sans elle, og:image reste relative
+  // et n'est pas résolue par Discord, Slack ou Twitter.
   metadataBase: new URL(siteUrl),
   title: { default: TITLE, template: `%s — ${SITE_NAME}` },
   description: DESCRIPTION,
   applicationName: SITE_NAME,
   manifest: "/manifest.webmanifest",
+  // Auto-découverte du flux : <link rel="alternate" type="application/rss+xml">
+  alternates: FEED_ALTERNATE,
   icons: {
     icon: [
       { url: "/favicon.ico", sizes: "any" },

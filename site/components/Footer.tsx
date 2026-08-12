@@ -14,6 +14,12 @@ export default function Footer() {
           Voir la <a href="/methodologie" className="underline hover:text-zinc-300">méthodologie</a>{" "}
           pour les limites connues.
         </p>
+        <p>
+          <a href="/rss.xml" className="underline hover:text-zinc-300">
+            Flux RSS
+          </a>{" "}
+          — les nouvelles études, sans compte ni newsletter.
+        </p>
       </div>
     </footer>
   );
