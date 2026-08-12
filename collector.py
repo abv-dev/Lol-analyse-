@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """lol-studies-collector — CLI.
 
-  python collector.py run                                  lance les 3 workers
-  python collector.py stats                                état du dataset
-  python collector.py export --study tierlist --patch 16.14 [--out fichier.csv]
+  python collector.py run                     lance les 3 workers
+  python collector.py stats                   état du dataset
+  python collector.py refresh --study tierlist   arrêt, export, redémarrage
+  python collector.py export --study tierlist [--patch 16.14] [--out dir]
 """
 
 import argparse
@@ -49,11 +50,28 @@ def main() -> None:
     export_parser.add_argument("--patch", default=None,
                                help="patch ciblé (ex: 16.15) ; défaut : patch "
                                     "courant détecté via Data Dragon")
-    export_parser.add_argument("--out", required=True,
-                               help="répertoire de sortie (tierlist.json + meta.json)")
+    export_parser.add_argument("--out", default=None,
+                               help="répertoire de sortie ; par défaut "
+                                    "site/data/etudes/<étude>/<patch-slug>/, "
+                                    "déduit du patch exporté")
     export_parser.add_argument("--min-games", type=int, default=200,
                                help="sous ce nombre de games, une cellule est "
                                     "marquée insufficient_sample (défaut: 200)")
+    export_parser.add_argument("--force", action="store_true",
+                               help="écrire même si aucune cellule n'atteint "
+                                    "--min-games (ne contourne pas le contrôle "
+                                    "de patch de la destination)")
+
+    refresh_parser = sub.add_parser(
+        "refresh",
+        help="cycle complet : arrêt du collecteur, export du patch courant, "
+             "redémarrage, résumé")
+    refresh_parser.add_argument("--study", default="tierlist", choices=["tierlist"],
+                                help="étude à rafraîchir (défaut: tierlist)")
+    refresh_parser.add_argument("--min-games", type=int, default=200,
+                                help="seuil de cellule exploitable (défaut: 200)")
+    refresh_parser.add_argument("--force", action="store_true",
+                                help="exporter même sans cellule au-dessus du seuil")
 
     args = parser.parse_args()
     cfg = Config()
@@ -81,7 +99,12 @@ def main() -> None:
         from lolcollector.export import export_tierlist
         if args.study == "tierlist":
             export_tierlist(cfg.db_path, args.patch, args.out,
-                            min_games=args.min_games)
+                            min_games=args.min_games, force=args.force,
+                            study=args.study)
+    elif args.command == "refresh":
+        from lolcollector.refresh import run_refresh
+        return run_refresh(cfg, args.study, min_games=args.min_games,
+                           force=args.force)
 
 
 if __name__ == "__main__":

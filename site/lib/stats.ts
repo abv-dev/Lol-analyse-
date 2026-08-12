@@ -45,6 +45,34 @@ export interface TierCell {
   insufficient_sample: boolean;
 }
 
+export const ROLE_LABELS: Record<string, string> = {
+  TOP: "Top",
+  JUNGLE: "Jungle",
+  MIDDLE: "Mid",
+  BOTTOM: "Bot (ADC)",
+  UTILITY: "Support",
+};
+
+/**
+ * Une ligne de tierlist-roles.json : les mêmes cellules découpées par poste,
+ * réduites aux compteurs bruts.
+ *
+ * Ni winrate ni intervalle ni pick rate : ils se recalculent ici avec la même
+ * formule de Wilson que l'exporteur, et ce fichier a cinq fois plus de lignes
+ * que le principal — il est servi dans la page.
+ *
+ * Pas de bans non plus : un ban vise un champion pour toute la partie, il n'a
+ * pas de poste.
+ */
+export interface RoleCell {
+  champion_id: number;
+  region: string;
+  bucket: string;
+  role: string;
+  games: number;
+  wins: number;
+}
+
 export interface TierExportMeta {
   study: string;
   patch: string;
@@ -55,4 +83,9 @@ export interface TierExportMeta {
   regions: string[];
   min_cell_games: number;
   cells: { region: string; bucket: string; matches: number }[];
+  /** Absents des exports antérieurs à la dimension rôle. */
+  roles?: string[];
+  role_cells?: number;
+  total_cells?: number;
+  usable_cells?: number;
 }

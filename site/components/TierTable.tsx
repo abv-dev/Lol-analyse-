@@ -5,8 +5,10 @@ import { STAT_VARIANT } from "@/lib/statVariant";
 import {
   BUCKET_LABELS,
   REGION_LABELS,
+  ROLE_LABELS,
   pct,
   wilsonCi,
+  type RoleCell,
   type TierCell,
   type TierExportMeta,
 } from "@/lib/stats";
@@ -38,12 +40,12 @@ interface AggRow {
   champion: string;
   games: number;
   wins: number;
-  bans: number;
   winrate: number;
   ciLow: number;
   ciHigh: number;
   pickRate: number;
-  banRate: number;
+  /** null sur une sélection de poste : un ban n'a pas de poste. */
+  banRate: number | null;
   insufficient: boolean;
 }
 
@@ -56,12 +58,15 @@ interface AggRow {
 export default function TierTable({
   rows,
   meta,
+  roleRows,
 }: {
   rows: TierCell[];
   meta: TierExportMeta;
+  roleRows?: RoleCell[] | null;
 }) {
   const [bucket, setBucket] = useState<string>("ALL");
   const [region, setRegion] = useState<string>("ALL");
+  const [role, setRole] = useState<string>("ALL");
   const [query, setQuery] = useState("");
   const [sortKey, setSortKey] = useState<SortKey>("winrate");
   const [descending, setDescending] = useState(true);
@@ -70,47 +75,78 @@ export default function TierTable({
     () => Array.from(new Set(rows.map((r) => r.bucket))).sort(), [rows]);
   const regions = useMemo(
     () => Array.from(new Set(rows.map((r) => r.region))).sort(), [rows]);
+  // Ordre de la Faille plutôt qu'alphabétique
+  const roles = useMemo(() => {
+    if (!roleRows?.length) return [];
+    const present = new Set(roleRows.map((r) => r.role));
+    return Object.keys(ROLE_LABELS).filter((r) => present.has(r));
+  }, [roleRows]);
+
+  // tierlist-roles.json ne porte que des champion_id : le nom vient du
+  // fichier principal, qui liste tous les champions du dataset.
+  const championNames = useMemo(() => {
+    const map = new Map<number, string>();
+    for (const r of rows) map.set(r.champion_id, r.champion_name);
+    return map;
+  }, [rows]);
+
+  const byRole = role !== "ALL";
 
   const { aggRows, denomMatches } = useMemo(() => {
-    const selected = rows.filter(
-      (r) => (bucket === "ALL" || r.bucket === bucket) &&
-             (region === "ALL" || r.region === region)
-    );
     const denom = meta.cells
       .filter((c) => (bucket === "ALL" || c.bucket === bucket) &&
                      (region === "ALL" || c.region === region))
       .reduce((sum, c) => sum + c.matches, 0);
-    const byChamp = new Map<string, { games: number; wins: number; bans: number }>();
-    for (const r of selected) {
-      const acc = byChamp.get(r.champion_name) ?? { games: 0, wins: 0, bans: 0 };
-      acc.games += r.games;
-      acc.wins += r.wins;
-      acc.bans += r.bans;
-      byChamp.set(r.champion_name, acc);
+
+    // games/wins/bans recombinés depuis les cellules, puis winrate et IC
+    // recalculés dessus — jamais une moyenne de pourcentages.
+    const byChamp = new Map<string, { games: number; wins: number; bans: number | null }>();
+    const add = (champion: string, games: number, wins: number, bans: number | null) => {
+      const acc = byChamp.get(champion) ?? { games: 0, wins: 0, bans };
+      acc.games += games;
+      acc.wins += wins;
+      if (acc.bans !== null && bans !== null) acc.bans += bans;
+      byChamp.set(champion, acc);
+    };
+
+    if (byRole && roleRows) {
+      for (const r of roleRows) {
+        if (r.role !== role) continue;
+        if (bucket !== "ALL" && r.bucket !== bucket) continue;
+        if (region !== "ALL" && r.region !== region) continue;
+        add(championNames.get(r.champion_id) ?? String(r.champion_id),
+            r.games, r.wins, null);
+      }
+    } else {
+      for (const r of rows) {
+        if (bucket !== "ALL" && r.bucket !== bucket) continue;
+        if (region !== "ALL" && r.region !== region) continue;
+        add(r.champion_name, r.games, r.wins, r.bans);
+      }
     }
+
     const result: AggRow[] = Array.from(byChamp.entries()).map(([champion, a]) => {
       const [ciLow, ciHigh] = wilsonCi(a.wins, a.games);
       return {
         champion,
         games: a.games,
         wins: a.wins,
-        bans: a.bans,
         winrate: a.games ? a.wins / a.games : 0,
         ciLow,
         ciHigh,
         pickRate: denom ? a.games / denom : 0,
-        banRate: denom ? a.bans / denom : 0,
+        banRate: denom && a.bans !== null ? a.bans / denom : null,
         insufficient: a.games < meta.min_cell_games,
       };
     });
     return { aggRows: result, denomMatches: denom };
-  }, [rows, meta, bucket, region]);
+  }, [rows, roleRows, championNames, meta, bucket, region, role, byRole]);
 
   const sorted = useMemo(() => {
     const key: Record<SortKey, (r: AggRow) => number> = {
       winrate: (r) => r.winrate,
       pick_rate: (r) => r.pickRate,
-      ban_rate: (r) => r.banRate,
+      ban_rate: (r) => r.banRate ?? -1,
       games: (r) => r.games,
     };
     const needle = normalise(query);
@@ -175,6 +211,29 @@ export default function TierTable({
             ))}
           </select>
         </label>
+        {/* Absent des études exportées avant la dimension rôle. */}
+        {roles.length > 0 && (
+          <label className="flex items-center gap-2 text-zinc-400">
+            Poste
+            <select
+              value={role}
+              onChange={(e) => {
+                setRole(e.target.value);
+                // Le tri par ban n'a plus de sens sur une sélection de poste
+                if (e.target.value !== "ALL" && sortKey === "ban_rate") {
+                  setSortKey("winrate");
+                  setDescending(true);
+                }
+              }}
+              className={selectClass}
+            >
+              <option value="ALL">Tous les postes</option>
+              {roles.map((r) => (
+                <option key={r} value={r}>{ROLE_LABELS[r] ?? r}</option>
+              ))}
+            </select>
+          </label>
+        )}
         <span className="text-xs text-zinc-500">
           {denomMatches.toLocaleString("fr-FR")} matchs dans la sélection
           {query && ` · ${sorted.length} champion${sorted.length > 1 ? "s" : ""} trouvé${sorted.length > 1 ? "s" : ""}`}
@@ -239,7 +298,9 @@ export default function TierTable({
                   {pct(r.pickRate)}
                 </td>
                 <td className="px-3 py-2 text-right tabular-nums text-zinc-300">
-                  {pct(r.banRate)}
+                  {r.banRate === null
+                    ? <span className="text-zinc-600" title="Un ban vise un champion pour toute la partie : il n'a pas de poste.">—</span>
+                    : pct(r.banRate)}
                 </td>
               </tr>
             ))}

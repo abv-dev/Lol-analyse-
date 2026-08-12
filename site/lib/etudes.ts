@@ -125,3 +125,18 @@ export function readStudyData<T = unknown>(family: string, patchSlug: string, fi
   }
   return JSON.parse(fs.readFileSync(filePath, "utf8")) as T;
 }
+
+/**
+ * Comme readStudyData, mais rend null si le fichier n'existe pas.
+ * Pour les données ajoutées après coup (tierlist-roles.json) : une étude
+ * publiée avant leur existence doit continuer à se construire.
+ */
+export function readStudyDataOptional<T = unknown>(
+  family: string,
+  patchSlug: string,
+  file: string
+): T | null {
+  const filePath = path.join(DATA_DIR, family, patchSlug, file);
+  if (!fs.existsSync(filePath)) return null;
+  return JSON.parse(fs.readFileSync(filePath, "utf8")) as T;
+}
