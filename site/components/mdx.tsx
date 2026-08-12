@@ -5,8 +5,13 @@ import Stat from "@/components/Stat";
 import StudyMeta from "@/components/StudyMeta";
 import TierTable from "@/components/TierTable";
 import WinrateChart, { type WinrateDatum } from "@/components/charts/WinrateChart";
-import { readStudyData, type Etude } from "@/lib/etudes";
-import { wilsonCi, type TierCell, type TierExportMeta } from "@/lib/stats";
+import { readStudyData, readStudyDataOptional, type Etude } from "@/lib/etudes";
+import {
+  wilsonCi,
+  type RoleCell,
+  type TierCell,
+  type TierExportMeta,
+} from "@/lib/stats";
 
 /** Agrège tierlist.json (cellules champion × bucket × région) par champion. */
 function aggregateForChart(rows: TierCell[], minGames: number, top: number): WinrateDatum[] {
@@ -45,10 +50,21 @@ export function mdxComponents(etude: Etude): MDXComponents {
     Chapo: ({ children }: { children?: React.ReactNode }) => (
       <p className="etude-chapo">{children}</p>
     ),
-    TierTable: ({ file = "tierlist.json" }: { file?: string }) => {
+    // Le découpage par poste est optionnel : une étude publiée avant
+    // l'ajout de la dimension rôle n'a pas de tierlist-roles.json, le
+    // sélecteur de rôle ne s'affiche simplement pas.
+    TierTable: ({
+      file = "tierlist.json",
+      roles = "tierlist-roles.json",
+    }: {
+      file?: string;
+      roles?: string;
+    }) => {
       const rows = data<TierCell[]>(file);
       const meta = data<TierExportMeta>("meta.json");
-      return <TierTable rows={rows} meta={meta} />;
+      const roleRows = readStudyDataOptional<RoleCell[]>(
+        etude.family, etude.patchSlug, roles);
+      return <TierTable rows={rows} meta={meta} roleRows={roleRows} />;
     },
     // ATTENTION : dans les MDX d'étude, les props se passent en CHAÎNE
     // (top="14"), jamais en expression JSX (top={14}) — ce pipeline MDX

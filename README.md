@@ -49,7 +49,7 @@ cp .env.example .env                   # puis renseigner RIOT_API_KEY
 ./start.sh                             # nohup, logs dans logs/
 ./stop.sh                              # arrêt gracieux
 python3 collector.py stats             # état du dataset
-python3 collector.py export --study tierlist --out /tmp/export   # patch courant auto
+python3 collector.py refresh --study tierlist   # arrêt, export, redémarrage
 ```
 
 ## Schéma SQLite (`data/matches.db`)
@@ -81,7 +81,8 @@ python3 collector.py export --study tierlist --out /tmp/export   # patch courant
 Index : `matches(patch, tier_bucket_source)`, `participants(champion_id, patch)`,
 plus trois **index couvrants d'export** créés automatiquement au premier
 export (`matches(patch, region, tier_bucket_source, match_id)`,
-`participants(match_id, champion_id, win)`, `bans(match_id, champion_id)`) —
+`participants(match_id, champion_id, team_position, win)`,
+`bans(match_id, champion_id)`) —
 les requêtes d'agrégation ne touchent jamais les tables, uniquement les
 index (vérifié par `EXPLAIN QUERY PLAN` à chaque export).
 
@@ -177,28 +178,40 @@ c'est attendu, et distinguable d'un vrai `0`.
 
 ## Publication d'une étude EloLab (à chaque patch)
 
-1. **Exporter** depuis le serveur (patch courant détecté via Data Dragon,
-   jamais codé en dur — `--patch X.Y` pour un patch passé) :
+1. **Rafraîchir les données** depuis le serveur. Une seule commande :
 
    ```bash
-   python3 collector.py export --study tierlist --out /tmp/export-tierlist
+   python3 collector.py refresh --study tierlist
    ```
 
-   Produit `tierlist.json` (champion × bucket × région : games, wins,
-   winrate + intervalle de Wilson à 95 %, pick/ban rates,
-   `insufficient_sample` sous 200 games) et `meta.json` (patch, période de
-   collecte, échantillon total et par cellule, régions). Le premier export
-   crée les index (une seule fois, quelques minutes sur une grosse base) ;
-   les suivants prennent quelques dizaines de secondes.
+   Elle arrête le collecteur, exporte le patch courant vers sa destination
+   déduite (`site/data/etudes/tierlist/<patch-slug>/`), redémarre le
+   collecteur et affiche un résumé (patch, matchs, cellules valides).
 
-2. **Déposer les données** dans le repo (slug = patch avec des tirets) :
+   **Le collecteur est redémarré même si l'export échoue.** Une étude non
+   rafraîchie est un contretemps ; un collecteur laissé à l'arrêt, c'est de
+   la donnée définitivement perdue — les matchs sortent de la fenêtre de
+   rétention de Riot.
 
-   ```bash
-   mkdir -p site/data/etudes/tierlist/16-15
-   cp /tmp/export-tierlist/*.json site/data/etudes/tierlist/16-15/
-   ```
+   L'export produit trois fichiers :
 
-3. **Créer le contenu** `site/content/etudes/tierlist/16-15/` :
+   - `tierlist.json` : champion × bucket × région, tous rôles confondus —
+     games, wins, winrate + intervalle de Wilson à 95 %, pick/ban rates,
+     `insufficient_sample` sous 200 games ;
+   - `tierlist-roles.json` : les mêmes cellules découpées par poste
+     (`team_position` : TOP, JUNGLE, MIDDLE, BOTTOM, UTILITY), réduites aux
+     compteurs bruts (voir « Dimension rôle » plus bas) ;
+   - `meta.json` : patch, période de collecte, échantillon total et par
+     cellule, régions, nombre de cellules exploitables.
+
+   Le premier export crée les index (une seule fois, quelques minutes sur
+   une grosse base) ; les suivants prennent quelques dizaines de secondes.
+
+   Pour un patch passé ou une destination ad hoc, `export` reste
+   disponible : `python3 collector.py export --study tierlist --patch 16.15
+   [--out <dir>]`. Sans `--out`, la destination est déduite du patch.
+
+2. **Créer le contenu** `site/content/etudes/tierlist/16-15/` :
    `index.mdx` (partir de la version du patch précédent) + `meta.json`
    (title, date, patch, patch_sensitive, sample_size, regions, collected_at,
    tags — build en échec si un champ manque). La rédaction suit la
@@ -206,7 +219,7 @@ c'est attendu, et distinguable d'un vrai `0`.
    `.claude/skills/elolab-redaction/` l'applique automatiquement dans une
    session Claude Code.
 
-4. **Vérifier et publier** :
+3. **Vérifier et publier** :
 
    ```bash
    python3 scripts/verify_study.py site/content/etudes/tierlist/16-15
@@ -223,7 +236,7 @@ c'est attendu, et distinguable d'un vrai `0`.
    redirige automatiquement vers le nouveau patch, l'ancienne version reste
    accessible à son URL datée, et le sélecteur de patch liste l'archive.
 
-5. **Annoncer**, une fois le déploiement terminé (l'annonce pointe vers la
+4. **Annoncer**, une fois le déploiement terminé (l'annonce pointe vers la
    page en ligne, inutile de l'envoyer avant) :
 
    ```bash
@@ -233,6 +246,75 @@ c'est attendu, et distinguable d'un vrai `0`.
    ```
 
    Le flux RSS, lui, ne demande rien : il est régénéré par le build Vercel.
+
+## Dimension rôle
+
+Les cellules d'export existent en deux découpages :
+
+- `tierlist.json` — champion × bucket × région, **tous rôles confondus** ;
+- `tierlist-roles.json` — champion × bucket × région × **poste**.
+
+Le poste vient exclusivement de `participants.team_position`, renvoyé par
+Riot, **jamais d'une liste de champions présumée** : un Yasuo support joué
+1 200 fois compte en `UTILITY`, comme il doit l'être.
+
+Les deux fichiers sortent de la **même passe SQL** — les agrégats tous rôles
+sont la somme des cellules par poste, ils ne peuvent pas diverger. Les
+participations dont `team_position` est vide (remakes, données Riot
+incomplètes) sont comptées dans les agrégats tous rôles mais ne produisent
+aucune cellule de poste : inventer un rôle serait pire que ne pas en donner.
+
+Le seuil des 200 games s'applique **par cellule**, donc à la cellule de
+poste, qui est cinq fois plus petite. Beaucoup plus de cellules sont sous le
+seuil dans ce découpage — c'est attendu, et c'est le but du seuil.
+
+`tierlist-roles.json` est réduit aux compteurs bruts (`champion_id`,
+`region`, `bucket`, `role`, `games`, `wins`). Trois absences volontaires :
+
+- **pas de champs dérivés** (winrate, bornes de Wilson, pick rate) : ni le
+  tableau du site ni `verify_study.py` ne lisent ceux de `tierlist.json`,
+  les deux les recalculent avec la même formule. Ce fichier a cinq fois plus
+  de lignes et il est servi dans la page — mesuré sur le patch 16.15 :
+  10 380 cellules, **1 Mo brut mais 145 Ko une fois compressé**, contre
+  ~4 Mo si on stockait les valeurs dérivées ;
+- **pas de `champion_name`** : jointure par `champion_id` sur le fichier
+  principal ;
+- **pas de bans** : un ban vise un champion pour toute la partie, il n'a pas
+  de poste. Écrire 0 laisserait croire que personne ne bannit ce champion à
+  ce poste. Le tableau du site affiche « — » sur une sélection de poste.
+
+## Garde-fous de l'export
+
+Un export de 16.16 comptant 517 matchs et aucune cellule exploitable a
+écrasé les JSON publiés de 16.15. Trois protections, testées par
+`tests/test_export_guards.py` qui rejoue l'incident :
+
+1. **La destination est déduite du patch** — `--out` devient optionnel.
+   Rien à taper, donc rien à se tromper.
+2. **Refus si le patch ne correspond pas à la destination**, détecté de deux
+   façons indépendantes : le dossier porte un slug de patch différent, ou il
+   contient déjà un `meta.json` d'un autre patch (le cas exact de
+   l'incident). Sortie en code 1, aucun fichier touché. **`--force` ne
+   contourne pas ce contrôle** : un patch qui n'est pas le bon est toujours
+   une erreur.
+3. **Refus si aucune cellule n'atteint `--min-games`** (200) — un export
+   sans donnée exploitable n'est pas un export. Contournable par `--force`,
+   qui le signale alors dans la sortie.
+4. **Refus si l'export est nettement plus maigre que celui déjà publié pour
+   le même patch** (moins de la moitié des matchs). Les contrôles ci-dessus
+   ne voient pas le cas « bon patch, mauvaise base » : exporter depuis une
+   base de test ou une copie tronquée les passe tous. C'est arrivé pendant
+   l'écriture de ces garde-fous — 36 000 matchs synthétiques écrits
+   par-dessus les 786 509 publiés. À patch constant le volume ne fait que
+   croître, une chute nette n'est jamais légitime. Contournable par
+   `--force`.
+
+Les JSON sont écrits de façon **atomique** (fichier temporaire puis
+`os.replace`) : un export interrompu ne laisse pas de fichier tronqué à la
+place d'une étude publiée. Et les index d'export sont **reconstruits si leur
+définition a changé** — sinon un index créé par une version antérieure
+resterait en place et les requêtes retourneraient à la table pour 22 M de
+lignes.
 
 ## Diffusion
 
