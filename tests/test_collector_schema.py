@@ -96,10 +96,20 @@ def columns(conn, table):
 
 
 def field(part, path):
-    """Valeur d'un champ de participant, 'challenges.x' compris."""
+    """Valeur brute d'un champ de participant, 'challenges.x' compris."""
     if path.startswith("challenges."):
         return (part.get("challenges") or {}).get(path.split(".", 1)[1])
     return part.get(path)
+
+
+def expected(part, path):
+    """Valeur attendue en base : les champs `challenges` sont convertis en
+    entier à l'insertion (§4, arrondi et non troncature), les champs directs
+    sont stockés bruts. Un champ absent reste NULL, jamais 0."""
+    value = field(part, path)
+    if path.startswith("challenges.") and value is not None:
+        return int(round(value))
+    return value
 
 
 def make_old_db(path):
@@ -215,13 +225,45 @@ def test_store_match_recopie_les_champs(tmp_path, payload):
         assert len(rows) == len(parts)
         for index, (row, part) in enumerate(zip(rows, parts)):
             for column, path in PARTICIPANT_FIELDS.items():
-                assert row[column] == field(part, path), \
+                assert row[column] == expected(part, path), \
                     f"participant {index}, {column} <- {path}"
 
         stored = db.conn.execute(
             "SELECT early_surrender FROM matches WHERE match_id = ?",
             (match_id,)).fetchone()[0]
         assert stored == (1 if parts[0].get(MATCH_FIELD[1]) else 0)
+    finally:
+        db.close()
+
+
+def test_challenges_flottants_stockes_en_entier(tmp_path, payload):
+    """Cas explicite de la fixture : jungleCsBefore10Minutes arrive en
+    flottant (68.00000008940697). La colonne doit porter un entier, sinon le
+    Lot 1 calcule ses percentiles sur une colonne à typage mixte."""
+    parts = payload["info"]["participants"]
+    flottants = [(index, field(part, "challenges.jungleCsBefore10Minutes"))
+                 for index, part in enumerate(parts)
+                 if isinstance(field(part, "challenges.jungleCsBefore10Minutes"), float)]
+    assert flottants, ("la fixture ne porte plus de challenges flottant : "
+                       "vérifier que le cas existe encore avant de relâcher la règle")
+
+    db = Database(str(tmp_path / "flottant.db"))
+    try:
+        assert db.store_match(payload, "europe", "euw1", "SILVER_GOLD") is True
+        rows = stored_participants(db, payload["metadata"]["matchId"])
+        for index, brut in flottants:
+            stocke = rows[index]["jungle_cs_at10"]
+            assert stocke == int(round(brut)), (index, brut, stocke)
+            assert isinstance(stocke, int), (index, brut, type(stocke))
+            # arrondi, pas troncature : la valeur vraie est au-dessus de la
+            # borne inférieure quand l'artefact est négatif (67.99999991)
+            assert stocke == round(brut)
+
+        # aucune colonne challenges à typage mixte, sur aucune ligne
+        for column in ("lane_cs_at10", "jungle_cs_at10", "turret_plates_taken"):
+            types = {row[0] for row in db.conn.execute(
+                f"SELECT DISTINCT typeof({column}) FROM participants")}
+            assert types <= {"integer", "null"}, (column, types)
     finally:
         db.close()
 

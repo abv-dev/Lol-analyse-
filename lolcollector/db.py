@@ -183,6 +183,19 @@ def patch_of(game_version: str) -> str:
     return ".".join((game_version or "").split(".")[:2])
 
 
+def challenge_int(value):
+    """Champ `challenges` -> entier. Ces valeurs sont calculées côté Riot et
+    arrivent parfois en flottant (`jungleCsBefore10Minutes` à
+    68.00000008940697) : sans conversion, la colonne mélange INTEGER et REAL.
+
+    Arrondi et non troncature — l'artefact peut tomber des deux côtés de
+    l'entier vrai (67.99999991 comme 68.00000009), et tronquer biaiserait
+    systématiquement vers le bas. NULL reste NULL : la conversion ne
+    s'applique jamais à une valeur absente et ne produit jamais de 0.
+    """
+    return None if value is None else int(round(value))
+
+
 class Database:
     def __init__(self, path: str):
         self.path = path
@@ -296,9 +309,9 @@ class Database:
                      part.get("totalDamageTaken"), part.get("visionScore"),
                      part.get("visionWardsBoughtInGame"),
                      part.get("totalTimeSpentDead"),
-                     challenges.get("laneMinionsFirst10Minutes"),
-                     challenges.get("jungleCsBefore10Minutes"),
-                     challenges.get("turretPlatesTaken"),
+                     challenge_int(challenges.get("laneMinionsFirst10Minutes")),
+                     challenge_int(challenges.get("jungleCsBefore10Minutes")),
+                     challenge_int(challenges.get("turretPlatesTaken")),
                      part.get("totalHealsOnTeammates"),
                      part.get("totalDamageShieldedOnTeammates")),
                 )

@@ -45,7 +45,14 @@ exactement le même chemin.
 Convention de nommage existante : snake_case calqué sur le champ Riot
 (`gold_earned` ← `goldEarned`). Tous les champs proviennent de
 `info.participants[]` du JSON Match-V5, sauf mention contraire. Type
-`INTEGER` partout.
+`INTEGER` partout **côté colonne** ; côté Riot, la fixture réelle
+(`tests/fixtures/match_v5_full.json`) montre que les champs de la famille
+`challenges` peuvent arriver en flottant — artefact de calcul constaté sur
+`jungleCsBefore10Minutes` (`68.00000008940697`), les autres champs étant
+entiers dans ce payload. Un compte de sbires ou de plates est un entier ; les
+trois champs `challenges` sont donc **convertis en entier à l'insertion**
+(règle au §4), pour ne pas produire une colonne à typage mixte que le Lot 1
+lirait pour calculer des percentiles.
 
 ### 3.1 `participants` — 10 colonnes
 
@@ -98,6 +105,20 @@ partage : le champ alimente un croisement du §5.5, une métrique actée au
   l'objet `challenges` manque (cas réel sur certains matchs). **Interdiction
   de recopier le style du helper `o()`** de `store_match`, qui coalesce à 0 —
   correct pour des compteurs d'objectifs, faux ici.
+- **Conversion en entier des champs `challenges`** (`lane_cs_at10`,
+  `jungle_cs_at10`, `turret_plates_taken`) : valeur présente →
+  `int(round(v))` ; valeur absente → NULL, règle inchangée — la conversion ne
+  s'applique jamais à un NULL et ne produit jamais un 0 par défaut.
+  **Arrondi, pas troncature** : l'artefact flottant peut retomber d'un côté
+  ou de l'autre de l'entier vrai (`68.00000009` comme un éventuel
+  `67.99999991`) ; la troncature rendrait 67 dans le second cas — un biais
+  systématique vers le bas — quand l'arrondi retrouve 68 dans les deux.
+  La règle couvre les trois champs de la famille, pas seulement
+  `jungleCsBefore10Minutes` où l'artefact est constaté : ce sont tous des
+  champs *calculés* côté Riot, et un unique payload ne prouve pas que les
+  deux autres restent entiers sur tous les matchs. Les sept champs directs
+  du §3.1 (compteurs bruts, entiers constatés) sont stockés tels quels, sans
+  conversion silencieuse.
 - Tous les matchs antérieurs à la migration restent NULL pour toujours, comme
   `horde_kills`. Les consommateurs (Lot 1 en tête) filtrent `IS NOT NULL` et
   peuvent borner par `matches.inserted_at >= <borne>` (index
@@ -196,8 +217,11 @@ Sur base fixture dans `tmp_path`, jamais sur la production. Cas minimum :
 3. **Base neuve** : `Database` sur chemin vierge → les 11 colonnes existent
    dès le `SCHEMA`.
 4. **Parsing** : `store_match(fixture)` → chaque nouvelle colonne égale au
-   champ correspondant du payload (valeurs lues dans la fixture, pas
-   codées en dur) ; `matches.early_surrender` cohérent avec le payload.
+   champ correspondant du payload (valeurs lues dans la fixture, pas codées
+   en dur), après application de la règle de conversion du §4 pour les trois
+   colonnes `challenges` — le cas `jungleCsBefore10Minutes` flottant de la
+   fixture doit donner un entier en base ; `matches.early_surrender`
+   cohérent avec le payload.
 5. **NULL, pas 0** : payload copié puis privé de `challenges` (et d'un champ
    direct comme `visionScore`) → colonnes correspondantes à NULL.
 6. **Garde-fou fixture** (§7) : présence de tous les champs attendus dans le
