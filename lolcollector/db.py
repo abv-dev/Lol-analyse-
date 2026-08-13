@@ -14,7 +14,9 @@ CREATE TABLE IF NOT EXISTS matches (
     game_duration       INTEGER,
     game_creation       INTEGER,
     tier_bucket_source  TEXT,
-    inserted_at         INTEGER
+    inserted_at         INTEGER,
+    -- participants[0].gameEndedInEarlySurrender (identique pour les 10), 0/1
+    early_surrender     INTEGER
 );
 
 CREATE TABLE IF NOT EXISTS participants (
@@ -35,7 +37,21 @@ CREATE TABLE IF NOT EXISTS participants (
     perk_keystone       INTEGER,
     gold_earned         INTEGER,
     total_cs            INTEGER,
-    patch               TEXT
+    patch               TEXT,
+    -- Dégâts, vision et fin de partie : info.participants[] de Match-V5.
+    -- NULL = non collecté (match antérieur à la migration, ou champ absent
+    -- du payload), 0 = mesuré nul. Ne jamais confondre les deux.
+    damage_to_champions  INTEGER,   -- totalDamageDealtToChampions
+    damage_taken         INTEGER,   -- totalDamageTaken
+    vision_score         INTEGER,   -- visionScore
+    control_wards_bought INTEGER,   -- visionWardsBoughtInGame
+    time_spent_dead      INTEGER,   -- totalTimeSpentDead (secondes)
+    -- Sous-objet challenges, absent de certains payloads : NULL dans ce cas.
+    lane_cs_at10         INTEGER,   -- challenges.laneMinionsFirst10Minutes
+    jungle_cs_at10       INTEGER,   -- challenges.jungleCsBefore10Minutes
+    turret_plates_taken  INTEGER,   -- challenges.turretPlatesTaken
+    heals_on_teammates   INTEGER,   -- totalHealsOnTeammates
+    shields_on_teammates INTEGER    -- totalDamageShieldedOnTeammates
 );
 
 CREATE TABLE IF NOT EXISTS bans (
@@ -133,11 +149,33 @@ CREATE INDEX IF NOT EXISTS idx_tl_state_status
     ON timeline_state (status);
 """
 
+# Lot 13 : dégâts, vision et métriques de fin de partie. Isolées du reste pour
+# la borne temporelle ci-dessous ; sinon migrations ordinaires.
+LOT13_MIGRATIONS = [
+    ("participants", "damage_to_champions", "ALTER TABLE participants ADD COLUMN damage_to_champions INTEGER"),
+    ("participants", "damage_taken", "ALTER TABLE participants ADD COLUMN damage_taken INTEGER"),
+    ("participants", "vision_score", "ALTER TABLE participants ADD COLUMN vision_score INTEGER"),
+    ("participants", "control_wards_bought", "ALTER TABLE participants ADD COLUMN control_wards_bought INTEGER"),
+    ("participants", "time_spent_dead", "ALTER TABLE participants ADD COLUMN time_spent_dead INTEGER"),
+    ("participants", "lane_cs_at10", "ALTER TABLE participants ADD COLUMN lane_cs_at10 INTEGER"),
+    ("participants", "jungle_cs_at10", "ALTER TABLE participants ADD COLUMN jungle_cs_at10 INTEGER"),
+    ("participants", "turret_plates_taken", "ALTER TABLE participants ADD COLUMN turret_plates_taken INTEGER"),
+    ("participants", "heals_on_teammates", "ALTER TABLE participants ADD COLUMN heals_on_teammates INTEGER"),
+    ("participants", "shields_on_teammates", "ALTER TABLE participants ADD COLUMN shields_on_teammates INTEGER"),
+    ("matches", "early_surrender", "ALTER TABLE matches ADD COLUMN early_surrender INTEGER"),
+]
+
 # Colonnes ajoutées après coup : appliquées à une base existante sans la
 # recréer (la base de production fait plusieurs Go).
 MIGRATIONS = [
     ("team_objectives", "horde_kills", "ALTER TABLE team_objectives ADD COLUMN horde_kills INTEGER"),
-]
+] + LOT13_MIGRATIONS
+
+# Borne temporelle des NULL du Lot 13 : posée une seule fois, au premier ALTER
+# réellement appliqué. Avant elle, les colonnes sont NULL pour toujours ; les
+# consommateurs bornent par matches.inserted_at plutôt que de scanner.
+LOT13_BORNE = "lot13_migrated_at"
+_LOT13_COLUMNS = {(table, column) for table, column, _ in LOT13_MIGRATIONS}
 
 
 def patch_of(game_version: str) -> str:
@@ -160,12 +198,19 @@ class Database:
 
     def _migrate(self) -> None:
         """Applique les colonnes ajoutées après coup (base existante)."""
+        lot13_applied = False
         for table, column, sql in MIGRATIONS:
             existing = {
                 row[1] for row in self.conn.execute(f"PRAGMA table_info({table})")
             }
             if column not in existing:
                 self.conn.execute(sql)
+                if (table, column) in _LOT13_COLUMNS:
+                    lot13_applied = True
+        # Sur une base neuve, SCHEMA a déjà créé les colonnes : aucun ALTER, donc
+        # pas de borne à poser — il n'y a pas de lignes antérieures.
+        if lot13_applied and self.get_meta(LOT13_BORNE) is None:
+            self.set_meta(LOT13_BORNE, str(int(time.time())))
 
     def close(self):
         self.conn.close()
@@ -190,16 +235,22 @@ class Database:
 
         game_version = info.get("gameVersion", "")
         patch = patch_of(game_version)
+        # gameEndedInEarlySurrender est identique pour les 10 participants :
+        # valeur de match, stockée une fois. NULL si le champ manque.
+        participants = info.get("participants") or []
+        early = participants[0].get("gameEndedInEarlySurrender") if participants else None
+        early_surrender = None if early is None else (1 if early else 0)
         cur = self.conn.cursor()
         try:
             cur.execute("BEGIN")
             cur.execute(
                 "INSERT OR IGNORE INTO matches (match_id, region, platform, game_version,"
-                " patch, game_duration, game_creation, tier_bucket_source, inserted_at)"
-                " VALUES (?,?,?,?,?,?,?,?,?)",
+                " patch, game_duration, game_creation, tier_bucket_source, inserted_at,"
+                " early_surrender)"
+                " VALUES (?,?,?,?,?,?,?,?,?,?)",
                 (match_id, region, platform, game_version, patch,
                  info.get("gameDuration"), info.get("gameCreation"), bucket,
-                 int(time.time())),
+                 int(time.time()), early_surrender),
             )
             if cur.rowcount == 0:  # déjà en base (course entre workers improbable mais sûre)
                 self.conn.rollback()
@@ -218,13 +269,21 @@ class Database:
                         sub_style = style.get("style")
                 total_cs = (part.get("totalMinionsKilled", 0) or 0) + \
                            (part.get("neutralMinionsKilled", 0) or 0)
+                # challenges manque sur certains matchs : ses champs valent
+                # alors NULL — non collecté, à ne pas coalescer à 0.
+                challenges = part.get("challenges") or {}
                 cur.execute(
                     "INSERT INTO participants (match_id, puuid, champion_id, champion_name,"
                     " team_id, team_position, win, kills, deaths, assists,"
                     " item0, item1, item2, item3, item4, item5, item6,"
                     " perk_primary_style, perk_sub_style, perk_keystone,"
-                    " gold_earned, total_cs, patch)"
-                    " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                    " gold_earned, total_cs, patch,"
+                    " damage_to_champions, damage_taken, vision_score,"
+                    " control_wards_bought, time_spent_dead, lane_cs_at10,"
+                    " jungle_cs_at10, turret_plates_taken, heals_on_teammates,"
+                    " shields_on_teammates)"
+                    " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,"
+                    "?,?,?,?,?,?,?,?,?,?)",
                     (match_id, part.get("puuid"), part.get("championId"),
                      part.get("championName"), part.get("teamId"),
                      part.get("teamPosition"), 1 if part.get("win") else 0,
@@ -232,7 +291,16 @@ class Database:
                      part.get("item0"), part.get("item1"), part.get("item2"),
                      part.get("item3"), part.get("item4"), part.get("item5"),
                      part.get("item6"), primary_style, sub_style, keystone,
-                     part.get("goldEarned"), total_cs, patch),
+                     part.get("goldEarned"), total_cs, patch,
+                     part.get("totalDamageDealtToChampions"),
+                     part.get("totalDamageTaken"), part.get("visionScore"),
+                     part.get("visionWardsBoughtInGame"),
+                     part.get("totalTimeSpentDead"),
+                     challenges.get("laneMinionsFirst10Minutes"),
+                     challenges.get("jungleCsBefore10Minutes"),
+                     challenges.get("turretPlatesTaken"),
+                     part.get("totalHealsOnTeammates"),
+                     part.get("totalDamageShieldedOnTeammates")),
                 )
 
             for team in info.get("teams", []):
