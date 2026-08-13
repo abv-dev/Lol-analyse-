@@ -316,6 +316,73 @@ définition a changé** — sinon un index créé par une version antérieure
 resterait en place et les requêtes retourneraient à la table pour 22 M de
 lignes.
 
+## File éditoriale (`queue/`)
+
+Le rythme visé est de 7 articles par semaine, publiés par cron quotidien
+depuis un stock rédigé en lot. Deux populations d'articles :
+
+- **Récurrents** — `queue/templates.json`. 11 gabarits (8 en régime
+  `patch_courant`, dont « méta par rôle » qui produit 5 articles via ses
+  variantes, et 3 en régime `comparatif`), soit **15 articles instanciés par
+  patch**, pour un cycle de patch d'environ deux semaines.
+- **Structurels** — `queue/articles.json`, uniques et non récurrents. Ils ne
+  périment pas. Objectif : **15 à 20 articles vérifiés en stock**.
+
+```bash
+python3 scripts/queue_sync.py [--dry-run]   # instancie les gabarits du patch courant
+python3 scripts/queue_status.py             # qui est rédigeable, et qui attend quoi
+python3 scripts/queue_status.py --json      # même chose, pour batch_write.py
+```
+
+`queue_sync.py` est **idempotent** : le relancer n'ajoute aucun doublon et
+n'écrase aucun statut. Il peut donc tourner dans le cron sans condition.
+
+### La règle de sélection
+
+C'est le cœur du système, et ce n'est pas un ordre figé. Le publieur regarde
+l'état réel des données :
+
+| Régime | Rédigeable quand |
+| --- | --- |
+| `patch_courant` | le patch a ≥ 3 jours **et** ≥ 50 000 matchs |
+| `comparatif` | dès le début d'un patch — c'est son sujet |
+| `structurel` | toujours, il ne dépend d'aucun patch |
+
+Conséquence recherchée : **le jour où un patch sort, la file ne se vide
+pas**. Elle bascule sur le comparatif et le structurel. Les seuils
+s'ajustent par `QUEUE_MIN_PATCH_AGE_DAYS` et `QUEUE_MIN_PATCH_MATCHES` — le
+bon seuil dépend du débit de collecte, qui change quand on ajoute une région
+ou qu'on bouge les quotas.
+
+Deux détails qui décident du bon fonctionnement :
+
+- **Portée des données.** Un article de régime `structurel` voit ses données
+  comptées sur **toute la base**, pas sur le patch courant. Les compter sur
+  le patch courant éteindrait le réservoir exactement le jour d'un patch,
+  c'est-à-dire au moment précis où il doit prendre le relais.
+- **Une donnée inconnue bloque.** Un identifiant absent du registre
+  (`team_positon` au lieu de `team_position`) rend l'article non rédigeable
+  au lieu de le laisser passer. Une faute de frappe ne doit pas se traduire
+  par un article rédigé sur des données absentes.
+
+### `debloque_par`
+
+Une structurelle peut attendre une donnée qui n'existe pas encore en volume
+(`timeline_frames`, `horde_kills`…). Tant qu'elle manque, l'article est
+**invisible à la rédaction** ; il redevient rédigeable **tout seul** dès que
+le volume est atteint, sans intervention.
+
+```json
+{ "id": "…", "regime": "structurel", "debloque_par": "timeline_frames" }
+```
+
+Quand le stock descend sous `STOCK_MIN`, le structurel passe devant dans
+l'ordre de sélection : il ne périme pas, il se rédige d'avance, et c'est le
+seul disponible les jours de sortie de patch. Remplir le tampon d'abord est
+ce qui évite d'être à sec au patch suivant.
+
+Tests : `python3 tests/test_editorial_queue.py`.
+
 ## Diffusion
 
 ### Flux RSS — `/rss.xml`
