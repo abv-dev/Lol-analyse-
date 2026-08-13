@@ -39,7 +39,9 @@ PATCHES = ["16.16", "16.15", "16.14", "16.13"]
 for patch in PATCHES:
     for i in range(20):
         mid = f"{patch}_M{i}"
-        cur.execute("INSERT OR IGNORE INTO matches VALUES (?,?,?,?,?,?,?,?,?)",
+        cur.execute("INSERT OR IGNORE INTO matches (match_id, region, platform,"
+                    " game_version, patch, game_duration, game_creation,"
+                    " tier_bucket_source, inserted_at) VALUES (?,?,?,?,?,?,?,?,?)",
                     (mid, "europe", "euw1", patch + ".1.1", patch, 1800, 0,
                      "SILVER_GOLD", now))
         cur.execute("INSERT INTO participants (match_id, champion_id, patch)"

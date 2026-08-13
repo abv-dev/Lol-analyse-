@@ -53,10 +53,17 @@ def seed(db, patch, version, per_cell, champs=6):
                               0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, patch))
                 b.append((match_id, 100, 1 + mid % champs, 1))
     cur = db.conn.cursor()
-    cur.executemany("INSERT OR IGNORE INTO matches VALUES (?,?,?,?,?,?,?,?,?)",
+    cur.executemany("INSERT OR IGNORE INTO matches (match_id, region, platform,"
+                    " game_version, patch, game_duration, game_creation,"
+                    " tier_bucket_source, inserted_at) VALUES (?,?,?,?,?,?,?,?,?)",
                     [(r[0], r[1], r[2], r[3], r[4], r[5], r[6], r[8], r[9]) for r in m])
     cur.executemany(
-        "INSERT INTO participants VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", p)
+        "INSERT INTO participants (match_id, puuid, champion_id, champion_name,"
+        " team_id, team_position, win, kills, deaths, assists,"
+        " item0, item1, item2, item3, item4, item5, item6,"
+        " perk_primary_style, perk_sub_style, perk_keystone,"
+        " gold_earned, total_cs, patch)"
+        " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", p)
     cur.executemany("INSERT INTO bans VALUES (?,?,?,?)", b)
     db.conn.commit()
 

@@ -145,7 +145,9 @@ shutil.rmtree("quota", ignore_errors=True); os.makedirs("quota")
 db3 = Database("quota/q.db")
 now3 = int(time.time()); c3 = db3.conn.cursor()
 for i in range(50):
-    c3.execute("INSERT OR IGNORE INTO matches VALUES (?,?,?,?,?,?,?,?,?)",
+    c3.execute("INSERT OR IGNORE INTO matches (match_id, region, platform,"
+        " game_version, patch, game_duration, game_creation, tier_bucket_source,"
+        " inserted_at) VALUES (?,?,?,?,?,?,?,?,?)",
         (f"Q_{i}", "europe", "euw1", "16.15.1.1", "16.15", 1800, 0, "SILVER_GOLD", now3))
 db3.conn.commit()
 q = PatchQuota(db3, target=5, refresh_every=1000)
@@ -160,7 +162,9 @@ assert stored_count_for_patch(db3, "16.15") == 5
 assert q.reached("16.15") is True
 # nouveau patch : compteurs remis à zéro, collecte reprise
 for i in range(10):
-    c3.execute("INSERT OR IGNORE INTO matches VALUES (?,?,?,?,?,?,?,?,?)",
+    c3.execute("INSERT OR IGNORE INTO matches (match_id, region, platform,"
+        " game_version, patch, game_duration, game_creation, tier_bucket_source,"
+        " inserted_at) VALUES (?,?,?,?,?,?,?,?,?)",
         (f"R_{i}", "europe", "euw1", "16.16.1.1", "16.16", 1800, 0, "SILVER_GOLD", now3))
 db3.conn.commit()
 assert q.reached("16.16") is False, "le plafond ne repart pas à zéro au patch suivant"
