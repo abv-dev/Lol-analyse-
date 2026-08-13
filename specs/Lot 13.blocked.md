@@ -1,7 +1,15 @@
 # Lot 13 — bloqué : §5 et §8.7 sont mutuellement exclusifs
 
-Statut : **aucun code écrit**, aucune migration appliquée, collecteur non touché.
-Constaté le 2026-08-13 sur la branche `lot-13/collector-damage-vision`.
+> **Levé le 2026-08-13, option A retenue** (commit « Tests : nomme les colonnes
+> des INSERT sur matches et participants »). Nommer les colonnes n'affaiblit
+> aucun test : aucune assertion ni valeur attendue ne change, la couverture est
+> identique, seule la forme de l'insertion devient explicite — la règle que le
+> code de production applique déjà. Document conservé pour la revue : il dit
+> pourquoi trois fichiers de tests bougent dans une PR de schéma.
+
+Statut à la rédaction : **aucun code écrit**, aucune migration appliquée,
+collecteur non touché. Constaté le 2026-08-13 sur la branche
+`lot-13/collector-damage-vision`.
 
 ## 1. Le blocage en une phrase
 
