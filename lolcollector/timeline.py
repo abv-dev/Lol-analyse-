@@ -24,6 +24,22 @@ KEPT_EVENT_TYPES = {
     "TURRET_PLATE_DESTROYED",
 }
 
+# Achats d'objets : PAS dans timeline_events (le chiffrage du Lot 14 §6
+# interdit d'y verser les ~172 ITEM_PURCHASED par match), mais dans la table
+# dédiée `item_events`, et seulement pour les objets légendaires complétés.
+ITEM_EVENT_TYPES = {"ITEM_PURCHASED": "PURCHASED", "ITEM_UNDO": "UNDO"}
+
+
+def assisting_ids(event: dict) -> str:
+    """assistingParticipantIds -> "6,8,10" (ordre du payload).
+
+    Chaîne vide si le kill n'a pas d'assistant : sur les timelines réelles,
+    Riot OMET le champ dans ce cas au lieu d'envoyer une liste vide. NULL est
+    réservé aux lignes non collectées (antérieures au Lot 14) — c'est ce qui
+    permet aux lots aval de les exclure de cette métrique seulement.
+    """
+    return ",".join(str(pid) for pid in event.get("assistingParticipantIds") or [])
+
 
 def is_sampled(match_id: str, rate: float) -> bool:
     """Tirage déterministe et stable : hash du match_id ramené dans [0, 1).
@@ -78,23 +94,66 @@ def parse_timeline(match_id: str, data: dict):
                 event.get("monsterType"), event.get("monsterSubType"),
                 event.get("laneType"), event.get("buildingType"),
                 position.get("x"), position.get("y"),
+                # colonne ajoutée en fin de tuple : les positions existantes
+                # ne bougent pas. NULL hors CHAMPION_KILL.
+                assisting_ids(event) if etype == "CHAMPION_KILL" else None,
             ))
     return events, frames
 
 
-def store_timeline(db, match_id: str, data: dict) -> tuple[int, int]:
-    """Stocke une timeline (transactionnel). Retourne (n_events, n_frames)."""
+def parse_item_events(match_id: str, data: dict, legendary) -> list[tuple]:
+    """Achats et annulations d'achats d'objets LÉGENDAIRES d'une timeline.
+
+    `legendary` est la liste du patch (voir `lolcollector.items`). Sans liste,
+    rien n'est extrait : une timeline se stocke quand même, la collecte n'est
+    jamais bloquée par Data Dragon.
+
+    Une annulation d'achat légendaire (`ITEM_UNDO`, objet en `beforeId`) est
+    conservée : sans elle, le « 1er item légendaire complété » est faux.
+    """
+    if not legendary:
+        return []
+    info = data.get("info") or {}
+    item_events = []
+    for frame in info.get("frames") or []:
+        for event in frame.get("events") or []:
+            label = ITEM_EVENT_TYPES.get(event.get("type"))
+            if label is None:
+                continue
+            item_id = event.get("itemId") if label == "PURCHASED" \
+                else event.get("beforeId")
+            if item_id not in legendary:
+                continue
+            item_events.append((
+                match_id, event.get("participantId"), item_id,
+                event.get("timestamp"), label,
+            ))
+    return item_events
+
+
+def store_timeline(db, match_id: str, data: dict, legendary=None) -> tuple[int, int]:
+    """Stocke une timeline (transactionnel). Retourne (n_events, n_frames).
+
+    `legendary` : liste des objets légendaires du patch, pour `item_events`.
+    Absente (patch inconnu, Data Dragon indisponible), la timeline est stockée
+    sans ses achats plutôt que pas du tout.
+    """
     events, frames = parse_timeline(match_id, data)
+    item_events = parse_item_events(match_id, data, legendary)
     cur = db.conn.cursor()
     try:
         cur.execute("BEGIN")
         cur.execute("DELETE FROM timeline_events WHERE match_id = ?", (match_id,))
         cur.execute("DELETE FROM timeline_frames WHERE match_id = ?", (match_id,))
+        cur.execute("DELETE FROM item_events WHERE match_id = ?", (match_id,))
         cur.executemany(
             "INSERT INTO timeline_events (match_id, timestamp_ms, type, team_id,"
             " killer_id, victim_id, monster_type, monster_subtype, lane_type,"
-            " building_type, position_x, position_y)"
-            " VALUES (?,?,?,?,?,?,?,?,?,?,?,?)", events)
+            " building_type, position_x, position_y, assisting_ids)"
+            " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)", events)
+        cur.executemany(
+            "INSERT INTO item_events (match_id, participant_id, item_id,"
+            " timestamp_ms, event) VALUES (?,?,?,?,?)", item_events)
         cur.executemany(
             "INSERT INTO timeline_frames (match_id, minute, participant_id,"
             " total_gold, current_gold, xp, level, cs, position_x, position_y)"

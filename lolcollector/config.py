@@ -36,6 +36,9 @@ DEFAULT_RATE_LIMITS = {
 }
 
 DDRAGON_VERSIONS_URL = "https://ddragon.leagueoflegends.com/api/versions.json"
+# item.json d'une version donnée : source de la liste des objets légendaires.
+DDRAGON_ITEMS_URL = ("https://ddragon.leagueoflegends.com/cdn/{version}"
+                     "/data/en_US/item.json")
 
 
 def load_env(path: str = ".env") -> None:

@@ -108,7 +108,8 @@ def run_prune(db_path: str, keep_patches: int, exports_dir: str,
             cur.execute("INSERT INTO _purge_ids SELECT match_id FROM matches"
                         " WHERE patch = ?", (patch,))
             for table in ("participants", "bans", "team_objectives",
-                          "timeline_events", "timeline_frames", "timeline_state"):
+                          "timeline_events", "timeline_frames", "timeline_state",
+                          "item_events"):
                 if _table_exists(conn, table):
                     cur.execute(f"DELETE FROM {table} WHERE match_id IN"
                                 " (SELECT match_id FROM _purge_ids)")

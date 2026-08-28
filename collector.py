@@ -5,6 +5,7 @@
   python collector.py stats                   état du dataset
   python collector.py refresh --study tierlist   arrêt, export, redémarrage
   python collector.py export --study tierlist [--patch 16.14] [--out dir]
+  python collector.py backfill-participant-ids   collecteur ARRÊTÉ (Lot 14)
 """
 
 import argparse
@@ -31,6 +32,15 @@ def main() -> None:
                                  help="part du budget de requêtes régional allouée "
                                       "au backfill, pour ne pas affamer les workers "
                                       "(défaut: 0.3)")
+
+    pid_parser = sub.add_parser(
+        "backfill-participant-ids",
+        help="renseigne participants.participant_id sur les lignes "
+             "historiques (Lot 14) — À LANCER COLLECTEUR ARRÊTÉ")
+    pid_parser.add_argument("--force", action="store_true",
+                            help="passer outre le contrôle « le collecteur "
+                                 "tourne » (à n'utiliser que sur une base de "
+                                 "test)")
 
     prune_parser = sub.add_parser(
         "prune",
@@ -88,6 +98,9 @@ def main() -> None:
             return asyncio.run(run_backfill(args.limit, args.share))
         except KeyboardInterrupt:
             pass
+    elif args.command == "backfill-participant-ids":
+        from lolcollector.migrate import run_participant_id_backfill
+        return run_participant_id_backfill(cfg, args.force)
     elif args.command == "prune":
         from lolcollector.prune import DEFAULT_EXPORTS_DIR, run_prune
         return run_prune(cfg.db_path, args.keep_patches,

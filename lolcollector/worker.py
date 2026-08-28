@@ -12,6 +12,7 @@ import aiohttp
 
 from .config import BUCKETS, QUEUE_ID, REGIONS, Config
 from .db import Database
+from .items import LegendaryItems
 from .ratelimit import RateLimiter
 from .riot import FatalApiError, RiotClient
 from .sampler import BucketSampler
@@ -39,7 +40,8 @@ def setup_logging(log_dir: str, level: str = "INFO") -> logging.Logger:
 
 
 async def patch_watcher(client: RiotClient, db: Database, interval: int,
-                        stop_event: asyncio.Event, log: logging.Logger):
+                        stop_event: asyncio.Event, log: logging.Logger,
+                        legendary: LegendaryItems | None = None):
     """Récupère la version ddragon au démarrage puis toutes les `interval` secondes."""
     while not stop_event.is_set():
         try:
@@ -54,6 +56,10 @@ async def patch_watcher(client: RiotClient, db: Database, interval: int,
                 elif not previous:
                     log.info("Version ddragon courante : %s", current)
                 db.set_meta("ddragon_current", current)
+                # Liste des objets légendaires : chargée au démarrage et à
+                # chaque passage (donc au patch suivant), jamais bloquante.
+                if legendary is not None:
+                    await legendary.ids_for(client, patch_of(current))
         except Exception as exc:
             log.warning("patch_watcher : échec récupération versions.json (%s)", exc)
         try:
@@ -64,7 +70,8 @@ async def patch_watcher(client: RiotClient, db: Database, interval: int,
 
 async def region_worker(cfg: Config, db: Database, client: RiotClient,
                         region: str, platform: str,
-                        stop_event: asyncio.Event, log: logging.Logger):
+                        stop_event: asyncio.Event, log: logging.Logger,
+                        legendary: LegendaryItems | None = None):
     samplers = {
         bucket: BucketSampler(db, client, region, platform, bucket, tiers,
                               cfg.max_pages_per_division, log)
@@ -123,7 +130,11 @@ async def region_worker(cfg: Config, db: Database, client: RiotClient,
                         try:
                             tl = await client.match_timeline(region, match_id)
                             if tl:
-                                n_ev, n_fr = store_timeline(db, match_id, tl)
+                                # liste du patch pour item_events ; None si
+                                # elle n'a pas pu être chargée (non bloquant)
+                                items = (await legendary.ids_for(client, match_patch)
+                                         if legendary is not None else None)
+                                n_ev, n_fr = store_timeline(db, match_id, tl, items)
                                 quota.record_stored(match_patch)
                                 timelines += 1
                                 log.debug("[%s] timeline %s : %d events, %d frames",
@@ -177,17 +188,21 @@ async def run_collector():
                          region, per_s, per_2min)
                 limiter = RateLimiter([(per_s, 1.0), (per_2min, 120.0)], name=region)
                 clients[region] = RiotClient(session, cfg.api_key, limiter, log)
+            # Une seule liste d'objets légendaires pour tout le collecteur :
+            # les 3 régions collectent les mêmes patchs.
+            legendary = LegendaryItems(db, log)
             tasks = [
                 asyncio.create_task(
                     patch_watcher(next(iter(clients.values())), db,
-                                  cfg.patch_check_interval, stop_event, log),
+                                  cfg.patch_check_interval, stop_event, log,
+                                  legendary),
                     name="patch_watcher",
                 )
             ]
             tasks += [
                 asyncio.create_task(
                     region_worker(cfg, db, clients[region], region, platform,
-                                  stop_event, log),
+                                  stop_event, log, legendary),
                     name=f"worker_{region}",
                 )
                 for region, platform in REGIONS.items()

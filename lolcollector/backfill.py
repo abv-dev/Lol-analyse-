@@ -23,6 +23,7 @@ import aiohttp
 
 from .config import REGIONS, Config
 from .db import Database, patch_of
+from .items import LegendaryItems
 from .ratelimit import RateLimiter
 from .riot import FatalApiError, RiotClient
 from .timeline import is_sampled, mark_timeline, store_timeline, stored_count_for_patch
@@ -100,13 +101,23 @@ def candidates(db: Database, limit: int, rate: float, target_per_patch: int = 0)
     return selected
 
 
-async def _region_worker(region, jobs, cfg, db, client, log, counters, stop):
+async def _region_worker(region, jobs, cfg, db, client, log, counters, stop,
+                         legendary=None):
     while jobs and not stop.is_set():
         match_id = jobs.pop()
         try:
             data = await client.match_timeline(region, match_id)
             if data:
-                store_timeline(db, match_id, data)
+                # Même chemin que le worker en direct, y compris item_events :
+                # rien de spécifique au backfill (spec Lot 14, §3.2). Le patch
+                # se lit sur la clé primaire de `matches`.
+                items = None
+                if legendary is not None:
+                    row = db.conn.execute(
+                        "SELECT patch FROM matches WHERE match_id = ?",
+                        (match_id,)).fetchone()
+                    items = await legendary.ids_for(client, row[0] if row else "")
+                store_timeline(db, match_id, data, items)
                 counters["ok"] += 1
             else:
                 mark_timeline(db, match_id, "missing")
@@ -152,6 +163,7 @@ async def run_backfill(limit: int, share: float) -> int:
 
         started = time.time()
         stop = asyncio.Event()
+        legendary = LegendaryItems(db, log)
         async with aiohttp.ClientSession() as session:
             tasks = []
             for region, match_ids in by_region.items():
@@ -165,7 +177,7 @@ async def run_backfill(limit: int, share: float) -> int:
                 client = RiotClient(session, cfg.api_key, limiter, log)
                 tasks.append(asyncio.create_task(
                     _region_worker(region, match_ids, cfg, db, client, log,
-                                   counters, stop)))
+                                   counters, stop, legendary)))
             try:
                 await asyncio.gather(*tasks)
             except FatalApiError as exc:

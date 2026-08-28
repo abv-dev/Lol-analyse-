@@ -103,3 +103,13 @@ class RiotClient:
         ) as resp:
             resp.raise_for_status()
             return await resp.json()
+
+    async def ddragon_items(self, version: str):
+        """item.json d'une version ddragon (hors rate limit Riot API)."""
+        from .config import DDRAGON_ITEMS_URL
+        async with self._session.get(
+            DDRAGON_ITEMS_URL.format(version=version),
+            timeout=aiohttp.ClientTimeout(total=60),
+        ) as resp:
+            resp.raise_for_status()
+            return await resp.json()

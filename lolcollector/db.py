@@ -51,7 +51,11 @@ CREATE TABLE IF NOT EXISTS participants (
     jungle_cs_at10       INTEGER,   -- challenges.jungleCsBefore10Minutes
     turret_plates_taken  INTEGER,   -- challenges.turretPlatesTaken
     heals_on_teammates   INTEGER,   -- totalHealsOnTeammates
-    shields_on_teammates INTEGER    -- totalDamageShieldedOnTeammates
+    shields_on_teammates INTEGER,   -- totalDamageShieldedOnTeammates
+    -- Identifiant Riot 1-10 (info.participants[].participantId) : seule clé
+    -- de jointure vers les victim_id/participant_id des tables timeline.
+    -- NULL = ligne antérieure au Lot 14 non encore backfillée.
+    participant_id       INTEGER
 );
 
 CREATE TABLE IF NOT EXISTS bans (
@@ -89,7 +93,33 @@ CREATE TABLE IF NOT EXISTS timeline_events (
     lane_type       TEXT,
     building_type   TEXT,
     position_x      INTEGER,
-    position_y      INTEGER
+    position_y      INTEGER,
+    -- CHAMPION_KILL uniquement : assistingParticipantIds sérialisé "6,8,10",
+    -- dans l'ordre du payload. '' = kill mesuré SANS assistant, NULL = non
+    -- collecté (ligne antérieure au Lot 14, ou autre type d'événement). Ne
+    -- jamais confondre les deux : les lots aval excluent les NULL de cette
+    -- métrique seulement.
+    assisting_ids   TEXT
+);
+
+-- Achats (et annulations) d'objets légendaires COMPLÉTÉS, extraits des mêmes
+-- timelines que ci-dessus. Table dédiée à index unique : conserver tous les
+-- ITEM_PURCHASED dans timeline_events coûterait 13x plus (spec Lot 14, §6).
+CREATE TABLE IF NOT EXISTS item_events (
+    match_id       TEXT NOT NULL,
+    participant_id INTEGER,
+    item_id        INTEGER,   -- itemId (achat) ou beforeId (annulation)
+    timestamp_ms   INTEGER,
+    event          TEXT       -- 'PURCHASED' | 'UNDO'
+);
+
+-- Traçabilité du filtre « légendaire » appliqué, patch par patch : une étude
+-- aval reconstitue exactement la liste utilisée le jour de la collecte. La
+-- version Data Dragon d'où elle sort est dans meta ('legendary_ddragon_<patch>').
+CREATE TABLE IF NOT EXISTS legendary_items (
+    patch   TEXT NOT NULL,
+    item_id INTEGER NOT NULL,
+    PRIMARY KEY (patch, item_id)
 );
 
 CREATE TABLE IF NOT EXISTS timeline_frames (
@@ -147,6 +177,8 @@ CREATE INDEX IF NOT EXISTS idx_tl_events_type_ts
     ON timeline_events (type, timestamp_ms);
 CREATE INDEX IF NOT EXISTS idx_tl_state_status
     ON timeline_state (status);
+CREATE INDEX IF NOT EXISTS idx_item_events_match
+    ON item_events (match_id);
 """
 
 # Lot 13 : dégâts, vision et métriques de fin de partie. Isolées du reste pour
@@ -165,11 +197,19 @@ LOT13_MIGRATIONS = [
     ("matches", "early_surrender", "ALTER TABLE matches ADD COLUMN early_surrender INTEGER"),
 ]
 
+# Lot 14 : identifiant Riot du participant et assistants des kills. Les deux
+# colonnes s'ajoutent en fin de schéma, hors de tout index : les 5,5 M de
+# lignes timeline_events existantes ne sont pas réécrites.
+LOT14_MIGRATIONS = [
+    ("participants", "participant_id", "ALTER TABLE participants ADD COLUMN participant_id INTEGER"),
+    ("timeline_events", "assisting_ids", "ALTER TABLE timeline_events ADD COLUMN assisting_ids TEXT"),
+]
+
 # Colonnes ajoutées après coup : appliquées à une base existante sans la
 # recréer (la base de production fait plusieurs Go).
 MIGRATIONS = [
     ("team_objectives", "horde_kills", "ALTER TABLE team_objectives ADD COLUMN horde_kills INTEGER"),
-] + LOT13_MIGRATIONS
+] + LOT13_MIGRATIONS + LOT14_MIGRATIONS
 
 # Borne temporelle des NULL du Lot 13 : posée une seule fois, au premier ALTER
 # réellement appliqué. Avant elle, les colonnes sont NULL pour toujours ; les
@@ -181,6 +221,70 @@ _LOT13_COLUMNS = {(table, column) for table, column, _ in LOT13_MIGRATIONS}
 def patch_of(game_version: str) -> str:
     """'16.14.702.1234' -> '16.14'"""
     return ".".join((game_version or "").split(".")[:2])
+
+
+class ParticipantIdError(Exception):
+    """Garde-fou du backfill : la dérivation du participant_id n'a pas tenu."""
+
+
+def check_participant_ids(conn, limit: int = 10) -> tuple[int, list[str]]:
+    """Matchs à 10 participants qui ne portent PAS exactement les ids 1-10.
+
+    Retourne (nombre total, échantillon de `limit` match_id). Les matchs à
+    moins de 10 lignes ne sont pas contrôlés (§2.2 de la spec) : la propriété
+    « rang = participantId » ne se vérifie que sur un match complet.
+    """
+    incoherents = (
+        "SELECT match_id FROM participants"
+        " GROUP BY match_id HAVING COUNT(*) = 10 AND ("
+        "     COUNT(DISTINCT participant_id) <> 10"
+        "  OR MIN(participant_id) <> 1"
+        "  OR MAX(participant_id) <> 10)"
+    )
+    total = conn.execute(
+        f"SELECT COUNT(*) FROM ({incoherents})").fetchone()[0]
+    exemples = [row[0] for row in conn.execute(f"{incoherents} LIMIT {int(limit)}")]
+    return total, exemples
+
+
+def backfill_participant_ids(conn) -> int:
+    """Renseigne participant_id sur les lignes historiques, en un seul UPDATE.
+
+    Dérivation validée sur la base réelle (§2.2 de la spec Lot 14) : le rang
+    d'insertion des lignes d'un match vaut le participantId Riot, parce que
+    `store_match` insère les 10 participants dans l'ordre du payload et que
+    Match-V5 les renvoie ordonnés de 1 à 10.
+
+    Seules les lignes à NULL sont touchées. Le garde-fou tourne dans la MÊME
+    transaction : s'il déclenche, l'UPDATE est intégralement annulé (y compris
+    les matchs sains) et l'appelant sort en erreur, base inchangée.
+
+    À exécuter collecteur arrêté, jamais pendant la collecte.
+    """
+    try:
+        conn.execute("BEGIN")
+        cur = conn.execute(
+            "UPDATE participants SET participant_id = rangs.rang"
+            " FROM (SELECT rowid AS rid,"
+            "              ROW_NUMBER() OVER (PARTITION BY match_id ORDER BY rowid)"
+            "                  AS rang"
+            "       FROM participants) AS rangs"
+            " WHERE participants.rowid = rangs.rid"
+            "   AND participants.participant_id IS NULL"
+        )
+        modifiees = cur.rowcount
+        total, exemples = check_participant_ids(conn)
+        if total:
+            conn.rollback()
+            raise ParticipantIdError(
+                f"{total} match(s) ne portent pas exactement les participant_id "
+                f"1-10 après backfill (ex. : {', '.join(exemples)}) — "
+                "aucune écriture conservée")
+        conn.commit()
+        return modifiees
+    except Exception:
+        conn.rollback()
+        raise
 
 
 def challenge_int(value):
@@ -294,9 +398,9 @@ class Database:
                     " damage_to_champions, damage_taken, vision_score,"
                     " control_wards_bought, time_spent_dead, lane_cs_at10,"
                     " jungle_cs_at10, turret_plates_taken, heals_on_teammates,"
-                    " shields_on_teammates)"
+                    " shields_on_teammates, participant_id)"
                     " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,"
-                    "?,?,?,?,?,?,?,?,?,?)",
+                    "?,?,?,?,?,?,?,?,?,?,?)",
                     (match_id, part.get("puuid"), part.get("championId"),
                      part.get("championName"), part.get("teamId"),
                      part.get("teamPosition"), 1 if part.get("win") else 0,
@@ -313,7 +417,10 @@ class Database:
                      challenge_int(challenges.get("jungleCsBefore10Minutes")),
                      challenge_int(challenges.get("turretPlatesTaken")),
                      part.get("totalHealsOnTeammates"),
-                     part.get("totalDamageShieldedOnTeammates")),
+                     part.get("totalDamageShieldedOnTeammates"),
+                     # toujours présent dans Match-V5 : NULL ici signalerait un
+                     # payload cassé, pas une ligne « non collectée »
+                     part.get("participantId")),
                 )
 
             for team in info.get("teams", []):
