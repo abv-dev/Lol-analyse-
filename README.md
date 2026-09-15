@@ -145,24 +145,45 @@ le collecteur tourne, il se contente de ~30 % des requêtes de la région et
 n'affame pas les workers. Les limites Riot étant par clé et par région, cette
 part est à ajuster selon ce qu'on veut privilégier.
 
-### Purge des vieux patchs
+### Purge au changement de patch
 
 ```bash
-python3 collector.py prune --keep-patches 2 [--exports site/data/etudes] [--yes]
+python3 collector.py purge-old-patches [--patch 16.18] [--dry-run] [--yes] [--no-export]
 ```
 
-Supprime les **matchs bruts** des patchs au-delà des N derniers, avec leurs
-participants, bans, objectifs et timelines, puis compacte la base (`VACUUM`)
-en annonçant l'espace libéré.
+La base ne garde que le **patch courant** (Data Dragon, sinon
+`meta.ddragon_current`). S'il reste des matchs d'un patch antérieur :
 
-**Garde-fou** : un patch n'est purgé que si un **export agrégé existe** pour
-lui (`site/data/etudes/<famille>/<patch-slug>/meta.json`). Les patchs sans
-export sont listés et laissés intacts — les supprimer serait une perte
-définitive. C'est cohérent avec l'architecture du site : **les études
-publiées ne dépendent que des JSON exportés, jamais de la base**, donc un
-patch exporté puis purgé reste consultable en ligne.
+1. le collecteur est arrêté s'il tournait (et redémarré quoi qu'il arrive) ;
+2. la tier list du **patch sortant** est exportée vers
+   `site/data/etudes/tierlist/<slug>/` — **non bloquant** : un export refusé
+   ou en échec est journalisé et la purge continue ;
+3. une base neuve `data/matches.db.rebuild` reçoit les seules lignes des
+   patchs gardés (rowid conservés), plus `meta`, `sampling_state` et
+   `legendary_items` ; puis `integrity_check`, comptes table par table,
+   absence d'orphelins et réouverture par le collecteur ;
+4. elle remplace `data/matches.db` (`os.replace`).
 
-Confirmation interactive par défaut ; `--yes` pour un usage en cron.
+Pas de `DELETE` + `VACUUM` : VACUUM exige jusqu'à deux fois la taille de la
+base en espace libre, impossible sur un disque plein. La reconstruction ne
+demande que la place de ce qu'on garde. Refus sans rien toucher si l'espace
+manque, si une table inconnue serait perdue ou si un autre processus garde
+la base ouverte.
+
+**Plancher de collecte** : après une purge, le collecteur ne doit pas
+retélécharger les matchs supprimés (sa fenêtre de 28 jours les contient
+encore). Il n'insère plus aucun match d'un patch antérieur au plus récent de
+`ddragon_current` et `purge_min_patch`, et sa liste de matchs démarre, par
+région, à `meta.collect_since_s_<région>` — posé par la purge, puis remonté à
+chaque match écarté.
+
+Sans changement de patch la commande sort en une seconde : elle tourne en
+cron toutes les heures (à la demi-heure, hors du passage de
+`milestone_check.py`) :
+
+```
+30 * * * * cd /home/aristide/lol-studies-collector && /usr/bin/python3 collector.py purge-old-patches --yes >> logs/purge.log 2>&1
+```
 
 ### Correction : voidgrubs ≠ Rift Herald
 

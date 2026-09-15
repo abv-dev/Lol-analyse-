@@ -84,9 +84,8 @@ def legendary_for_patch(db, patch: str, log: logging.Logger | None = None
         return ids, patch
 
     # Tri numérique : « 16.9 » est ANTÉRIEUR à « 16.15 », le tri de SQLite dit
-    # l'inverse. Import différé — backfill importe worker, qui importe ce
-    # module ; au niveau du module, l'import serait circulaire.
-    from .backfill import patch_sort_key
+    # l'inverse.
+    from .db import patch_sort_key
 
     cible = patch_sort_key(patch)
     precedents = sorted(

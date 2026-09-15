@@ -11,12 +11,11 @@ import time
 import aiohttp
 
 from .config import BUCKETS, QUEUE_ID, REGIONS, Config
-from .db import Database
+from .db import Database, collect_since, is_before_collect_floor, patch_of
 from .items import LegendaryItems
 from .ratelimit import RateLimiter
 from .riot import FatalApiError, RiotClient
 from .sampler import BucketSampler
-from .db import patch_of
 from .timeline import PatchQuota, is_sampled, mark_timeline, store_timeline
 
 STATS_LOG_EVERY = 50  # log de progression toutes les N insertions par région
@@ -80,6 +79,7 @@ async def region_worker(cfg: Config, db: Database, client: RiotClient,
     bucket_cycle = itertools.cycle(BUCKETS.keys())  # round-robin entre buckets
     inserted = 0
     skipped_dup = 0
+    skipped_old = 0
     timelines = 0
     quota = PatchQuota(db, cfg.timeline_target_per_patch)
     quota_logged: dict[str, bool] = {}
@@ -96,8 +96,10 @@ async def region_worker(cfg: Config, db: Database, client: RiotClient,
                 await asyncio.sleep(30)
                 continue
             # Fenêtre glissante calculée à chaque appel : Riot filtre côté
-            # serveur (startTime), les vieux matchs ne coûtent rien.
-            start_time = int(time.time()) - cfg.match_max_age_days * 86400
+            # serveur (startTime), les vieux matchs ne coûtent rien. Elle ne
+            # remonte jamais avant le plancher de la région (patchs purgés).
+            start_time = max(int(time.time()) - cfg.match_max_age_days * 86400,
+                             collect_since(db, region))
             match_ids = await client.match_ids(
                 region, puuid, cfg.matches_per_player, QUEUE_ID, start_time
             ) or []
@@ -113,6 +115,13 @@ async def region_worker(cfg: Config, db: Database, client: RiotClient,
                 if stop_event.is_set():
                     break
                 data = await client.match(region, match_id)
+                if data and is_before_collect_floor(db, region, data):
+                    # patch antérieur au patch courant : jamais inséré (la
+                    # base ne garde que le patch courant, voir compact.py)
+                    skipped_old += 1
+                    log.debug("[%s] %s : patch antérieur au plancher, écarté",
+                              region, match_id)
+                    continue
                 if data and db.store_match(data, region, platform, bucket):
                     inserted += 1
                     # Timeline : fraction échantillonnée, et tant que le
@@ -151,8 +160,9 @@ async def region_worker(cfg: Config, db: Database, client: RiotClient,
                         mark_timeline(db, match_id, "skipped")
                     if inserted % STATS_LOG_EVERY == 0:
                         log.info("[%s] %d matchs insérés (%d doublons évités, "
-                                 "%d timelines)", region, inserted, skipped_dup,
-                                 timelines)
+                                 "%d timelines, %d d'anciens patchs écartés)",
+                                 region, inserted, skipped_dup, timelines,
+                                 skipped_old)
         except FatalApiError:
             raise
         except Exception as exc:

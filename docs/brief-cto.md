@@ -43,7 +43,7 @@ métrique, le projet perd ce qui fait sa valeur.
   récemment — NULL sur les matchs antérieurs)
 - Timeline échantillonnée : `TIMELINE_SAMPLE_RATE=0.10`, déterministe
   (SHA-256 du match_id), plafond 200 000/patch, 27,2 Ko/match mesuré
-- Commandes : `export --study tierlist`, `refresh`, `backfill-timelines`, `prune`
+- Commandes : `export --study tierlist`, `refresh`, `backfill-timelines`, `purge-old-patches` (base = patch courant seul, cron horaire)
 - Buckets d'élo : `IRON_BRONZE`, `SILVER_GOLD`, `PLAT_EMERALD`, `DIAMOND_PLUS`
 - `team_position` est disponible dans l'export
 

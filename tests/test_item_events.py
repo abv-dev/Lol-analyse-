@@ -660,11 +660,13 @@ def test_lignes_pre_migration_restent_null(tmp_path, timeline):
         db.close()
 
 
-def test_prune_emporte_les_item_events(tmp_path, timeline, legendary):
+def test_purge_emporte_les_item_events(tmp_path, timeline, legendary):
     """`item_events` suit le même cycle de vie que les autres tables timeline :
     sans ça, purger un vieux patch laisserait ses achats orphelins en base pour
     toujours — les 28 Mo/jour du §6 ne se libéreraient jamais."""
-    from lolcollector.prune import run_prune
+    from types import SimpleNamespace
+
+    from lolcollector.compact import run_purge
 
     path = str(tmp_path / "prune.db")
     db = Database(path)
@@ -682,10 +684,8 @@ def test_prune_emporte_les_item_events(tmp_path, timeline, legendary):
     finally:
         db.close()
 
-    exports = tmp_path / "etudes" / "tierlist" / "16-15"
-    exports.mkdir(parents=True)
-    (exports / "meta.json").write_text('{"patch": "16.15"}')
-    assert run_prune(path, 1, str(tmp_path / "etudes"), assume_yes=True) == 0
+    cfg = SimpleNamespace(db_path=path, pid_file=str(tmp_path / "collector.pid"))
+    assert run_purge(cfg, "16.16", assume_yes=True, export=False) == 0
 
     conn = sqlite3.connect(path)
     try:

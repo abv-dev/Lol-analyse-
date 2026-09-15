@@ -223,6 +223,97 @@ def patch_of(game_version: str) -> str:
     return ".".join((game_version or "").split(".")[:2])
 
 
+def patch_sort_key(patch: str) -> tuple[int, int]:
+    """Clé de tri numérique d'un patch : (16, 9) < (16, 15) < (16, 16).
+
+    Le tri lexicographique de SQLite est faux ici — « 16.9 » y passe après
+    « 16.16 », ce qui ferait traiter les vieux patchs avant les récents.
+
+    Un patch au format inattendu (« PBE », « 16 » sans mineur, valeur non
+    numérique) prend (-1, -1) : il reste traité, mais après tous les patchs
+    valides en ordre décroissant, plutôt que de faire échouer le tri.
+    """
+    parts = str(patch).split(".")
+    if len(parts) < 2 or not (parts[0].isdigit() and parts[1].isdigit()):
+        return (-1, -1)
+    return (int(parts[0]), int(parts[1]))
+
+
+# ---- plancher de collecte : ne rien collecter d'antérieur au patch courant ----
+#
+# Sans lui, une base purgée se re-remplit : le collecteur demande 28 jours
+# d'historique par joueur et ne saute que les matchs DÉJÀ en base, donc il
+# retéléchargerait un à un tous les matchs qu'on vient de supprimer.
+
+# Posé par la purge : patch courant au moment de la reconstruction. Le patch
+# plancher est le plus récent de celui-ci et du patch Data Dragon courant.
+PURGE_MIN_PATCH = "purge_min_patch"
+
+
+def collect_since_key(region: str) -> str:
+    """Clé meta de la borne startTime (epoch secondes) d'une région."""
+    return f"collect_since_s_{region}"
+
+
+def collect_floor_patch(db) -> str | None:
+    """Patch en dessous duquel un match n'est plus inséré (None : aucun)."""
+    candidates = [patch_of(db.get_meta("ddragon_current") or ""),
+                  db.get_meta(PURGE_MIN_PATCH) or ""]
+    valid = [p for p in candidates if patch_sort_key(p) != (-1, -1)]
+    return max(valid, key=patch_sort_key) if valid else None
+
+
+def collect_since(db, region: str) -> int:
+    """Borne basse (epoch secondes) de la liste de matchs d'une région, 0 si
+    aucune."""
+    try:
+        return int(db.get_meta(collect_since_key(region)))
+    except (TypeError, ValueError):
+        return 0
+
+
+def match_end_s(info: dict) -> int | None:
+    """Fin de partie en epoch secondes (gameEndTimestamp, sinon création +
+    durée). None si le payload ne permet pas de la dater."""
+    end = info.get("gameEndTimestamp")
+    if end is None:
+        creation = info.get("gameCreation")
+        if creation is None:
+            return None
+        end = creation + (info.get("gameDuration") or 0) * 1000
+    return int(end) // 1000
+
+
+def raise_collect_since(db, region: str, seconds: int) -> None:
+    """Remonte la borne d'une région, sans jamais la baisser ni la placer
+    dans le futur (une borne future bloquerait toute collecte)."""
+    seconds = min(int(seconds), int(time.time()))
+    if seconds > collect_since(db, region):
+        db.set_meta(collect_since_key(region), str(seconds))
+
+
+def is_before_collect_floor(db, region: str, data: dict) -> bool:
+    """Vrai si le match appartient à un patch antérieur au plancher : il ne
+    doit pas être inséré.
+
+    Effet de bord voulu : la borne startTime de la région remonte juste après
+    la fin de ce match. Sur une plateforme, toutes les parties d'un patch se
+    terminent avant la première du suivant (serveurs coupés au déploiement) :
+    la borne converge en quelques rejets vers le déploiement, et les matchs
+    rejetés ne sont plus jamais redemandés à Riot.
+    """
+    floor = collect_floor_patch(db)
+    if floor is None:
+        return False
+    info = data.get("info") or {}
+    if patch_sort_key(patch_of(info.get("gameVersion", ""))) >= patch_sort_key(floor):
+        return False
+    end = match_end_s(info)
+    if end is not None:
+        raise_collect_since(db, region, end + 1)
+    return True
+
+
 class ParticipantIdError(Exception):
     """Garde-fou du backfill : la dérivation du participant_id n'a pas tenu."""
 

@@ -6,6 +6,7 @@
   python collector.py refresh --study tierlist   arrêt, export, redémarrage
   python collector.py export --study tierlist [--patch 16.14] [--out dir]
   python collector.py backfill-participant-ids   collecteur ARRÊTÉ (Lot 14)
+  python collector.py purge-old-patches [--dry-run] [--yes]   base = patch courant
 """
 
 import argparse
@@ -42,16 +43,22 @@ def main() -> None:
                                  "tourne » (à n'utiliser que sur une base de "
                                  "test)")
 
-    prune_parser = sub.add_parser(
-        "prune",
-        help="supprime les matchs bruts (et timelines) des vieux patchs déjà exportés")
-    prune_parser.add_argument("--keep-patches", type=int, default=2,
-                              help="nombre de patchs récents à conserver (défaut: 2)")
-    prune_parser.add_argument("--exports", default=None,
-                              help="répertoire des études exportées "
-                                   "(défaut: site/data/etudes)")
-    prune_parser.add_argument("--yes", action="store_true",
-                              help="ne pas demander de confirmation")
+    purge_parser = sub.add_parser(
+        "purge-old-patches",
+        help="reconstruit la base avec le seul patch courant (export tierlist "
+             "du patch sortant d'abord, non bloquant) ; sans effet si aucun "
+             "patch antérieur n'est en base")
+    purge_parser.add_argument("--patch", default=None,
+                              help="patch courant imposé (ex: 16.18) ; défaut : "
+                                   "Data Dragon, sinon la base")
+    purge_parser.add_argument("--dry-run", action="store_true",
+                              help="affiche le plan sans rien modifier")
+    purge_parser.add_argument("--yes", action="store_true",
+                              help="ne pas demander de confirmation (cron)")
+    purge_parser.add_argument("--no-export", action="store_true",
+                              help="ne pas exporter le patch sortant avant purge")
+    purge_parser.add_argument("--min-games", type=int, default=200,
+                              help="seuil de cellule de l'export préalable (défaut: 200)")
 
     export_parser = sub.add_parser(
         "export", help="export JSON d'une étude pour le site EloLab")
@@ -101,10 +108,11 @@ def main() -> None:
     elif args.command == "backfill-participant-ids":
         from lolcollector.migrate import run_participant_id_backfill
         return run_participant_id_backfill(cfg, args.force)
-    elif args.command == "prune":
-        from lolcollector.prune import DEFAULT_EXPORTS_DIR, run_prune
-        return run_prune(cfg.db_path, args.keep_patches,
-                         args.exports or DEFAULT_EXPORTS_DIR, args.yes)
+    elif args.command == "purge-old-patches":
+        from lolcollector.compact import run_purge
+        return run_purge(cfg, args.patch, dry_run=args.dry_run,
+                         assume_yes=args.yes, export=not args.no_export,
+                         min_games=args.min_games)
     elif args.command == "stats":
         from lolcollector.stats import print_stats
         print_stats(cfg.db_path)

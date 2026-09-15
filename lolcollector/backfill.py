@@ -22,7 +22,8 @@ import time
 import aiohttp
 
 from .config import REGIONS, Config
-from .db import Database, patch_of
+# patch_sort_key vit dans db (partagé avec la purge) ; réexporté ici
+from .db import Database, patch_of, patch_sort_key  # noqa: F401
 from .items import LegendaryItems
 from .ratelimit import RateLimiter
 from .riot import FatalApiError, RiotClient
@@ -30,22 +31,6 @@ from .timeline import is_sampled, mark_timeline, store_timeline, stored_count_fo
 from .worker import setup_logging
 
 PROGRESS_EVERY = 50
-
-
-def patch_sort_key(patch: str) -> tuple[int, int]:
-    """Clé de tri numérique d'un patch : (16, 9) < (16, 15) < (16, 16).
-
-    Le tri lexicographique de SQLite est faux ici — « 16.9 » y passe après
-    « 16.16 », ce qui ferait traiter les vieux patchs avant les récents.
-
-    Un patch au format inattendu (« PBE », « 16 » sans mineur, valeur non
-    numérique) prend (-1, -1) : il reste traité, mais après tous les patchs
-    valides en ordre décroissant, plutôt que de faire échouer le tri.
-    """
-    parts = str(patch).split(".")
-    if len(parts) < 2 or not (parts[0].isdigit() and parts[1].isdigit()):
-        return (-1, -1)
-    return (int(parts[0]), int(parts[1]))
 
 
 def candidates(db: Database, limit: int, rate: float, target_per_patch: int = 0):
