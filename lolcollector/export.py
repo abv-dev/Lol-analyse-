@@ -291,6 +291,108 @@ def _write_json(path: str, payload, compact: bool = False) -> None:
     os.replace(tmp, path)
 
 
+def compute_tierlist(conn: sqlite3.Connection, patch: str,
+                     ddragon_version: str | None, min_games: int = 200):
+    """Agrégats d'une tier list, sans aucune écriture en base.
+
+    Fonctionne sur une connexion en lecture seule (mode=ro) : c'est ce que
+    fait le générateur d'études pendant que le collecteur tourne. Rend
+    (rows, role_rows, cells, first_inserted_at, last_inserted_at) ; cells
+    vide si le patch n'a aucun match.
+    """
+    cells = {
+        (region, bucket): count
+        for region, bucket, count in conn.execute(CELLS_SQL, (patch,))
+    }
+    if not cells:
+        return [], [], {}, None, None
+
+    # picks_by_role : (champ, region, bucket, role) -> (games, wins)
+    # picks         : (champ, region, bucket)       -> (games, wins),
+    #                 somme de TOUTES les valeurs de team_position, y
+    #                 compris celles hors des cinq postes connus.
+    picks_by_role: dict[tuple, tuple[int, int]] = {}
+    picks: dict[tuple, tuple[int, int]] = {}
+    for region, bucket, champ, position, games, wins in conn.execute(
+            PICKS_SQL, (patch,)):
+        wins = wins or 0
+        total = picks.get((champ, region, bucket), (0, 0))
+        picks[(champ, region, bucket)] = (total[0] + games, total[1] + wins)
+        if position in ROLES:
+            picks_by_role[(champ, region, bucket, position)] = (games, wins)
+    bans = {
+        (champ, region, bucket): count
+        for region, bucket, champ, count in conn.execute(BANS_SQL, (patch,))
+    }
+
+    names = fetch_champion_names(ddragon_version)
+
+    def resolve_name(champ_id: int) -> str:
+        if champ_id in names:
+            return names[champ_id]
+        row = conn.execute(
+            "SELECT champion_name FROM participants"
+            " WHERE champion_id = ? AND patch = ? LIMIT 1",
+            (champ_id, patch),
+        ).fetchone()
+        return row[0] if row and row[0] else str(champ_id)
+
+    rows = []
+    for champ, region, bucket in sorted(set(picks) | set(bans)):
+        games, wins = picks.get((champ, region, bucket), (0, 0))
+        ban_count = bans.get((champ, region, bucket), 0)
+        cell_matches = cells.get((region, bucket), 0)
+        ci_low, ci_high = wilson_ci(wins, games)
+        rows.append({
+            "champion_id": champ,
+            "champion_name": resolve_name(champ),
+            "region": region,
+            "bucket": bucket,
+            "games": games,
+            "wins": wins,
+            "winrate": round(wins / games, 4) if games else None,
+            "winrate_ci_low": round(ci_low, 4) if games else None,
+            "winrate_ci_high": round(ci_high, 4) if games else None,
+            "pick_rate": round(games / cell_matches, 4) if cell_matches else None,
+            "ban_rate": round(ban_count / cell_matches, 4) if cell_matches else None,
+            "bans": ban_count,
+            "insufficient_sample": games < min_games,
+        })
+
+    # Cellules par poste, volontairement réduites aux compteurs bruts.
+    #
+    # Ce fichier a cinq fois plus de lignes que tierlist.json et il part
+    # dans la page servie au lecteur : chaque champ compte. Or winrate,
+    # bornes de Wilson, pick rate et insufficient_sample sont tous
+    # dérivables de (games, wins, matchs de la cellule, min_cell_games) —
+    # et de fait, ni le tableau du site ni verify_study.py ne lisent les
+    # champs dérivés de tierlist.json : les deux les recalculent avec la
+    # même formule. Les stocker ici les rendrait juste plus gros.
+    #
+    # Pas de champion_name non plus (jointure par champion_id sur le
+    # fichier principal), et surtout pas de bans : un ban vise un
+    # champion pour toute la partie, il n'a pas de poste. Écrire 0
+    # laisserait croire que personne ne bannit ce champion à ce poste.
+    role_rows = [
+        {
+            "champion_id": champ,
+            "region": region,
+            "bucket": bucket,
+            "role": role,
+            "games": picks_by_role[(champ, region, bucket, role)][0],
+            "wins": picks_by_role[(champ, region, bucket, role)][1],
+        }
+        for champ, region, bucket, role in sorted(picks_by_role)
+    ]
+
+    first, last = conn.execute(
+        "SELECT MIN(inserted_at), MAX(inserted_at) FROM matches WHERE patch = ?",
+        (patch,),
+    ).fetchone()
+
+    return rows, role_rows, cells, first, last
+
+
 def export_tierlist(db_path: str, patch: str | None, out_dir: str | None,
                     min_games: int = 200, force: bool = False,
                     study: str = "tierlist",
@@ -327,95 +429,10 @@ def export_tierlist(db_path: str, patch: str | None, out_dir: str | None,
             _assert_covering_plan(conn, sql, (patch,))
         print("Plans de requête vérifiés : index couvrants utilisés.")
 
-        cells = {
-            (region, bucket): count
-            for region, bucket, count in conn.execute(CELLS_SQL, (patch,))
-        }
+        rows, role_rows, cells, first, last = compute_tierlist(
+            conn, patch, ddragon_version, min_games)
         if not cells:
             raise SystemExit(f"Aucun match en base pour le patch {patch}")
-
-        # picks_by_role : (champ, region, bucket, role) -> (games, wins)
-        # picks         : (champ, region, bucket)       -> (games, wins),
-        #                 somme de TOUTES les valeurs de team_position, y
-        #                 compris celles hors des cinq postes connus.
-        picks_by_role: dict[tuple, tuple[int, int]] = {}
-        picks: dict[tuple, tuple[int, int]] = {}
-        for region, bucket, champ, position, games, wins in conn.execute(
-                PICKS_SQL, (patch,)):
-            wins = wins or 0
-            total = picks.get((champ, region, bucket), (0, 0))
-            picks[(champ, region, bucket)] = (total[0] + games, total[1] + wins)
-            if position in ROLES:
-                picks_by_role[(champ, region, bucket, position)] = (games, wins)
-        bans = {
-            (champ, region, bucket): count
-            for region, bucket, champ, count in conn.execute(BANS_SQL, (patch,))
-        }
-
-        names = fetch_champion_names(ddragon_version)
-
-        def resolve_name(champ_id: int) -> str:
-            if champ_id in names:
-                return names[champ_id]
-            row = conn.execute(
-                "SELECT champion_name FROM participants"
-                " WHERE champion_id = ? AND patch = ? LIMIT 1",
-                (champ_id, patch),
-            ).fetchone()
-            return row[0] if row and row[0] else str(champ_id)
-
-        rows = []
-        for champ, region, bucket in sorted(set(picks) | set(bans)):
-            games, wins = picks.get((champ, region, bucket), (0, 0))
-            ban_count = bans.get((champ, region, bucket), 0)
-            cell_matches = cells.get((region, bucket), 0)
-            ci_low, ci_high = wilson_ci(wins, games)
-            rows.append({
-                "champion_id": champ,
-                "champion_name": resolve_name(champ),
-                "region": region,
-                "bucket": bucket,
-                "games": games,
-                "wins": wins,
-                "winrate": round(wins / games, 4) if games else None,
-                "winrate_ci_low": round(ci_low, 4) if games else None,
-                "winrate_ci_high": round(ci_high, 4) if games else None,
-                "pick_rate": round(games / cell_matches, 4) if cell_matches else None,
-                "ban_rate": round(ban_count / cell_matches, 4) if cell_matches else None,
-                "bans": ban_count,
-                "insufficient_sample": games < min_games,
-            })
-
-        # Cellules par poste, volontairement réduites aux compteurs bruts.
-        #
-        # Ce fichier a cinq fois plus de lignes que tierlist.json et il part
-        # dans la page servie au lecteur : chaque champ compte. Or winrate,
-        # bornes de Wilson, pick rate et insufficient_sample sont tous
-        # dérivables de (games, wins, matchs de la cellule, min_cell_games) —
-        # et de fait, ni le tableau du site ni verify_study.py ne lisent les
-        # champs dérivés de tierlist.json : les deux les recalculent avec la
-        # même formule. Les stocker ici les rendrait juste plus gros.
-        #
-        # Pas de champion_name non plus (jointure par champion_id sur le
-        # fichier principal), et surtout pas de bans : un ban vise un
-        # champion pour toute la partie, il n'a pas de poste. Écrire 0
-        # laisserait croire que personne ne bannit ce champion à ce poste.
-        role_rows = [
-            {
-                "champion_id": champ,
-                "region": region,
-                "bucket": bucket,
-                "role": role,
-                "games": picks_by_role[(champ, region, bucket, role)][0],
-                "wins": picks_by_role[(champ, region, bucket, role)][1],
-            }
-            for champ, region, bucket, role in sorted(picks_by_role)
-        ]
-
-        first, last = conn.execute(
-            "SELECT MIN(inserted_at), MAX(inserted_at) FROM matches WHERE patch = ?",
-            (patch,),
-        ).fetchone()
 
         # Second garde-fou : un export sans une seule cellule au-dessus du
         # seuil n'est pas une étude, c'est un écrasement. C'est exactement

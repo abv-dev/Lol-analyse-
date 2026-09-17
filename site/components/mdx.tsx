@@ -4,6 +4,7 @@ import KeyFigure from "@/components/KeyFigure";
 import Stat from "@/components/Stat";
 import StudyMeta from "@/components/StudyMeta";
 import TierTable from "@/components/TierTable";
+import IntervalChart from "@/components/charts/IntervalChart";
 import WinrateChart, { type WinrateDatum } from "@/components/charts/WinrateChart";
 import { readStudyData, readStudyDataOptional, type Etude } from "@/lib/etudes";
 import {
@@ -65,6 +66,30 @@ export function mdxComponents(etude: Etude): MDXComponents {
       const roleRows = readStudyDataOptional<RoleCell[]>(
         etude.family, etude.patchSlug, roles);
       return <TierTable rows={rows} meta={meta} roleRows={roleRows} />;
+    },
+    // Études générées : graphique décrit dans study.json, valeurs = faits
+    // vérifiés par scripts/verify_generated.py.
+    IntervalChart: ({ id }: { id: string }) => {
+      type Fact = { value: number; display: string };
+      const study = data<{
+        facts: Record<string, Fact>;
+        charts: Record<string, {
+          title: string;
+          subtitle?: string;
+          rows: { label: string; wr: string; lo: string; hi: string; games: string }[];
+        }>;
+      }>("study.json");
+      const spec = study.charts[id];
+      if (!spec) throw new Error(`[etudes] graphique inconnu : ${id}`);
+      const rows = spec.rows.map((r) => ({
+        label: r.label,
+        wr: study.facts[r.wr].value,
+        lo: study.facts[r.lo].value,
+        hi: study.facts[r.hi].value,
+        wrLabel: study.facts[r.wr].display,
+        gamesLabel: `${study.facts[r.games].display} parties`,
+      }));
+      return <IntervalChart title={spec.title} subtitle={spec.subtitle} rows={rows} />;
     },
     // ATTENTION : dans les MDX d'étude, les props se passent en CHAÎNE
     // (top="14"), jamais en expression JSX (top={14}) — ce pipeline MDX
