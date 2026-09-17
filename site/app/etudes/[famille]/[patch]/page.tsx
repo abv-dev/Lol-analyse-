@@ -5,7 +5,7 @@ import PatchSelector from "@/components/PatchSelector";
 import Support from "@/components/Support";
 import { mdxComponents } from "@/components/mdx";
 import { getAllEtudes, getEtude } from "@/lib/etudes";
-import { FEED_ALTERNATE } from "@/lib/site";
+import { FEED_ALTERNATE, OG_IMAGE, SITE_NAME } from "@/lib/site";
 
 // SSG strict : toutes les versions d'études sont générées au build.
 export const dynamicParams = false;
@@ -35,16 +35,20 @@ export async function generateMetadata({
     alternates: { canonical: url, ...FEED_ALTERNATE },
     openGraph: {
       type: "article",
-      title: `${meta.title} — EloLab`,
+      siteName: SITE_NAME,
+      locale: "fr_FR",
+      title: `${meta.title} — ${SITE_NAME}`,
       description: meta.description,
       url,
-      images: [{ url: "/og.png", width: 1200, height: 630, alt: "EloLab" }],
+      publishedTime: meta.date,
+      tags: meta.tags,
+      images: [OG_IMAGE],
     },
     twitter: {
       card: "summary_large_image",
-      title: `${meta.title} — EloLab`,
+      title: `${meta.title} — ${SITE_NAME}`,
       description: meta.description,
-      images: ["/og.png"],
+      images: [OG_IMAGE.url],
     },
   };
 }

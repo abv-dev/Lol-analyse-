@@ -47,6 +47,12 @@ Z_95 = 1.959963984540054  # quantile 97.5 % de la loi normale
 DEFAULT_EXPORTS_ROOT = os.path.join("site", "data", "etudes")
 PATCH_SLUG_RE = re.compile(r"^\d+-\d+$")
 
+# Gate qualité : une région sous ce volume de matchs sur le patch rend
+# l'export refusé. Sous ce seuil, les découpages par région × bucket ne
+# laissent presque aucune cellule exploitable et une comparaison entre
+# régions n'aurait pas de sens.
+MIN_REGION_MATCHES = 20_000
+
 
 def patch_to_slug(patch: str) -> str:
     """'16.15' -> '16-15' (segment d'URL, et nom de dossier de l'étude)."""
@@ -287,7 +293,8 @@ def _write_json(path: str, payload, compact: bool = False) -> None:
 
 def export_tierlist(db_path: str, patch: str | None, out_dir: str | None,
                     min_games: int = 200, force: bool = False,
-                    study: str = "tierlist") -> None:
+                    study: str = "tierlist",
+                    min_region_matches: int = MIN_REGION_MATCHES) -> None:
     if not os.path.exists(db_path):
         raise SystemExit(f"Base introuvable : {db_path}")
     started = time.time()
@@ -430,6 +437,23 @@ def export_tierlist(db_path: str, patch: str | None, out_dir: str | None,
             print(f"! --force : export écrit sans aucune cellule à "
                   f"{min_games} games.")
 
+        region_matches: dict[str, int] = {}
+        for (region, _), count in cells.items():
+            region_matches[region] = region_matches.get(region, 0) + count
+        thin = {r: n for r, n in sorted(region_matches.items())
+                if n < min_region_matches}
+        if thin and not force:
+            detail = ", ".join(f"{r} : {n}" for r, n in thin.items())
+            raise ExportRefused(
+                f"gate qualité : moins de {min_region_matches} matchs sur le "
+                f"patch {patch} pour {detail}.\n"
+                f"  Rien n'a été écrit dans {out_dir}.\n"
+                f"  Pour écrire quand même : --force."
+            )
+        if thin:
+            print(f"! --force : export écrit avec des régions sous "
+                  f"{min_region_matches} matchs ({', '.join(thin)}).")
+
         os.makedirs(out_dir, exist_ok=True)
         _write_json(os.path.join(out_dir, "tierlist.json"), rows)
         # Compact (pas d'indent) : ce fichier est cinq fois plus gros et il
@@ -448,6 +472,7 @@ def export_tierlist(db_path: str, patch: str | None, out_dir: str | None,
             "roles": list(ROLES),
             "role_cells": len(role_rows),
             "min_cell_games": min_games,
+            "min_region_matches": min_region_matches,
             "total_cells": len(rows),
             "usable_cells": usable,
             "cells": [

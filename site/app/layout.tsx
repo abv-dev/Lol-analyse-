@@ -4,6 +4,7 @@ import Footer from "@/components/Footer";
 import Logo from "@/components/Logo";
 import {
   FEED_ALTERNATE,
+  OG_IMAGE,
   SITE_DESCRIPTION as DESCRIPTION,
   SITE_NAME,
   SITE_TITLE as TITLE,
@@ -34,14 +35,14 @@ export const metadata: Metadata = {
     locale: "fr_FR",
     title: TITLE,
     description: DESCRIPTION,
-    url: siteUrl,
-    images: [{ url: "/og.png", width: 1200, height: 630, alt: SITE_NAME }],
+    url: "/",
+    images: [OG_IMAGE],
   },
   twitter: {
     card: "summary_large_image",
     title: TITLE,
     description: DESCRIPTION,
-    images: ["/og.png"],
+    images: [OG_IMAGE.url],
   },
 };
 
@@ -54,12 +55,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Link href="/" aria-label="EloLab — accueil" className="shrink-0">
               <Logo />
             </Link>
-            <nav className="flex gap-6 text-sm">
+            <nav className="flex gap-4 text-sm sm:gap-6">
               <Link href="/" className="hover:text-zinc-100">
                 Études
               </Link>
               <Link href="/methodologie" className="hover:text-zinc-100">
                 Méthodologie
+              </Link>
+              <Link href="/a-propos" className="hover:text-zinc-100">
+                À propos
               </Link>
             </nav>
           </div>

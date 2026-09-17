@@ -78,6 +78,9 @@ PUBLISHED = os.path.join("site", "data", "etudes", "tierlist", "16-15")
 
 
 def export(patch, out=None, **kw):
+    # La base de test compte quelques centaines de matchs par région : le
+    # gate régional (20 000 en production) est testé à part, section 9.
+    kw.setdefault("min_region_matches", 100)
     return export_tierlist("data/matches.db", patch, out, **kw)
 
 
@@ -202,6 +205,23 @@ sql = conn.execute("SELECT sql FROM sqlite_master WHERE name = "
 conn.close()
 assert "team_position" in sql, sql
 print("OK  index obsolète détecté et reconstruit avec team_position")
+
+
+
+# --- 9) gate qualité : volume minimal de matchs par région -----------------
+
+GATED = os.path.join(W, "gate-region")
+try:
+    export("16.15", GATED, min_region_matches=20_000)
+    raise AssertionError("une région sous 20 000 matchs aurait dû être refusée")
+except SystemExit as exc:
+    assert "gate qualité" in str(exc) and "europe" in str(exc), exc
+assert not os.path.exists(os.path.join(GATED, "tierlist.json"))
+print("OK  gate régional : région sous 20 000 matchs refusée, rien d'écrit")
+
+meta_gate = export("16.15", GATED, min_region_matches=20_000, force=True)
+assert meta_gate["min_region_matches"] == 20_000
+print("OK  --force passe outre le gate régional et le trace dans meta.json")
 
 shutil.rmtree(W, ignore_errors=True)
 print("TESTS EXPORT OK")

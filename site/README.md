@@ -76,14 +76,17 @@ de publication complète est dans le README racine.
 
 - `/` — liste des études (titre, date, patch, tags), plus récentes en premier
 - `/etudes/[famille]/[patch]` — étude versionnée ; `/etudes/[famille]` — canonique
-- `/methodologie` — sampling par bucket de rank, approximation du tier, limites
+- `/methodologie` — gate qualité (20 000 matchs/région), sampling par bucket de rank, reproductibilité, limites
+- `/a-propos` — projet communautaire, sans publicité, financement Ko-fi
+- `/mentions-legales` — éditeur, hébergeur, disclaimer Riot, données personnelles
+- `/sitemap.xml`, `/robots.txt` — générés depuis la liste des études
 - Footer : mention légale Riot obligatoire (texte exact du boilerplate)
 
 ## Variables d'environnement
 
 | Variable | Rôle |
 | --- | --- |
-| `NEXT_PUBLIC_KOFI_URL` | Lien de soutien (ex. `https://ko-fi.com/elolab`). **Absente = le bloc de soutien ne s'affiche pas du tout**, aucune trace dans le HTML. |
+| `NEXT_PUBLIC_KOFI_URL` | Lien de soutien. Défaut : `https://ko-fi.com/elolab` (footer, page À propos, ligne de soutien sous les études). |
 | `NEXT_PUBLIC_SITE_URL` | Base absolue des métadonnées (`og:image`, canoniques). À défaut, l'URL de production Vercel, sinon `https://elolab.vercel.app`. |
 
 En local : `site/.env.local` (non versionné). Sur Vercel : *Settings → Environment Variables*.

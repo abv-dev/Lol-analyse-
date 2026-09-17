@@ -225,6 +225,12 @@ c'est attendu, et distinguable d'un vrai `0`.
    - `meta.json` : patch, période de collecte, échantillon total et par
      cellule, régions, nombre de cellules exploitables.
 
+   **Gate qualité** : l'export est refusé (rien n'est écrit) si une région
+   compte moins de 20 000 matchs sur le patch (`MIN_REGION_MATCHES` dans
+   `lolcollector/export.py`, contournable par `--force`). Ce seuil est
+   annoncé sur la page Méthodologie du site : ne pas le modifier sans la
+   mettre à jour.
+
    Le premier export crée les index (une seule fois, quelques minutes sur
    une grosse base) ; les suivants prennent quelques dizaines de secondes.
 

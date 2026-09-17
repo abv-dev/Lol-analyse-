@@ -34,3 +34,50 @@ export const FEED_ALTERNATE = {
     "application/rss+xml": [{ url: FEED_PATH, title: FEED_TITLE }],
   },
 };
+
+/** Page de soutien. Surchargeable par NEXT_PUBLIC_KOFI_URL. */
+export const KOFI_URL = process.env.NEXT_PUBLIC_KOFI_URL ?? "https://ko-fi.com/elolab";
+
+/** Code source du collecteur, du pipeline d'export et du site. */
+export const REPO_URL = "https://github.com/abv-dev/Lol-analyse-";
+
+export const OG_IMAGE = { url: "/og.png", width: 1200, height: 630, alt: SITE_NAME };
+
+/**
+ * Métadonnées complètes d'une page statique.
+ *
+ * Next remplace `openGraph`, `twitter` et `alternates` au lieu de les
+ * fusionner avec ceux du layout : une page qui ne pose que `title` et
+ * `description` serait partagée sur Discord ou X avec le titre du site.
+ */
+export function pageMetadata({
+  title,
+  description,
+  path,
+}: {
+  title: string;
+  description: string;
+  path: string;
+}) {
+  const fullTitle = `${title} — ${SITE_NAME}`;
+  return {
+    title,
+    description,
+    alternates: { canonical: path, ...FEED_ALTERNATE },
+    openGraph: {
+      type: "website" as const,
+      siteName: SITE_NAME,
+      locale: "fr_FR",
+      title: fullTitle,
+      description,
+      url: path,
+      images: [OG_IMAGE],
+    },
+    twitter: {
+      card: "summary_large_image" as const,
+      title: fullTitle,
+      description,
+      images: [OG_IMAGE.url],
+    },
+  };
+}
