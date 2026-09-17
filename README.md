@@ -343,6 +343,19 @@ définition a changé** — sinon un index créé par une version antérieure
 resterait en place et les requêtes retourneraient à la table pour 22 M de
 lignes.
 
+## Études automatiques (`scripts/generate_study.py`)
+
+1. `scripts/study_job.sh weekly` publie un sujet par semaine, pris dans l'ordre de `studies/topics.json` (gabarits du Lot 3), qui n'a pas encore été publié sur le patch courant. L'état est tenu dans `studies/state.json`.
+2. `scripts/study_job.sh tierlist` publie la tier list du patch, une fois par patch, dès que les gates passent. Pas de prose LLM : les textes sont fixes.
+3. Gates, sinon arrêt sans rien écrire (code 2) : au moins **20 000 matchs par région**, patch collecté depuis au moins 3 jours et au moins 50 000 matchs au total (`QUEUE_MIN_PATCH_AGE_DAYS`, `QUEUE_MIN_PATCH_MATCHES`).
+4. `matches.db` est lue uniquement en `mode=ro`. La lecture se fait sous verrou partagé avec la purge : si une purge est en cours, le job s'arrête (code 4).
+5. Les chiffres, tableaux et graphiques viennent du code (`lolcollector/studygen.py`) ; chaque chiffre est un « fait » enregistré avec sa formule dans `study.json`.
+6. La prose est écrite par `claude -p` (`ELOLAB_WRITER_MODEL`, `claude-opus-5` par défaut), qui cite les chiffres uniquement par repères `{{id}}`. Un chiffre en dur, un repère inconnu ou un terme interdit par la charte provoque un rejet ; au bout de 3 rejets, le job s'arrête (code 3).
+7. `scripts/verify_generated.py` recalcule chaque fait depuis les JSON exportés et vérifie chaque nombre du MDX dans son contexte champion ; pour la tier list, `verify_study.py` s'ajoute.
+8. Ensuite `npm run build`, puis commit et push sur `main`, et Vercel déploie. Tout échec avant le commit supprime les fichiers créés.
+9. Cron (`crontab -e`) : `15 7 * * 1 /home/aristide/lol-studies-collector/scripts/study_job.sh weekly` et `45 */6 * * * /home/aristide/lol-studies-collector/scripts/study_job.sh tierlist`.
+10. Journal : `logs/studies.log`. Tests hors ligne : `python3 tests/test_generate_study.py`.
+
 ## Diffusion
 
 ### Flux RSS — `/rss.xml`
