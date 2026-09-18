@@ -1,0 +1,1313 @@
+{
+ "topic": "tierlist-globale",
+ "patch": "16.18",
+ "generated_at": "2026-09-18T18:45:58Z",
+ "writer_model": null,
+ "facts": {
+  "param.volume": {
+   "spec": {
+    "kind": "param",
+    "value": 5000
+   },
+   "value": 5000,
+   "display": "5 000",
+   "champion_id": null,
+   "meaning": "seuil de volume"
+  },
+  "global.matches": {
+   "spec": {
+    "kind": "matches",
+    "scope": {}
+   },
+   "value": 371021,
+   "display": "371 021",
+   "champion_id": null,
+   "meaning": "matchs du patch"
+  },
+  "param.min_champ": {
+   "spec": {
+    "kind": "param",
+    "value": 1000
+   },
+   "value": 1000,
+   "display": "1 000",
+   "champion_id": null,
+   "meaning": "parties minimum pour être compté"
+  },
+  "global.count.above": {
+   "spec": {
+    "kind": "count",
+    "scopes": [
+     {}
+    ],
+    "min_games": 1000,
+    "condition": "above"
+   },
+   "value": 52,
+   "display": "52",
+   "champion_id": null,
+   "meaning": "champions au-dessus de 50 %"
+  },
+  "global.count.below": {
+   "spec": {
+    "kind": "count",
+    "scopes": [
+     {}
+    ],
+    "min_games": 1000,
+    "condition": "below"
+   },
+   "value": 41,
+   "display": "41",
+   "champion_id": null,
+   "meaning": "champions en dessous de 50 %"
+  },
+  "global.count.contains": {
+   "spec": {
+    "kind": "count",
+    "scopes": [
+     {}
+    ],
+    "min_games": 1000,
+    "condition": "contains"
+   },
+   "value": 80,
+   "display": "80",
+   "champion_id": null,
+   "meaning": "champions indistinguables de 50 %"
+  },
+  "yone.global.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 777,
+    "scope": {}
+   },
+   "value": 0.5049788714558033,
+   "display": "50,50 %",
+   "champion_id": 777,
+   "meaning": "winrate de Yone (toutes régions, tous ranks)"
+  },
+  "yone.global.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 777,
+    "scope": {}
+   },
+   "value": 0.501400902693924,
+   "display": "50,14",
+   "champion_id": 777,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Yone (toutes régions, tous ranks)"
+  },
+  "yone.global.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 777,
+    "scope": {}
+   },
+   "value": 0.508556330329249,
+   "display": "50,86",
+   "champion_id": 777,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Yone (toutes régions, tous ranks)"
+  },
+  "yone.global.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 777,
+    "scope": {}
+   },
+   "value": 75017,
+   "display": "75 017",
+   "champion_id": 777,
+   "meaning": "parties de Yone (toutes régions, tous ranks)"
+  },
+  "yone.global.pick_rate": {
+   "spec": {
+    "kind": "pick_rate",
+    "champion_id": 777,
+    "scope": {}
+   },
+   "value": 0.20219071157697274,
+   "display": "20,22 %",
+   "champion_id": 777,
+   "meaning": "pick rate de Yone (toutes régions, tous ranks)"
+  },
+  "jinx.global.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 222,
+    "scope": {}
+   },
+   "value": 0.5163191087787138,
+   "display": "51,63 %",
+   "champion_id": 222,
+   "meaning": "winrate de Jinx (toutes régions, tous ranks)"
+  },
+  "jinx.global.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 222,
+    "scope": {}
+   },
+   "value": 0.5124814866527545,
+   "display": "51,25",
+   "champion_id": 222,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Jinx (toutes régions, tous ranks)"
+  },
+  "jinx.global.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 222,
+    "scope": {}
+   },
+   "value": 0.5201548071222214,
+   "display": "52,02",
+   "champion_id": 222,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Jinx (toutes régions, tous ranks)"
+  },
+  "jinx.global.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 222,
+    "scope": {}
+   },
+   "value": 65169,
+   "display": "65 169",
+   "champion_id": 222,
+   "meaning": "parties de Jinx (toutes régions, tous ranks)"
+  },
+  "jinx.global.pick_rate": {
+   "spec": {
+    "kind": "pick_rate",
+    "champion_id": 222,
+    "scope": {}
+   },
+   "value": 0.1756477396158169,
+   "display": "17,56 %",
+   "champion_id": 222,
+   "meaning": "pick rate de Jinx (toutes régions, tous ranks)"
+  },
+  "caitlyn.global.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 51,
+    "scope": {}
+   },
+   "value": 0.4922283004540594,
+   "display": "49,22 %",
+   "champion_id": 51,
+   "meaning": "winrate de Caitlyn (toutes régions, tous ranks)"
+  },
+  "caitlyn.global.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 51,
+    "scope": {}
+   },
+   "value": 0.48837153574533904,
+   "display": "48,84",
+   "champion_id": 51,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Caitlyn (toutes régions, tous ranks)"
+  },
+  "caitlyn.global.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 51,
+    "scope": {}
+   },
+   "value": 0.49608599041767626,
+   "display": "49,61",
+   "champion_id": 51,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Caitlyn (toutes régions, tous ranks)"
+  },
+  "caitlyn.global.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 51,
+    "scope": {}
+   },
+   "value": 64529,
+   "display": "64 529",
+   "champion_id": 51,
+   "meaning": "parties de Caitlyn (toutes régions, tous ranks)"
+  },
+  "caitlyn.global.pick_rate": {
+   "spec": {
+    "kind": "pick_rate",
+    "champion_id": 51,
+    "scope": {}
+   },
+   "value": 0.17392276987016908,
+   "display": "17,39 %",
+   "champion_id": 51,
+   "meaning": "pick rate de Caitlyn (toutes régions, tous ranks)"
+  },
+  "kaisa.global.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 145,
+    "scope": {}
+   },
+   "value": 0.49603933783420556,
+   "display": "49,60 %",
+   "champion_id": 145,
+   "meaning": "winrate de Kai'Sa (toutes régions, tous ranks)"
+  },
+  "kaisa.global.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 145,
+    "scope": {}
+   },
+   "value": 0.49214310856176047,
+   "display": "49,21",
+   "champion_id": 145,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Kai'Sa (toutes régions, tous ranks)"
+  },
+  "kaisa.global.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 145,
+    "scope": {}
+   },
+   "value": 0.49993604819813525,
+   "display": "49,99",
+   "champion_id": 145,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Kai'Sa (toutes régions, tous ranks)"
+  },
+  "kaisa.global.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 145,
+    "scope": {}
+   },
+   "value": 63247,
+   "display": "63 247",
+   "champion_id": 145,
+   "meaning": "parties de Kai'Sa (toutes régions, tous ranks)"
+  },
+  "kaisa.global.pick_rate": {
+   "spec": {
+    "kind": "pick_rate",
+    "champion_id": 145,
+    "scope": {}
+   },
+   "value": 0.17046743984841828,
+   "display": "17,05 %",
+   "champion_id": 145,
+   "meaning": "pick rate de Kai'Sa (toutes régions, tous ranks)"
+  },
+  "jhin.global.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 202,
+    "scope": {}
+   },
+   "value": 0.49876819345845896,
+   "display": "49,88 %",
+   "champion_id": 202,
+   "meaning": "winrate de Jhin (toutes régions, tous ranks)"
+  },
+  "jhin.global.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 202,
+    "scope": {}
+   },
+   "value": 0.4948230820465258,
+   "display": "49,48",
+   "champion_id": 202,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Jhin (toutes régions, tous ranks)"
+  },
+  "jhin.global.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 202,
+    "scope": {}
+   },
+   "value": 0.5027134582510365,
+   "display": "50,27",
+   "champion_id": 202,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Jhin (toutes régions, tous ranks)"
+  },
+  "jhin.global.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 202,
+    "scope": {}
+   },
+   "value": 61698,
+   "display": "61 698",
+   "champion_id": 202,
+   "meaning": "parties de Jhin (toutes régions, tous ranks)"
+  },
+  "jhin.global.pick_rate": {
+   "spec": {
+    "kind": "pick_rate",
+    "champion_id": 202,
+    "scope": {}
+   },
+   "value": 0.16629247401090505,
+   "display": "16,63 %",
+   "champion_id": 202,
+   "meaning": "pick rate de Jhin (toutes régions, tous ranks)"
+  },
+  "sylas.global.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 517,
+    "scope": {}
+   },
+   "value": 0.4958635963912321,
+   "display": "49,59 %",
+   "champion_id": 517,
+   "meaning": "winrate de Sylas (toutes régions, tous ranks)"
+  },
+  "sylas.global.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 517,
+    "scope": {}
+   },
+   "value": 0.4919094219177328,
+   "display": "49,19",
+   "champion_id": 517,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Sylas (toutes régions, tous ranks)"
+  },
+  "sylas.global.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 517,
+    "scope": {}
+   },
+   "value": 0.49981828836563186,
+   "display": "49,98",
+   "champion_id": 517,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Sylas (toutes régions, tous ranks)"
+  },
+  "sylas.global.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 517,
+    "scope": {}
+   },
+   "value": 61406,
+   "display": "61 406",
+   "champion_id": 517,
+   "meaning": "parties de Sylas (toutes régions, tous ranks)"
+  },
+  "sylas.global.pick_rate": {
+   "spec": {
+    "kind": "pick_rate",
+    "champion_id": 517,
+    "scope": {}
+   },
+   "value": 0.16550545656445323,
+   "display": "16,55 %",
+   "champion_id": 517,
+   "meaning": "pick rate de Sylas (toutes régions, tous ranks)"
+  },
+  "lux.global.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 99,
+    "scope": {}
+   },
+   "value": 0.500234828407528,
+   "display": "50,02 %",
+   "champion_id": 99,
+   "meaning": "winrate de Lux (toutes régions, tous ranks)"
+  },
+  "lux.global.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 99,
+    "scope": {}
+   },
+   "value": 0.49622138639987623,
+   "display": "49,62",
+   "champion_id": 99,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Lux (toutes régions, tous ranks)"
+  },
+  "lux.global.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 99,
+    "scope": {}
+   },
+   "value": 0.5042482401550054,
+   "display": "50,42",
+   "champion_id": 99,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Lux (toutes régions, tous ranks)"
+  },
+  "lux.global.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 99,
+    "scope": {}
+   },
+   "value": 59618,
+   "display": "59 618",
+   "champion_id": 99,
+   "meaning": "parties de Lux (toutes régions, tous ranks)"
+  },
+  "lux.global.pick_rate": {
+   "spec": {
+    "kind": "pick_rate",
+    "champion_id": 99,
+    "scope": {}
+   },
+   "value": 0.16068632233754962,
+   "display": "16,07 %",
+   "champion_id": 99,
+   "meaning": "pick rate de Lux (toutes régions, tous ranks)"
+  },
+  "yasuo.global.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 157,
+    "scope": {}
+   },
+   "value": 0.5015702264249154,
+   "display": "50,16 %",
+   "champion_id": 157,
+   "meaning": "winrate de Yasuo (toutes régions, tous ranks)"
+  },
+  "yasuo.global.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 157,
+    "scope": {}
+   },
+   "value": 0.4974882596379022,
+   "display": "49,75",
+   "champion_id": 157,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Yasuo (toutes régions, tous ranks)"
+  },
+  "yasuo.global.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 157,
+    "scope": {}
+   },
+   "value": 0.5056519839100067,
+   "display": "50,57",
+   "champion_id": 157,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Yasuo (toutes régions, tous ranks)"
+  },
+  "yasuo.global.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 157,
+    "scope": {}
+   },
+   "value": 57635,
+   "display": "57 635",
+   "champion_id": 157,
+   "meaning": "parties de Yasuo (toutes régions, tous ranks)"
+  },
+  "yasuo.global.pick_rate": {
+   "spec": {
+    "kind": "pick_rate",
+    "champion_id": 157,
+    "scope": {}
+   },
+   "value": 0.15534161139126895,
+   "display": "15,53 %",
+   "champion_id": 157,
+   "meaning": "pick rate de Yasuo (toutes régions, tous ranks)"
+  },
+  "yunara.global.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 804,
+    "scope": {}
+   },
+   "value": 0.5013614984734714,
+   "display": "50,14 %",
+   "champion_id": 804,
+   "meaning": "winrate de Yunara (toutes régions, tous ranks)"
+  },
+  "yunara.global.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 804,
+    "scope": {}
+   },
+   "value": 0.4969106130287413,
+   "display": "49,69",
+   "champion_id": 804,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Yunara (toutes régions, tous ranks)"
+  },
+  "yunara.global.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 804,
+    "scope": {}
+   },
+   "value": 0.5058121681526313,
+   "display": "50,58",
+   "champion_id": 804,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Yunara (toutes régions, tous ranks)"
+  },
+  "yunara.global.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 804,
+    "scope": {}
+   },
+   "value": 48476,
+   "display": "48 476",
+   "champion_id": 804,
+   "meaning": "parties de Yunara (toutes régions, tous ranks)"
+  },
+  "yunara.global.pick_rate": {
+   "spec": {
+    "kind": "pick_rate",
+    "champion_id": 804,
+    "scope": {}
+   },
+   "value": 0.1306556771719121,
+   "display": "13,07 %",
+   "champion_id": 804,
+   "meaning": "pick rate de Yunara (toutes régions, tous ranks)"
+  },
+  "tristana.global.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 18,
+    "scope": {}
+   },
+   "value": 0.5014012738853503,
+   "display": "50,14 %",
+   "champion_id": 18,
+   "meaning": "winrate de Tristana (toutes régions, tous ranks)"
+  },
+  "tristana.global.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 18,
+    "scope": {}
+   },
+   "value": 0.49688584280389003,
+   "display": "49,69",
+   "champion_id": 18,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Tristana (toutes régions, tous ranks)"
+  },
+  "tristana.global.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 18,
+    "scope": {}
+   },
+   "value": 0.5059164764106775,
+   "display": "50,59",
+   "champion_id": 18,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Tristana (toutes régions, tous ranks)"
+  },
+  "tristana.global.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 18,
+    "scope": {}
+   },
+   "value": 47100,
+   "display": "47 100",
+   "champion_id": 18,
+   "meaning": "parties de Tristana (toutes régions, tous ranks)"
+  },
+  "tristana.global.pick_rate": {
+   "spec": {
+    "kind": "pick_rate",
+    "champion_id": 18,
+    "scope": {}
+   },
+   "value": 0.1269469922187693,
+   "display": "12,69 %",
+   "champion_id": 18,
+   "meaning": "pick rate de Tristana (toutes régions, tous ranks)"
+  },
+  "rell.global.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 526,
+    "scope": {}
+   },
+   "value": 0.5266936215859395,
+   "display": "52,67 %",
+   "champion_id": 526,
+   "meaning": "winrate de Rell (toutes régions, tous ranks)"
+  },
+  "rell.global.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 526,
+    "scope": {}
+   },
+   "value": 0.5177973218409231,
+   "display": "51,78",
+   "champion_id": 526,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Rell (toutes régions, tous ranks)"
+  },
+  "rell.global.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 526,
+    "scope": {}
+   },
+   "value": 0.5355730041010398,
+   "display": "53,56",
+   "champion_id": 526,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Rell (toutes régions, tous ranks)"
+  },
+  "rell.global.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 526,
+    "scope": {}
+   },
+   "value": 12119,
+   "display": "12 119",
+   "champion_id": 526,
+   "meaning": "parties de Rell (toutes régions, tous ranks)"
+  },
+  "rell.global.pick_rate": {
+   "spec": {
+    "kind": "pick_rate",
+    "champion_id": 526,
+    "scope": {}
+   },
+   "value": 0.03266391929297802,
+   "display": "3,27 %",
+   "champion_id": 526,
+   "meaning": "pick rate de Rell (toutes régions, tous ranks)"
+  },
+  "rell.global.ban_rate": {
+   "spec": {
+    "kind": "ban_rate",
+    "champion_id": 526,
+    "scope": {}
+   },
+   "value": 0.011524954113109501,
+   "display": "1,15 %",
+   "champion_id": 526,
+   "meaning": "ban rate de Rell (toutes régions, tous ranks)"
+  },
+  "leona.global.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 89,
+    "scope": {}
+   },
+   "value": 0.5231758844674277,
+   "display": "52,32 %",
+   "champion_id": 89,
+   "meaning": "winrate de Leona (toutes régions, tous ranks)"
+  },
+  "leona.global.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 89,
+    "scope": {}
+   },
+   "value": 0.5176764121631817,
+   "display": "51,77",
+   "champion_id": 89,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Leona (toutes régions, tous ranks)"
+  },
+  "leona.global.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 89,
+    "scope": {}
+   },
+   "value": 0.5286697429466641,
+   "display": "52,87",
+   "champion_id": 89,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Leona (toutes régions, tous ranks)"
+  },
+  "leona.global.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 89,
+    "scope": {}
+   },
+   "value": 31714,
+   "display": "31 714",
+   "champion_id": 89,
+   "meaning": "parties de Leona (toutes régions, tous ranks)"
+  },
+  "leona.global.pick_rate": {
+   "spec": {
+    "kind": "pick_rate",
+    "champion_id": 89,
+    "scope": {}
+   },
+   "value": 0.08547764142730466,
+   "display": "8,55 %",
+   "champion_id": 89,
+   "meaning": "pick rate de Leona (toutes régions, tous ranks)"
+  },
+  "leona.global.ban_rate": {
+   "spec": {
+    "kind": "ban_rate",
+    "champion_id": 89,
+    "scope": {}
+   },
+   "value": 0.10526358346293067,
+   "display": "10,53 %",
+   "champion_id": 89,
+   "meaning": "ban rate de Leona (toutes régions, tous ranks)"
+  },
+  "rammus.global.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 33,
+    "scope": {}
+   },
+   "value": 0.5255393693527568,
+   "display": "52,55 %",
+   "champion_id": 33,
+   "meaning": "winrate de Rammus (toutes régions, tous ranks)"
+  },
+  "rammus.global.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 33,
+    "scope": {}
+   },
+   "value": 0.516134406875013,
+   "display": "51,61",
+   "champion_id": 33,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Rammus (toutes régions, tous ranks)"
+  },
+  "rammus.global.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 33,
+    "scope": {}
+   },
+   "value": 0.5349262470619724,
+   "display": "53,49",
+   "champion_id": 33,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Rammus (toutes régions, tous ranks)"
+  },
+  "rammus.global.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 33,
+    "scope": {}
+   },
+   "value": 10846,
+   "display": "10 846",
+   "champion_id": 33,
+   "meaning": "parties de Rammus (toutes régions, tous ranks)"
+  },
+  "rammus.global.pick_rate": {
+   "spec": {
+    "kind": "pick_rate",
+    "champion_id": 33,
+    "scope": {}
+   },
+   "value": 0.029232846658275406,
+   "display": "2,92 %",
+   "champion_id": 33,
+   "meaning": "pick rate de Rammus (toutes régions, tous ranks)"
+  },
+  "rammus.global.ban_rate": {
+   "spec": {
+    "kind": "ban_rate",
+    "champion_id": 33,
+    "scope": {}
+   },
+   "value": 0.05651432129178672,
+   "display": "5,65 %",
+   "champion_id": 33,
+   "meaning": "ban rate de Rammus (toutes régions, tous ranks)"
+  },
+  "wukong.global.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 62,
+    "scope": {}
+   },
+   "value": 0.5215878479497157,
+   "display": "52,16 %",
+   "champion_id": 62,
+   "meaning": "winrate de Wukong (toutes régions, tous ranks)"
+  },
+  "wukong.global.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 62,
+    "scope": {}
+   },
+   "value": 0.5155965147104812,
+   "display": "51,56",
+   "champion_id": 62,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Wukong (toutes régions, tous ranks)"
+  },
+  "wukong.global.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 62,
+    "scope": {}
+   },
+   "value": 0.5275729766909133,
+   "display": "52,76",
+   "champion_id": 62,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Wukong (toutes régions, tous ranks)"
+  },
+  "wukong.global.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 62,
+    "scope": {}
+   },
+   "value": 26728,
+   "display": "26 728",
+   "champion_id": 62,
+   "meaning": "parties de Wukong (toutes régions, tous ranks)"
+  },
+  "wukong.global.pick_rate": {
+   "spec": {
+    "kind": "pick_rate",
+    "champion_id": 62,
+    "scope": {}
+   },
+   "value": 0.07203904900261711,
+   "display": "7,20 %",
+   "champion_id": 62,
+   "meaning": "pick rate de Wukong (toutes régions, tous ranks)"
+  },
+  "wukong.global.ban_rate": {
+   "spec": {
+    "kind": "ban_rate",
+    "champion_id": 62,
+    "scope": {}
+   },
+   "value": 0.03616506882359759,
+   "display": "3,62 %",
+   "champion_id": 62,
+   "meaning": "ban rate de Wukong (toutes régions, tous ranks)"
+  },
+  "jinx.global.ban_rate": {
+   "spec": {
+    "kind": "ban_rate",
+    "champion_id": 222,
+    "scope": {}
+   },
+   "value": 0.10786720967276785,
+   "display": "10,79 %",
+   "champion_id": 222,
+   "meaning": "ban rate de Jinx (toutes régions, tous ranks)"
+  },
+  "fizz.global.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 105,
+    "scope": {}
+   },
+   "value": 0.5178270452482822,
+   "display": "51,78 %",
+   "champion_id": 105,
+   "meaning": "winrate de Fizz (toutes régions, tous ranks)"
+  },
+  "fizz.global.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 105,
+    "scope": {}
+   },
+   "value": 0.5113863439009829,
+   "display": "51,14",
+   "champion_id": 105,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Fizz (toutes régions, tous ranks)"
+  },
+  "fizz.global.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 105,
+    "scope": {}
+   },
+   "value": 0.5242618284061198,
+   "display": "52,43",
+   "champion_id": 105,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Fizz (toutes régions, tous ranks)"
+  },
+  "fizz.global.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 105,
+    "scope": {}
+   },
+   "value": 23139,
+   "display": "23 139",
+   "champion_id": 105,
+   "meaning": "parties de Fizz (toutes régions, tous ranks)"
+  },
+  "fizz.global.pick_rate": {
+   "spec": {
+    "kind": "pick_rate",
+    "champion_id": 105,
+    "scope": {}
+   },
+   "value": 0.06236574210085143,
+   "display": "6,24 %",
+   "champion_id": 105,
+   "meaning": "pick rate de Fizz (toutes régions, tous ranks)"
+  },
+  "fizz.global.ban_rate": {
+   "spec": {
+    "kind": "ban_rate",
+    "champion_id": 105,
+    "scope": {}
+   },
+   "value": 0.10706671590017816,
+   "display": "10,71 %",
+   "champion_id": 105,
+   "meaning": "ban rate de Fizz (toutes régions, tous ranks)"
+  },
+  "illaoi.global.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 420,
+    "scope": {}
+   },
+   "value": 0.5185312285518188,
+   "display": "51,85 %",
+   "champion_id": 420,
+   "meaning": "winrate de Illaoi (toutes régions, tous ranks)"
+  },
+  "illaoi.global.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 420,
+    "scope": {}
+   },
+   "value": 0.5104142556757043,
+   "display": "51,04",
+   "champion_id": 420,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Illaoi (toutes régions, tous ranks)"
+  },
+  "illaoi.global.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 420,
+    "scope": {}
+   },
+   "value": 0.5266384322875759,
+   "display": "52,66",
+   "champion_id": 420,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Illaoi (toutes régions, tous ranks)"
+  },
+  "illaoi.global.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 420,
+    "scope": {}
+   },
+   "value": 14570,
+   "display": "14 570",
+   "champion_id": 420,
+   "meaning": "parties de Illaoi (toutes régions, tous ranks)"
+  },
+  "illaoi.global.pick_rate": {
+   "spec": {
+    "kind": "pick_rate",
+    "champion_id": 420,
+    "scope": {}
+   },
+   "value": 0.03927001436576366,
+   "display": "3,93 %",
+   "champion_id": 420,
+   "meaning": "pick rate de Illaoi (toutes régions, tous ranks)"
+  },
+  "illaoi.global.ban_rate": {
+   "spec": {
+    "kind": "ban_rate",
+    "champion_id": 420,
+    "scope": {}
+   },
+   "value": 0.09647701882103708,
+   "display": "9,65 %",
+   "champion_id": 420,
+   "meaning": "ban rate de Illaoi (toutes régions, tous ranks)"
+  },
+  "thresh.global.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 412,
+    "scope": {}
+   },
+   "value": 0.5141316173236731,
+   "display": "51,41 %",
+   "champion_id": 412,
+   "meaning": "winrate de Thresh (toutes régions, tous ranks)"
+  },
+  "thresh.global.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 412,
+    "scope": {}
+   },
+   "value": 0.5094175677413005,
+   "display": "50,94",
+   "champion_id": 412,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Thresh (toutes régions, tous ranks)"
+  },
+  "thresh.global.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 412,
+    "scope": {}
+   },
+   "value": 0.5188431539457298,
+   "display": "51,88",
+   "champion_id": 412,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Thresh (toutes régions, tous ranks)"
+  },
+  "thresh.global.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 412,
+    "scope": {}
+   },
+   "value": 43201,
+   "display": "43 201",
+   "champion_id": 412,
+   "meaning": "parties de Thresh (toutes régions, tous ranks)"
+  },
+  "thresh.global.pick_rate": {
+   "spec": {
+    "kind": "pick_rate",
+    "champion_id": 412,
+    "scope": {}
+   },
+   "value": 0.11643815309645546,
+   "display": "11,64 %",
+   "champion_id": 412,
+   "meaning": "pick rate de Thresh (toutes régions, tous ranks)"
+  },
+  "thresh.global.ban_rate": {
+   "spec": {
+    "kind": "ban_rate",
+    "champion_id": 412,
+    "scope": {}
+   },
+   "value": 0.09761711601230119,
+   "display": "9,76 %",
+   "champion_id": 412,
+   "meaning": "ban rate de Thresh (toutes régions, tous ranks)"
+  },
+  "amumu.global.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 32,
+    "scope": {}
+   },
+   "value": 0.5165480427046263,
+   "display": "51,65 %",
+   "champion_id": 32,
+   "meaning": "winrate de Amumu (toutes régions, tous ranks)"
+  },
+  "amumu.global.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 32,
+    "scope": {}
+   },
+   "value": 0.5090020060276346,
+   "display": "50,90",
+   "champion_id": 32,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Amumu (toutes régions, tous ranks)"
+  },
+  "amumu.global.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 32,
+    "scope": {}
+   },
+   "value": 0.524086540337235,
+   "display": "52,41",
+   "champion_id": 32,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Amumu (toutes régions, tous ranks)"
+  },
+  "amumu.global.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 32,
+    "scope": {}
+   },
+   "value": 16860,
+   "display": "16 860",
+   "champion_id": 32,
+   "meaning": "parties de Amumu (toutes régions, tous ranks)"
+  },
+  "amumu.global.pick_rate": {
+   "spec": {
+    "kind": "pick_rate",
+    "champion_id": 32,
+    "scope": {}
+   },
+   "value": 0.04544217173690977,
+   "display": "4,54 %",
+   "champion_id": 32,
+   "meaning": "pick rate de Amumu (toutes régions, tous ranks)"
+  },
+  "amumu.global.ban_rate": {
+   "spec": {
+    "kind": "ban_rate",
+    "champion_id": 32,
+    "scope": {}
+   },
+   "value": 0.018020543311564576,
+   "display": "1,80 %",
+   "champion_id": 32,
+   "meaning": "ban rate de Amumu (toutes régions, tous ranks)"
+  },
+  "teemo.global.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 17,
+    "scope": {}
+   },
+   "value": 0.5137975974614687,
+   "display": "51,38 %",
+   "champion_id": 17,
+   "meaning": "winrate de Teemo (toutes régions, tous ranks)"
+  },
+  "teemo.global.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 17,
+    "scope": {}
+   },
+   "value": 0.508582152507058,
+   "display": "50,86",
+   "champion_id": 17,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Teemo (toutes régions, tous ranks)"
+  },
+  "teemo.global.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 17,
+    "scope": {}
+   },
+   "value": 0.5190100394050849,
+   "display": "51,90",
+   "champion_id": 17,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Teemo (toutes régions, tous ranks)"
+  },
+  "teemo.global.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 17,
+    "scope": {}
+   },
+   "value": 35296,
+   "display": "35 296",
+   "champion_id": 17,
+   "meaning": "parties de Teemo (toutes régions, tous ranks)"
+  },
+  "teemo.global.pick_rate": {
+   "spec": {
+    "kind": "pick_rate",
+    "champion_id": 17,
+    "scope": {}
+   },
+   "value": 0.0951320814724773,
+   "display": "9,51 %",
+   "champion_id": 17,
+   "meaning": "pick rate de Teemo (toutes régions, tous ranks)"
+  },
+  "teemo.global.ban_rate": {
+   "spec": {
+    "kind": "ban_rate",
+    "champion_id": 17,
+    "scope": {}
+   },
+   "value": 0.1488541079884966,
+   "display": "14,89 %",
+   "champion_id": 17,
+   "meaning": "ban rate de Teemo (toutes régions, tous ranks)"
+  }
+ },
+ "charts": {
+  "meilleurs-winrates": {
+   "title": "Meilleurs winrates du patch, avec leur intervalle de confiance",
+   "subtitle": "toutes régions, tous ranks",
+   "rows": [
+    {
+     "label": "Rell",
+     "wr": "rell.global.wr",
+     "lo": "rell.global.wr_lo",
+     "hi": "rell.global.wr_hi",
+     "games": "rell.global.games"
+    },
+    {
+     "label": "Leona",
+     "wr": "leona.global.wr",
+     "lo": "leona.global.wr_lo",
+     "hi": "leona.global.wr_hi",
+     "games": "leona.global.games"
+    },
+    {
+     "label": "Rammus",
+     "wr": "rammus.global.wr",
+     "lo": "rammus.global.wr_lo",
+     "hi": "rammus.global.wr_hi",
+     "games": "rammus.global.games"
+    },
+    {
+     "label": "Wukong",
+     "wr": "wukong.global.wr",
+     "lo": "wukong.global.wr_lo",
+     "hi": "wukong.global.wr_hi",
+     "games": "wukong.global.games"
+    },
+    {
+     "label": "Jinx",
+     "wr": "jinx.global.wr",
+     "lo": "jinx.global.wr_lo",
+     "hi": "jinx.global.wr_hi",
+     "games": "jinx.global.games"
+    },
+    {
+     "label": "Fizz",
+     "wr": "fizz.global.wr",
+     "lo": "fizz.global.wr_lo",
+     "hi": "fizz.global.wr_hi",
+     "games": "fizz.global.games"
+    },
+    {
+     "label": "Illaoi",
+     "wr": "illaoi.global.wr",
+     "lo": "illaoi.global.wr_lo",
+     "hi": "illaoi.global.wr_hi",
+     "games": "illaoi.global.games"
+    },
+    {
+     "label": "Thresh",
+     "wr": "thresh.global.wr",
+     "lo": "thresh.global.wr_lo",
+     "hi": "thresh.global.wr_hi",
+     "games": "thresh.global.games"
+    },
+    {
+     "label": "Amumu",
+     "wr": "amumu.global.wr",
+     "lo": "amumu.global.wr_lo",
+     "hi": "amumu.global.wr_hi",
+     "games": "amumu.global.games"
+    },
+    {
+     "label": "Teemo",
+     "wr": "teemo.global.wr",
+     "lo": "teemo.global.wr_lo",
+     "hi": "teemo.global.wr_hi",
+     "games": "teemo.global.games"
+    }
+   ]
+  }
+ }
+}

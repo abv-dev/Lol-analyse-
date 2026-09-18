@@ -1,0 +1,21 @@
+{
+ "title": "Tier list — patch 16.18",
+ "description": "Winrate, pick et ban par champion, rank et région sur 371 021 matchs ranked solo du patch 16.18, chaque winrate avec son intervalle de confiance à 95 %.",
+ "date": "2026-09-18",
+ "patch": "16.18",
+ "patch_sensitive": true,
+ "sample_size": 371021,
+ "regions": [
+  "europe",
+  "asia",
+  "americas"
+ ],
+ "collected_at": "2026-09-18",
+ "tags": [
+  "Tier list",
+  "Tous rôles",
+  "Tous ranks",
+  "EUW · KR · NA"
+ ],
+ "generated": true
+}

@@ -1,3 +1,14 @@
 {
- "published": []
+ "published": [
+  {
+   "topic": "tierlist-globale",
+   "patch": "16.18",
+   "path": "site/content/etudes/tierlist/16-18",
+   "date": "2026-09-18",
+   "mode": "tierlist",
+   "attempts": 0,
+   "cost_usd": 0.0,
+   "writer_model": null
+  }
+ ]
 }

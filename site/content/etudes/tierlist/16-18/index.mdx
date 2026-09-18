@@ -1,0 +1,67 @@
+# Tier list — patch 16.18
+
+<StudyMeta />
+
+## Comment lire cette étude
+
+Chaque winrate est donné avec son **intervalle de confiance de Wilson à 95 %**, calculé sur le nombre réel de parties. Yone, à <Stat value="50,50" ci="50,14 – 50,86" /> sur 75 017 parties, est réellement au-dessus de 50 % : tout l'intervalle l'est. Jhin, à <Stat value="49,88" ci="49,48 – 50,27" />, ne permet pas de conclure : son intervalle contient encore 50 %. Quand deux intervalles se recouvrent, l'écart entre deux champions n'est pas un classement.
+
+Le niveau d'une partie est approximé par le bucket du joueur échantillonné qui l'a fait découvrir, pas par le rang moyen des dix joueurs (voir la [méthodologie](/methodologie)).
+
+## Ce que disent les intervalles
+
+Sur les champions joués au moins 1 000 fois, **52 sont au-dessus de 50 %**, 41 sont en dessous et 80 restent indistinguables de 50 % : leur intervalle de confiance contient encore l'équilibre.
+
+## Les champions les plus joués
+
+<KeyFigure value="50,50" ci="50,14 – 50,86" label="Winrate de Yone, champion le plus joué du patch." sample="75 017 parties" />
+
+Les dix champions les plus présents du patch, avec leur winrate et la lecture de leur intervalle de confiance.
+
+| Champion | Pick rate | Winrate (IC 95 %) | Parties | Lecture |
+| --- | --- | --- | --- | --- |
+| Yone | 20,22 % | 50,50 % `[50,14 – 50,86]` | 75 017 | au-dessus de 50 % |
+| Jinx | 17,56 % | 51,63 % `[51,25 – 52,02]` | 65 169 | au-dessus de 50 % |
+| Caitlyn | 17,39 % | 49,22 % `[48,84 – 49,61]` | 64 529 | en dessous de 50 % |
+| Kai'Sa | 17,05 % | 49,60 % `[49,21 – 49,99]` | 63 247 | en dessous de 50 % |
+| Jhin | 16,63 % | 49,88 % `[49,48 – 50,27]` | 61 698 | indistinguable de 50 % |
+| Sylas | 16,55 % | 49,59 % `[49,19 – 49,98]` | 61 406 | en dessous de 50 % |
+| Lux | 16,07 % | 50,02 % `[49,62 – 50,42]` | 59 618 | indistinguable de 50 % |
+| Yasuo | 15,53 % | 50,16 % `[49,75 – 50,57]` | 57 635 | indistinguable de 50 % |
+| Yunara | 13,07 % | 50,14 % `[49,69 – 50,58]` | 48 476 | indistinguable de 50 % |
+| Tristana | 12,69 % | 50,14 % `[49,69 – 50,59]` | 47 100 | indistinguable de 50 % |
+
+## Les meilleurs winrates à gros volume
+
+<KeyFigure value="52,67" ci="51,78 – 53,56" label="Winrate de Rell, meilleure borne basse d'intervalle du patch parmi les champions à au moins 5 000 parties." sample="12 119 parties" />
+
+Parmi les champions joués au moins 5 000 fois, classés par la borne basse de leur intervalle de confiance : c'est la valeur que l'échantillon garantit, pas la plus flatteuse.
+
+| Champion | Winrate (IC 95 %) | Parties | Pick rate | Ban rate |
+| --- | --- | --- | --- | --- |
+| Rell | 52,67 % `[51,78 – 53,56]` | 12 119 | 3,27 % | 1,15 % |
+| Leona | 52,32 % `[51,77 – 52,87]` | 31 714 | 8,55 % | 10,53 % |
+| Rammus | 52,55 % `[51,61 – 53,49]` | 10 846 | 2,92 % | 5,65 % |
+| Wukong | 52,16 % `[51,56 – 52,76]` | 26 728 | 7,20 % | 3,62 % |
+| Jinx | 51,63 % `[51,25 – 52,02]` | 65 169 | 17,56 % | 10,79 % |
+| Fizz | 51,78 % `[51,14 – 52,43]` | 23 139 | 6,24 % | 10,71 % |
+| Illaoi | 51,85 % `[51,04 – 52,66]` | 14 570 | 3,93 % | 9,65 % |
+| Thresh | 51,41 % `[50,94 – 51,88]` | 43 201 | 11,64 % | 9,76 % |
+| Amumu | 51,65 % `[50,90 – 52,41]` | 16 860 | 4,54 % | 1,80 % |
+| Teemo | 51,38 % `[50,86 – 51,90]` | 35 296 | 9,51 % | 14,89 % |
+
+<IntervalChart id="meilleurs-winrates" />
+
+## Le tableau complet
+
+Trier par winrate, pick rate, ban rate ou volume ; filtrer par bucket de rank, région et poste. Les agrégats recombinent parties et victoires des cellules, jamais une moyenne de pourcentages, et recalculent l'intervalle de confiance sur l'échantillon obtenu.
+
+<TierTable />
+
+## Limites
+
+Ces chiffres décrivent des **corrélations, pas des recommandations de jeu** : un winrate peut refléter le champion, la population qui le choisit ou les compositions dans lesquelles il apparaît. Cette étude ne mesure ni les builds, ni les runes, ni les matchups.
+
+Le bucket d'une partie est celui du joueur échantillonné qui l'a fait découvrir au collecteur, pas le rang moyen des dix joueurs. Les biais d'échantillonnage connus sont décrits dans la [méthodologie](/methodologie).
+
+*Étude générée automatiquement à partir des données du patch ; chaque chiffre est calculé et vérifié par le code.*
