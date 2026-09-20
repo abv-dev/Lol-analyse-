@@ -384,7 +384,9 @@ def instantiate(templates: list, patch: str) -> list:
             # Le suffixe d'identifiant vient de la variante : « role_slug »
             # pour la méta par poste, « suffixe » pour toutes les autres
             # déclinaisons (bucket, région, métrique…).
-            suffix = variant.get("suffixe") or variant.get("role_slug")
+            # strip("-") : la variante porte son tiret pour le slug
+            # (« champions-pieges-diamant »), l'identifiant le reçoit du join.
+            suffix = (variant.get("suffixe") or variant.get("role_slug") or "").strip("-")
             article_id = "-".join(
                 filter(None, [tpl["id"], suffix, patch_to_slug(patch)]))
             created.append({
