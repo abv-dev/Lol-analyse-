@@ -7,15 +7,20 @@ Volontairement indépendant du générateur (stdlib seule, aucun import de
 lolcollector) : il ne fait confiance à rien de ce que le générateur a calculé.
 
 1. Chaque fait de study.json est RECALCULÉ depuis les JSON exportés
-   (tierlist.json, tierlist-roles.json, meta.json) à partir de sa formule,
-   puis comparé à la valeur et à l'affichage enregistrés.
+   (tierlist.json, tierlist-roles.json, meta.json, et le cas échéant
+   metrics.json pour les métriques du Lot 13 et timeline.json pour les taux
+   tirés des timelines) à partir de sa formule, puis comparé à la valeur et
+   à l'affichage enregistrés.
 2. Chaque nombre du MDX et de la description (meta.json du contenu) doit
    correspondre à un fait recalculé, DANS SON CONTEXTE : un nombre d'un
    paragraphe ou d'une ligne de tableau qui nomme un champion doit être un
    fait de ce champion ou un fait global. Un winrate recopié du mauvais
    champion est rejeté.
-3. Seules exceptions : « 50 % » et « 95 % » (conventions statistiques) et le
-   numéro du patch.
+3. Seules exceptions : « 50 % » et « 95 % » (conventions statistiques), le
+   numéro du patch, et le TITRE de l'étude — il vient du catalogue
+   (queue/templates.json), pas des données : « Morts avant 5 minutes » n'est
+   pas une mesure. Les titres de sections, eux, sont écrits par le modèle et
+   ne peuvent contenir aucun chiffre (contrôle amont).
 
 Code de sortie 0 si tout concorde, 1 sinon.
 """
@@ -51,7 +56,39 @@ class Source:
         self.roles = load("tierlist-roles.json")
         self.meta = load("meta.json")
         self.study = load("study.json")
+        # Présents seulement quand l'étude cite des moyennes ou des taux.
+        self.metrics = load("metrics.json") if os.path.exists(
+            os.path.join(data_dir, "metrics.json")) else {}
+        self.timelines = load("timeline.json") if os.path.exists(
+            os.path.join(data_dir, "timeline.json")) else {}
         self.names = {r["champion_id"]: r["champion_name"] for r in self.rows}
+
+    @staticmethod
+    def _cell(row, scope):
+        return ((not scope.get("regions") or row["region"] in scope["regions"])
+                and (not scope.get("buckets") or row["bucket"] in scope["buckets"])
+                and (not scope.get("role") or row["role"] == scope["role"]))
+
+    def metric_stats(self, cid, metric, scope):
+        if metric not in self.metrics:
+            raise ValueError(f"metrics.json ne contient pas {metric}")
+        n = total = sumsq = 0.0
+        for row in self.metrics[metric]:
+            if row["champion_id"] == cid and self._cell(row, scope):
+                n += row["n"]
+                total += row["sum"]
+                sumsq += row["sumsq"]
+        return int(n), total, sumsq
+
+    def rate_stats(self, cid, event, scope):
+        if event not in self.timelines:
+            raise ValueError(f"timeline.json ne contient pas {event}")
+        games = hits = 0
+        for row in self.timelines[event]:
+            if row["champion_id"] == cid and self._cell(row, scope):
+                games += row["games"]
+                hits += row["hits"]
+        return games, hits
 
     @staticmethod
     def _ok(region, bucket, scope):
@@ -101,6 +138,30 @@ class Source:
                         break
                 n += ok
             return n
+        if kind in ("mean", "mean_lo", "mean_hi", "mean_n"):
+            n, total, sumsq = self.metric_stats(
+                spec["champion_id"], spec["metric"], scope)
+            if kind == "mean_n":
+                return n
+            if not n:
+                raise ValueError("aucune mesure")
+            mean = total / n
+            if n < 2:
+                return mean
+            var = max(0.0, (sumsq - n * mean * mean) / (n - 1))
+            half = Z_95 * math.sqrt(var / n)
+            return {"mean": mean, "mean_lo": mean - half, "mean_hi": mean + half}[kind]
+        if kind == "mean_diff":
+            return (self.value({**spec, "kind": "mean"})
+                    - self.value({**spec, "kind": "mean", "scope": spec["minus"]}))
+        if kind in ("rate", "rate_lo", "rate_hi", "rate_n"):
+            games, hits = self.rate_stats(spec["champion_id"], spec["event"], scope)
+            if kind == "rate_n":
+                return games
+            if not games:
+                raise ValueError("aucune partie avec timeline")
+            lo, hi = wilson(hits, games)
+            return {"rate": hits / games, "rate_lo": lo, "rate_hi": hi}[kind]
         if kind == "wr_diff":
             ga, wa, _ = self.stats(spec["champion_id"], scope)
             gb, wb, _ = self.stats(spec["champion_id"], spec["minus"])
@@ -125,22 +186,39 @@ class Source:
         raise ValueError(f"type de fait inconnu : {kind}")
 
 
-def shown(kind, value):
+PERCENT = ("winrate", "ci_low", "ci_high", "pick_rate", "ban_rate", "wr_diff",
+           "rate", "rate_lo", "rate_hi")
+MEANS = ("mean", "mean_lo", "mean_hi", "mean_diff")
+
+
+def shown(spec, value):
     """Valeur telle qu'elle doit apparaître dans le texte (nombre)."""
-    if kind in ("winrate", "ci_low", "ci_high", "pick_rate", "ban_rate", "wr_diff"):
+    kind = spec["kind"]
+    if kind in PERCENT:
         return round(value * 100, 2)
+    if kind in MEANS:
+        digits = spec.get("digits", 2)
+        return round(value, digits)
     return value
 
 
-def display(kind, value):
-    fr = lambda x: f"{x:.2f}".replace(".", ",")
-    if kind in ("winrate", "pick_rate", "ban_rate"):
+def display(spec, value):
+    kind = spec["kind"]
+    fr = lambda x, d=2: f"{x:.{d}f}".replace(".", ",")
+    space = lambda x: f"{int(x):,}".replace(",", " ")
+    if kind in ("winrate", "pick_rate", "ban_rate", "rate"):
         return fr(value * 100) + " %"
-    if kind in ("ci_low", "ci_high"):
+    if kind in ("ci_low", "ci_high", "rate_lo", "rate_hi"):
         return fr(value * 100)
     if kind == "wr_diff":
         return ("+" if value >= 0 else "−") + fr(abs(value) * 100) + " pts"
-    return f"{int(value):,}".replace(",", " ")
+    if kind in MEANS:
+        digits, suffix = spec.get("digits", 2), spec.get("suffix", "")
+        shown_value = abs(value) if kind == "mean_diff" else value
+        body = space(round(shown_value)) if digits == 0 else fr(shown_value, digits)
+        sign = ("+" if value >= 0 else "−") if kind == "mean_diff" else ""
+        return sign + body + suffix
+    return space(value)
 
 
 NUMBER_RE = re.compile(r"[+−-]?\d{1,3}(?:[  ]\d{3})+(?:,\d+)?|[+−-]?\d+(?:,\d+)?")
@@ -193,9 +271,10 @@ def main(argv=None):
             continue
         if abs(value - fact["value"]) > 1e-9:
             errors.append(f"fait {fid} : study.json dit {fact['value']}, les données donnent {value}")
-        if display(spec["kind"], value) != fact["display"]:
-            errors.append(f"fait {fid} : affichage « {fact['display']} » ≠ « {display(spec['kind'], value)} »")
-        recomputed[fid] = (spec["kind"], shown(spec["kind"], value), spec.get("champion_id"))
+        if display(spec, value) != fact["display"]:
+            errors.append(f"fait {fid} : affichage « {fact['display']} » ≠ "
+                          f"« {display(spec, value)} »")
+        recomputed[fid] = (spec["kind"], shown(spec, value), spec.get("champion_id"))
 
     for cid, chart in src.study.get("charts", {}).items():
         for row in chart["rows"]:
@@ -234,11 +313,14 @@ def main(argv=None):
                 for fid, (k, val, fcid) in recomputed.items():
                     if fcid is not None and fcid not in champs:
                         continue
-                    if k in ("games", "wins", "bans", "matches", "count", "param"):
+                    if k in ("games", "wins", "bans", "matches", "count", "param",
+                             "mean_n", "rate_n"):
                         if num == val:
                             ok = True
                     elif abs(abs(num) - abs(val)) < TOLERANCE and (
-                            k != "wr_diff" or (num < 0) == (val < 0) or not token[0] in "+−-"):
+                            k not in ("wr_diff", "mean_diff")
+                            or (num < 0) == (val < 0)
+                            or token[0] not in "+−-"):
                         ok = True
                     if ok:
                         break
@@ -248,7 +330,9 @@ def main(argv=None):
                     errors.append(f"{origin} ({kind}, contexte : {who}) : « {token} » ne "
                                   f"correspond à aucune donnée — {line}")
 
-    check_text(mdx, "index.mdx")
+    # Le titre (ligne « # … ») vient du catalogue, pas des données.
+    body = re.sub(r"\A#[^\n]*\n", "", mdx)
+    check_text(body, "index.mdx")
     check_text(cmeta.get("description", ""), "meta.json description")
 
     if errors:

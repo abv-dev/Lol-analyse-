@@ -15,6 +15,7 @@ ne bloque jamais le collecteur (WAL).
 from __future__ import annotations
 
 import json
+import math
 import os
 import re
 import sqlite3
@@ -23,7 +24,7 @@ import unicodedata
 from dataclasses import dataclass, field
 
 from .export import (
-    MIN_REGION_MATCHES, ROLES, compute_tierlist, fetch_champion_names,
+    MIN_REGION_MATCHES, ROLES, Z_95, compute_tierlist, fetch_champion_names,
     patch_to_slug, wilson_ci,
 )
 
@@ -113,6 +114,9 @@ class Dataset:
     names: dict = field(default_factory=dict)
 
     def __post_init__(self):
+        self.conn = None
+        self.metrics: dict[str, list] = {}
+        self.timelines: dict[str, list] = {}
         self.by_champ: dict[int, list] = {}
         for r in self.rows:
             self.by_champ.setdefault(r["champion_id"], []).append(r)
@@ -125,7 +129,47 @@ class Dataset:
     def load(cls, conn, patch, ddragon_version=None):
         rows, role_rows, cells, first, last = compute_tierlist(
             conn, patch, ddragon_version, MIN_CELL_GAMES)
-        return cls(patch, rows, role_rows, cells, first, last)
+        ds = cls(patch, rows, role_rows, cells, first, last)
+        ds.conn = conn
+        return ds
+
+    def metric_rows(self, metric: str) -> list:
+        """Agrégats d'une métrique, chargés à la demande et mis en cache.
+
+        Le chargement exige la connexion : tous les faits d'une étude sont
+        donc calculés pendant que la base est ouverte, jamais après.
+        """
+        if metric not in self.metrics:
+            if self.conn is None:
+                raise RuntimeError(
+                    f"métrique {metric} demandée hors connexion : les faits "
+                    "doivent être calculés pendant la lecture de la base")
+            self.metrics[metric] = load_metric(self.conn, self.patch, metric)
+        return self.metrics[metric]
+
+    def timeline_rows(self, event: str) -> list:
+        if event not in self.timelines:
+            if self.conn is None:
+                raise RuntimeError(f"événement {event} demandé hors connexion")
+            self.timelines[event] = load_timeline_rate(self.conn, self.patch, event)
+        return self.timelines[event]
+
+    def metric_stats(self, cid: int, metric: str, scope: dict):
+        n = total = sumsq = 0.0
+        for row in self.metric_rows(metric):
+            if row["champion_id"] == cid and _cell_ok(row, scope):
+                n += row["n"]
+                total += row["sum"]
+                sumsq += row["sumsq"]
+        return int(n), total, sumsq
+
+    def rate_stats(self, cid: int, event: str, scope: dict):
+        games = hits = 0
+        for row in self.timeline_rows(event):
+            if row["champion_id"] == cid and _cell_ok(row, scope):
+                games += row["games"]
+                hits += row["hits"]
+        return games, hits
 
     @property
     def total_matches(self) -> int:
@@ -199,6 +243,112 @@ VERDICT = {"above": "au-dessus de 50 %", "below": "en dessous de 50 %",
 
 
 # ---------------------------------------------------------------------------
+# Métriques du Lot 13 et timelines : agrégats par cellule, en lecture seule
+# ---------------------------------------------------------------------------
+
+# Chaque métrique est une expression SQL sur participants, avec le format
+# d'affichage de sa moyenne. `sens` dit quel côté du classement est
+# remarquable ; il ne juge rien, il ordonne.
+# (libellé, expression SQL, décimales, suffixe affiché, unité des composants)
+METRICS = {
+    "vision_score": ("vision score", "p.vision_score", 1, "", "de vision"),
+    "damage_to_champions": ("dégâts aux champions", "p.damage_to_champions", 0, "",
+                            "dégâts"),
+    "damage_per_gold": ("dégâts aux champions par or gagné",
+                        "p.damage_to_champions * 1.0 / NULLIF(p.gold_earned, 0)", 2, "",
+                        "dégâts/or"),
+    "cs_at10": ("CS à 10 minutes", "p.lane_cs_at10 + p.jungle_cs_at10", 1, "", "CS"),
+    "time_spent_dead": ("temps passé mort", "p.time_spent_dead / 60.0", 1, " min", "min"),
+    "control_wards_bought": ("pinks achetés", "p.control_wards_bought", 2, "", "pinks"),
+    "turret_plates_taken": ("plates de tourelle prises", "p.turret_plates_taken", 2, "",
+                            "plates"),
+    "deaths": ("morts", "p.deaths", 2, "", "morts"),
+    "kills": ("éliminations", "p.kills", 2, "", "kills"),
+    "assists": ("passes décisives", "p.assists", 2, "", "assists"),
+    "gold_earned": ("or gagné", "p.gold_earned", 0, "", "or"),
+    "damage_taken": ("dégâts subis", "p.damage_taken", 0, "", "dégâts subis"),
+}
+
+METRIC_SQL = (
+    "SELECT m.region, m.tier_bucket_source, p.champion_id, p.team_position,"
+    " COUNT(*), SUM({expr}), SUM(({expr}) * ({expr}))"
+    " FROM matches m JOIN participants p ON p.match_id = m.match_id"
+    " WHERE m.patch = ? AND ({expr}) IS NOT NULL"
+    " GROUP BY m.region, m.tier_bucket_source, p.champion_id, p.team_position"
+)
+
+# Dénominateur des taux de timeline : les participants des matchs dont la
+# timeline a réellement été collectée (10 % des matchs, échantillonnés).
+TL_GAMES_SQL = (
+    "SELECT m.region, m.tier_bucket_source, p.champion_id, p.team_position, COUNT(*)"
+    " FROM matches m JOIN participants p ON p.match_id = m.match_id"
+    " JOIN timeline_state t ON t.match_id = m.match_id AND t.status = 'ok'"
+    " WHERE m.patch = ?"
+    " GROUP BY m.region, m.tier_bucket_source, p.champion_id, p.team_position"
+)
+# Numérateur : les participants morts au moins une fois avant 5 minutes.
+TL_EARLY_DEATH_SQL = (
+    "SELECT m.region, m.tier_bucket_source, p.champion_id, p.team_position,"
+    " COUNT(DISTINCT p.match_id)"
+    " FROM timeline_events e"
+    " JOIN matches m ON m.match_id = e.match_id"
+    " JOIN participants p ON p.match_id = e.match_id"
+    "  AND p.participant_id = e.victim_id"
+    " WHERE m.patch = ? AND e.type = 'CHAMPION_KILL' AND e.timestamp_ms < 300000"
+    " GROUP BY m.region, m.tier_bucket_source, p.champion_id, p.team_position"
+)
+TL_EVENTS = {"morts_avant_5min": (TL_EARLY_DEATH_SQL,
+                                  "part des parties où le champion meurt avant 5 minutes")}
+
+
+def load_metric(conn, patch: str, metric: str) -> list[dict]:
+    """Agrégats (n, somme, somme des carrés) d'une métrique, par cellule."""
+    expr = METRICS[metric][1]
+    return [
+        {"champion_id": champ, "region": region, "bucket": bucket, "role": role,
+         "n": n, "sum": total, "sumsq": sumsq}
+        for region, bucket, champ, role, n, total, sumsq
+        in conn.execute(METRIC_SQL.format(expr=expr), (patch,))
+        if role in ROLES and n
+    ]
+
+
+def load_timeline_rate(conn, patch: str, event: str) -> list[dict]:
+    """Parties avec timeline et parties concernées par l'événement, par cellule."""
+    games = {}
+    for region, bucket, champ, role, n in conn.execute(TL_GAMES_SQL, (patch,)):
+        if role in ROLES:
+            games[(champ, region, bucket, role)] = n
+    hits = {}
+    for region, bucket, champ, role, n in conn.execute(TL_EVENTS[event][0], (patch,)):
+        if role in ROLES:
+            hits[(champ, region, bucket, role)] = n
+    return [
+        {"champion_id": champ, "region": region, "bucket": bucket, "role": role,
+         "games": n, "hits": hits.get((champ, region, bucket, role), 0)}
+        for (champ, region, bucket, role), n in sorted(games.items())
+    ]
+
+
+def _cell_ok(row, scope) -> bool:
+    return ((not scope.get("regions") or row["region"] in scope["regions"])
+            and (not scope.get("buckets") or row["bucket"] in scope["buckets"])
+            and (not scope.get("role") or row["role"] == scope["role"]))
+
+
+def mean_ci(n: int, total: float, sumsq: float) -> tuple[float, float, float]:
+    """Moyenne et intervalle de confiance à 95 % (erreur type × 1,96)."""
+    if n <= 0:
+        return (0.0, 0.0, 0.0)
+    mean = total / n
+    if n < 2:
+        return (mean, mean, mean)
+    var = max(0.0, (sumsq - n * mean * mean) / (n - 1))
+    half = Z_95 * math.sqrt(var / n)
+    return (mean, mean - half, mean + half)
+
+
+# ---------------------------------------------------------------------------
 # Faits
 # ---------------------------------------------------------------------------
 
@@ -214,14 +364,21 @@ PERCENT_KINDS = {"winrate", "ci_low", "ci_high", "pick_rate", "ban_rate"}
 INT_KINDS = {"games", "wins", "bans", "matches", "count", "param"}
 
 
-def format_fact(kind: str, value) -> str:
-    if kind in ("winrate", "pick_rate", "ban_rate"):
+def format_fact(spec: dict, value) -> str:
+    kind = spec["kind"]
+    if kind in ("winrate", "pick_rate", "ban_rate", "rate"):
         return fr_dec(value * 100) + " %"
-    if kind in ("ci_low", "ci_high"):
+    if kind in ("ci_low", "ci_high", "rate_lo", "rate_hi"):
         return fr_dec(value * 100)
     if kind == "wr_diff":
-        sign = "+" if value >= 0 else "−"
-        return sign + fr_dec(abs(value) * 100) + " pts"
+        return ("+" if value >= 0 else "−") + fr_dec(abs(value) * 100) + " pts"
+    if kind in ("mean", "mean_lo", "mean_hi", "mean_diff"):
+        digits = spec.get("digits", 2)
+        suffix = spec.get("suffix", "")
+        shown = abs(value) if kind == "mean_diff" else value
+        body = fr_int(round(shown)) if digits == 0 else fr_dec(shown, digits)
+        sign = ("+" if value >= 0 else "−") if kind == "mean_diff" else ""
+        return sign + body + suffix
     return fr_int(value)
 
 
@@ -250,6 +407,26 @@ def evaluate(ds: Dataset, spec: dict):
                     break
             n += ok
         return n
+    if kind in ("mean", "mean_lo", "mean_hi", "mean_n"):
+        n, total, sumsq = ds.metric_stats(spec["champion_id"], spec["metric"], scope)
+        if kind == "mean_n":
+            return n
+        if not n:
+            raise ValueError(f"aucune mesure pour {spec}")
+        mean, lo, hi = mean_ci(n, total, sumsq)
+        return {"mean": mean, "mean_lo": lo, "mean_hi": hi}[kind]
+    if kind == "mean_diff":
+        a = evaluate(ds, {**spec, "kind": "mean"})
+        b = evaluate(ds, {**spec, "kind": "mean", "scope": spec["minus"]})
+        return a - b
+    if kind in ("rate", "rate_lo", "rate_hi", "rate_n"):
+        games, hits = ds.rate_stats(spec["champion_id"], spec["event"], scope)
+        if kind == "rate_n":
+            return games
+        if not games:
+            raise ValueError(f"aucune partie avec timeline pour {spec}")
+        lo, hi = wilson_ci(hits, games)
+        return {"rate": hits / games, "rate_lo": lo, "rate_hi": hi}[kind]
     if kind == "wr_diff":
         a = evaluate(ds, {"kind": "winrate", "champion_id": spec["champion_id"],
                           "scope": spec["scope"]})
@@ -300,7 +477,7 @@ class Facts:
         if fid not in self.items:
             value = evaluate(self.ds, spec)
             self.items[fid] = {"spec": spec, "value": value,
-                               "display": format_fact(spec["kind"], value),
+                               "display": format_fact(spec, value),
                                "champion_id": spec.get("champion_id"),
                                "meaning": meaning}
         return fid
@@ -331,6 +508,47 @@ class Facts:
         return self.add(fid, {"kind": kind, "champion_id": cid, "scope": scope},
                         f"{what} de {self.ds.names[cid]} ({label})")
 
+    def metric(self, cid: int, metric: str, scope: dict, label: str) -> str:
+        """Moyenne d'une métrique, son IC à 95 % et son effectif."""
+        mlabel, _, digits, suffix, _ = METRICS[metric]
+        base = f"{self.champ_id(cid)}.{scope_key(scope)}.{metric}"
+        name = self.ds.names[cid]
+        common = {"champion_id": cid, "scope": scope, "metric": metric,
+                  "digits": digits, "suffix": suffix}
+        self.add(f"{base}.mean", {"kind": "mean", **common},
+                 f"{mlabel} moyen de {name} ({label})")
+        self.add(f"{base}.mean_lo", {"kind": "mean_lo", **common},
+                 f"borne basse de l'IC à 95 % du {mlabel} moyen de {name} ({label})")
+        self.add(f"{base}.mean_hi", {"kind": "mean_hi", **common},
+                 f"borne haute de l'IC à 95 % du {mlabel} moyen de {name} ({label})")
+        self.add(f"{base}.mean_n", {"kind": "mean_n", **common},
+                 f"participations mesurées pour {name} ({label})")
+        return base
+
+    def metric_diff(self, cid: int, metric: str, scope: dict, minus: dict,
+                    label: str) -> str:
+        mlabel, _, digits, suffix, _ = METRICS[metric]
+        fid = f"{self.champ_id(cid)}.{scope_key(scope)}.vs.{scope_key(minus)}.{metric}"
+        return self.add(fid, {"kind": "mean_diff", "champion_id": cid, "scope": scope,
+                              "minus": minus, "metric": metric, "digits": digits,
+                              "suffix": suffix},
+                        f"écart de {mlabel} moyen de {self.ds.names[cid]} : {label}")
+
+    def event_rate(self, cid: int, event: str, scope: dict, label: str) -> str:
+        """Taux issu des timelines (part des parties concernées), avec IC."""
+        base = f"{self.champ_id(cid)}.{scope_key(scope)}.{event}"
+        name = self.ds.names[cid]
+        common = {"champion_id": cid, "scope": scope, "event": event}
+        self.add(f"{base}.rate", {"kind": "rate", **common},
+                 f"{TL_EVENTS[event][1]} pour {name} ({label})")
+        self.add(f"{base}.rate_lo", {"kind": "rate_lo", **common},
+                 f"borne basse de l'IC à 95 % de ce taux pour {name} ({label})")
+        self.add(f"{base}.rate_hi", {"kind": "rate_hi", **common},
+                 f"borne haute de l'IC à 95 % de ce taux pour {name} ({label})")
+        self.add(f"{base}.rate_n", {"kind": "rate_n", **common},
+                 f"parties avec timeline mesurées pour {name} ({label})")
+        return base
+
     def diff(self, cid: int, scope: dict, minus: dict, label: str) -> str:
         fid = f"{self.champ_id(cid)}.{scope_key(scope)}.vs.{scope_key(minus)}"
         return self.add(fid, {"kind": "wr_diff", "champion_id": cid, "scope": scope,
@@ -354,9 +572,44 @@ class Facts:
                 f'ci="{self.d(base + ".wr_lo")} – {self.d(base + ".wr_hi")}" '
                 f'label="{label}" sample="{self.d(base + ".games")} parties" />')
 
+    def mean_cell(self, base: str) -> str:
+        return (f'{self.d(base + ".mean")} `[{self.d(base + ".mean_lo")} – '
+                f'{self.d(base + ".mean_hi")}]`')
+
+    def mean_stat(self, base: str) -> str:
+        unit = METRICS[self.items[base + ".mean"]["spec"]["metric"]][4]
+        return (f'<Stat value="{self.d(base + ".mean")}" unit="{unit}" '
+                f'ci="{self.d(base + ".mean_lo")} – {self.d(base + ".mean_hi")}" />')
+
+    def mean_key_figure(self, base: str, label: str) -> str:
+        unit = METRICS[self.items[base + ".mean"]["spec"]["metric"]][4]
+        return (f'<KeyFigure value="{self.d(base + ".mean")}" unit="{unit}" '
+                f'ci="{self.d(base + ".mean_lo")} – {self.d(base + ".mean_hi")}" '
+                f'label="{label}" sample="{self.d(base + ".mean_n")} participations" />')
+
+    def rate_cell(self, base: str) -> str:
+        return (f'{self.d(base + ".rate")} `[{self.d(base + ".rate_lo")} – '
+                f'{self.d(base + ".rate_hi")}]`')
+
+    def rate_stat(self, base: str) -> str:
+        return (f'<Stat value="{self.d(base + ".rate").removesuffix(" %")}" '
+                f'ci="{self.d(base + ".rate_lo")} – {self.d(base + ".rate_hi")}" />')
+
+    def rate_key_figure(self, base: str, label: str) -> str:
+        return (f'<KeyFigure value="{self.d(base + ".rate").removesuffix(" %")}" '
+                f'ci="{self.d(base + ".rate_lo")} – {self.d(base + ".rate_hi")}" '
+                f'label="{label}" '
+                f'sample="{self.d(base + ".rate_n")} parties avec timeline" />')
+
     def key_value(self, fid: str, label: str, unit: str = "%") -> str:
+        spec = self.items[fid]["spec"]
         value = self.d(fid).removesuffix(" %").removesuffix(" pts")
-        unit = "pts" if self.items[fid]["spec"]["kind"] == "wr_diff" else unit
+        if spec["kind"] == "wr_diff":
+            unit = "pts"
+        elif spec["kind"] == "mean_diff":
+            unit = METRICS[spec["metric"]][4]
+            if spec.get("suffix"):
+                value = value.removesuffix(spec["suffix"])
         return f'<KeyFigure value="{value}" unit="{unit}" label="{label}" />'
 
 
@@ -521,445 +774,6 @@ def plan_tierlist(ds: Dataset) -> StudyPlan:
                        "que l'échantillon garantit, pas la plus flatteuse.")),
     ]
     return plan
-
-
-def plan_regions(ds: Dataset) -> StudyPlan:
-    f = Facts(ds)
-    patch = ds.patch
-    min_g = 2000
-    f.param("min_region", min_g, "parties minimum par région")
-    base = [c for c in ds.champions()
-            if all(ds.stats(c, {"regions": [r]})[0] >= min_g for r in REGIONS)]
-    if len(base) < 10:
-        raise NotFeasible("moins de 10 champions assez joués dans les trois régions")
-    f.add("regions.count.base", {"kind": "count", "min_games": min_g, "condition": "any",
-          "scopes": [{"regions": [r]} for r in REGIONS]},
-          "champions joués au moins le seuil dans chacune des trois régions")
-
-    def gap(cid):
-        s = {r: ds.wr(cid, {"regions": [r]}) for r in REGIONS}
-        hi_r = max(REGIONS, key=lambda r: s[r]["wr"])
-        lo_r = min(REGIONS, key=lambda r: s[r]["wr"])
-        net = s[hi_r]["lo"] > s[lo_r]["hi"]
-        return s[hi_r]["wr"] - s[lo_r]["wr"], hi_r, lo_r, net
-
-    gaps = sorted(base, key=lambda c: -gap(c)[0])
-
-    plan = StudyPlan("comparaison-regionale", "regions",
-                     f"EUW, KR, NA : trois métas ? Patch {patch}",
-                     "Mesurer l'écart réel entre les trois régions et distinguer les vraies "
-                     "différences de méta du bruit d'échantillonnage.",
-                     ["Régions", "Tous ranks", "EUW · KR · NA"], f, [])
-
-    # Section 1 : les plus grands écarts de winrate
-    rows, precis_rows, bases = [], [], []
-    for cid in gaps[:8]:
-        g, hi_r, lo_r, is_net = gap(cid)
-        cells = []
-        ids = []
-        for r in REGIONS:
-            b = f.winrate(cid, {"regions": [r]}, REGION_LABELS[r])
-            cells.append(f"{f.cell(b)} ({f.d(b + '.games')})")
-            ids += _wr_ids(b)
-        dfid = f.diff(cid, {"regions": [hi_r]}, {"regions": [lo_r]},
-                      f"{REGION_SHORT[hi_r]} moins {REGION_SHORT[lo_r]}")
-        ids.append(dfid)
-        rows.append([ds.names[cid], *cells, f.d(dfid), "oui" if is_net else "non"])
-        precis_rows.append(_row_precis(f, cid, ids, region_haute=REGION_LABELS[hi_r],
-                                       region_basse=REGION_LABELS[lo_r],
-                                       ecart_net=is_net))
-    top = gaps[0]
-    g, hi_r, lo_r, _ = gap(top)
-    kf_id = f.diff(top, {"regions": [hi_r]}, {"regions": [lo_r]},
-                   f"{REGION_SHORT[hi_r]} moins {REGION_SHORT[lo_r]}")
-    for r in (hi_r, lo_r):
-        bases.append((f"{ds.names[top]} — {REGION_SHORT[r]}",
-                      f.winrate(top, {"regions": [r]}, REGION_LABELS[r])))
-    for cid in gaps[1:4]:
-        _, h, l, _ = gap(cid)
-        for r in (h, l):
-            bases.append((f"{ds.names[cid]} — {REGION_SHORT[r]}",
-                          f.winrate(cid, {"regions": [r]}, REGION_LABELS[r])))
-    s1 = Section(
-        "ecarts",
-        "Les plus grands écarts de winrate d'un même champion entre régions. La colonne "
-        "« Écart net » (ecart_net) dit si les intervalles des deux régions extrêmes sont "
-        "disjoints ; si ecart_net est faux, l'écart peut être du bruit et doit être décrit ainsi.",
-        [f.key_value(kf_id, f"Écart de winrate de {ds.names[top]} entre {REGION_LABELS[hi_r]} et {REGION_LABELS[lo_r]}, le plus grand du patch parmi les champions à au moins {f.d('param.min_region')} parties par région.")],
-        [md_table(["Champion", "EUW", "KR", "NA", "Écart max", "Écart net"], rows),
-         chart(f, plan.charts, bases, "ecarts-regions",
-               "Winrate par région des champions aux plus grands écarts",
-               "intervalle de confiance à 95 %, tous ranks")],
-        {"lignes": precis_rows,
-         "nombre_ecarts_nets_parmi_ces_lignes": sum(1 for c in gaps[:8] if gap(c)[3])})
-
-    # Section 2 : les picks régionaux
-    def pick_gap(cid):
-        pr = {r: ds.stats(cid, {"regions": [r]})[0] / ds.matches({"regions": [r]})
-              for r in REGIONS}
-        return max(pr.values()) - min(pr.values()), pr
-
-    picks = sorted(base, key=lambda c: -pick_gap(c)[0])[:8]
-    rows, precis_rows = [], []
-    for cid in picks:
-        ids = [f.rate(cid, {"regions": [r]}, "pick_rate", REGION_LABELS[r]) for r in REGIONS]
-        rows.append([ds.names[cid], *[f.d(i) for i in ids]])
-        pr = pick_gap(cid)[1]
-        precis_rows.append(_row_precis(f, cid, ids,
-                                       region_la_plus_jouee=REGION_LABELS[max(pr, key=pr.get)],
-                                       region_la_moins_jouee=REGION_LABELS[min(pr, key=pr.get)]))
-    top_p = picks[0]
-    pr = pick_gap(top_p)[1]
-    kf_p = f.rate(top_p, {"regions": [max(pr, key=pr.get)]}, "pick_rate",
-                  REGION_LABELS[max(pr, key=pr.get)])
-    s2 = Section(
-        "picks",
-        "Les champions dont la popularité (pick rate) varie le plus d'une région à l'autre. "
-        "Décrire les écarts de choix, sans les expliquer : aucune cause n'est mesurée.",
-        [f.key_value(kf_p, f"Pick rate de {ds.names[top_p]} en {REGION_LABELS[max(pr, key=pr.get)]}, la région où il est le plus joué ; c'est le plus grand écart de popularité entre régions du patch.")],
-        [md_table(["Champion", "Pick rate EUW", "Pick rate KR", "Pick rate NA"], rows)],
-        {"lignes": precis_rows})
-
-    # Section 3 : ce qui est commun aux trois régions
-    all_above = f.add("regions.count.above3", {"kind": "count", "min_games": min_g,
-                      "condition": "above", "scopes": [{"regions": [r]} for r in REGIONS]},
-                      "champions significativement au-dessus de 50 % dans les trois régions")
-    all_below = f.add("regions.count.below3", {"kind": "count", "min_games": min_g,
-                      "condition": "below", "scopes": [{"regions": [r]} for r in REGIONS]},
-                      "champions significativement en dessous de 50 % dans les trois régions")
-    per_region = {}
-    for r in REGIONS:
-        per_region[r] = f.add(f"regions.count.above.{REGION_SHORT[r].lower()}",
-                              {"kind": "count", "min_games": min_g, "condition": "above",
-                               "scopes": [{"regions": [r]}]},
-                              f"champions significativement au-dessus de 50 % en {REGION_LABELS[r]}")
-    s3 = Section(
-        "commun",
-        "Ce que les trois régions ont en commun : combien de champions sont au-dessus "
-        "(ou en dessous) de 50 % partout à la fois, comparé au nombre par région.",
-        [f.key_value(all_above, f"Champions significativement au-dessus de 50 % dans les trois régions à la fois, parmi ceux joués au moins {f.d('param.min_region')} fois dans chacune.", unit="champions")],
-        [md_table(["Région", "Champions au-dessus de 50 %"],
-                  [[REGION_LABELS[r], f.d(per_region[r])] for r in REGIONS])],
-        {"faits_globaux": {i: f"{f.d(i)} — {f.items[i]['meaning']}"
-                           for i in [all_above, all_below, *per_region.values(),
-                                     "regions.count.base", "param.min_region"]}})
-    plan.sections = [s1, s2, s3]
-    plan.extra_limits = ("Chaque région est représentée par une seule plateforme (EUW, KR, "
-                         "NA) : les autres serveurs ne sont pas couverts.")
-    return plan
-
-
-def plan_champions_pieges(ds: Dataset) -> StudyPlan:
-    f = Facts(ds)
-    patch = ds.patch
-    min_pick, min_games = 0.03, 10000
-    f.param("min_games", min_games, "parties minimum")
-    total = ds.matches(GLOBAL)
-    popular = [c for c in ds.champions()
-               if ds.stats(c, GLOBAL)[0] >= min_games and ds.stats(c, GLOBAL)[0] / total >= min_pick]
-    traps = sorted([c for c in popular if ds.wr(c, GLOBAL)["hi"] < 0.5],
-                   key=lambda c: -ds.stats(c, GLOBAL)[0])
-    if len(traps) < 3:
-        raise NotFeasible("moins de 3 champions populaires sous 50 %")
-    plan = StudyPlan("champions-pieges", "champions-pieges", f"Champions pièges — patch {patch}",
-                     "Les champions très joués dont l'intervalle de confiance est entièrement "
-                     "sous 50 % : populaires et perdants, sur des échantillons qui ne laissent pas de doute.",
-                     ["Tous rôles", "Tous ranks", "EUW · KR · NA"], f, [])
-    rows, precis_rows, bases = [], [], []
-    for cid in traps[:10]:
-        b = f.winrate(cid, GLOBAL, "toutes régions, tous ranks")
-        p = f.rate(cid, GLOBAL, "pick_rate", "toutes régions, tous ranks")
-        rows.append([ds.names[cid], f.d(p), f.cell(b), f.d(b + ".games")])
-        precis_rows.append(_row_precis(f, cid, [p, *_wr_ids(b)]))
-        bases.append((ds.names[cid], b))
-    top = traps[0]
-    s1 = Section(
-        "pieges",
-        "Les champions joués dans au moins 3 % des parties dont tout l'intervalle de "
-        "confiance est sous 50 %. Ce sont des mesures de parties perdues, pas des jugements "
-        "sur le champion : ne pas conseiller de l'éviter.",
-        [f.key_figure(f.winrate(top, GLOBAL, "toutes régions, tous ranks"),
-                      f"Winrate de {ds.names[top]}, le champion le plus joué dont l'intervalle est entièrement sous 50 %.")],
-        [md_table(["Champion", "Pick rate", "Winrate (IC 95 %)", "Parties"], rows),
-         chart(f, plan.charts, bases, "pieges", "Winrate des champions populaires sous 50 %",
-               "toutes régions, tous ranks")],
-        {"lignes": precis_rows, "nombre_de_champions_pieges": len(traps)})
-
-    rows, precis_rows = [], []
-    lo_b, hi_b = {"buckets": ["IRON_BRONZE"]}, {"buckets": ["DIAMOND_PLUS"]}
-    for cid in traps[:8]:
-        a = f.winrate(cid, lo_b, "Fer–Bronze")
-        z = f.winrate(cid, hi_b, "Diamant+")
-        d = f.diff(cid, hi_b, lo_b, "Diamant+ moins Fer–Bronze")
-        rows.append([ds.names[cid], f"{f.cell(a)} ({f.d(a + '.games')})",
-                     f"{f.cell(z)} ({f.d(z + '.games')})", f.d(d)])
-        precis_rows.append(_row_precis(
-            f, cid, [*_wr_ids(a), *_wr_ids(z), d],
-            lecture_fer_bronze=VERDICT[significance(ds.wr(cid, lo_b))],
-            lecture_diamant=VERDICT[significance(ds.wr(cid, hi_b))]))
-    s2 = Section(
-        "niveaux",
-        "Les mêmes champions en Fer–Bronze et en Diamant+ : le piège vaut-il à tous les "
-        "niveaux ? Rappeler que le bucket est celui du joueur échantillonné.",
-        [], [md_table(["Champion", "Fer–Bronze", "Diamant+", "Écart"], rows)],
-        {"lignes": precis_rows})
-
-    counts = {}
-    for cond, label in (("above", "au-dessus de 50 %"), ("below", "en dessous de 50 %"),
-                        ("contains", "indistinguables de 50 %")):
-        counts[cond] = f.add(f"global.count.{cond}", {"kind": "count", "scopes": [GLOBAL],
-                             "min_games": min_games, "condition": cond},
-                             f"champions joués au moins le seuil de parties et {label}")
-    s3 = Section(
-        "ensemble",
-        "Remettre les pièges en perspective : parmi tous les champions à gros volume, "
-        "combien sont au-dessus, en dessous, ou indistinguables de 50 %.",
-        [f.key_value(counts["below"], f"Champions joués au moins {f.d('param.min_games')} fois dont l'intervalle est entièrement sous 50 %.", unit="champions")],
-        [md_table(["Lecture", "Champions"],
-                  [["Au-dessus de 50 %", f.d(counts["above"])],
-                   ["En dessous de 50 %", f.d(counts["below"])],
-                   ["Indistinguables de 50 %", f.d(counts["contains"])]])],
-        {"faits_globaux": {i: f"{f.d(i)} — {f.items[i]['meaning']}"
-                           for i in [*counts.values(), "param.min_games"]}})
-    plan.sections = [s1, s2, s3]
-    return plan
-
-
-def plan_bans(ds: Dataset) -> StudyPlan:
-    f = Facts(ds)
-    patch = ds.patch
-    total = ds.matches(GLOBAL)
-    ban_rate = lambda c: ds.stats(c, GLOBAL)[2] / total
-    by_ban = sorted([c for c in ds.champions() if ds.stats(c, GLOBAL)[0] >= 2000],
-                    key=lambda c: -ban_rate(c))
-    if len(by_ban) < 10:
-        raise NotFeasible("moins de 10 champions bannis avec un volume suffisant")
-    plan = StudyPlan("bans-justifies", "bans", f"Les bans sont-ils justifiés ? Patch {patch}",
-                     "Confronter le ban rate au winrate : quels champions bannis gagnent "
-                     "réellement leurs parties, et lesquels non.",
-                     ["Bans", "Tous ranks", "EUW · KR · NA"], f, [])
-    rows, precis_rows, bases = [], [], []
-    for cid in by_ban[:10]:
-        b = f.winrate(cid, GLOBAL, "toutes régions, tous ranks")
-        br = f.rate(cid, GLOBAL, "ban_rate", "toutes régions, tous ranks")
-        verdict = VERDICT[significance(ds.wr(cid, GLOBAL))]
-        rows.append([ds.names[cid], f.d(br), f.cell(b), f.d(b + ".games"), verdict])
-        precis_rows.append(_row_precis(f, cid, [br, *_wr_ids(b)], lecture=verdict))
-        bases.append((ds.names[cid], b))
-    top = by_ban[0]
-    kf = f.rate(top, GLOBAL, "ban_rate", "toutes régions, tous ranks")
-    n_below = sum(1 for c in by_ban[:10] if significance(ds.wr(c, GLOBAL)) == "below")
-    s1 = Section(
-        "plus-bannis",
-        "Les dix champions les plus bannis et leur winrate quand ils sont joués. Le champ "
-        "« lecture » dit si l'intervalle est au-dessus, en dessous ou indistinguable de 50 %. "
-        "Ne pas prêter d'intention aux joueurs qui bannissent.",
-        [f.key_value(kf, f"Ban rate de {ds.names[top]}, le champion le plus banni du patch.")],
-        [md_table(["Champion", "Ban rate", "Winrate (IC 95 %)", "Parties", "Lecture"], rows),
-         chart(f, plan.charts, bases, "plus-bannis", "Winrate des dix champions les plus bannis",
-               "toutes régions, tous ranks")],
-        {"lignes": precis_rows, "parmi_les_dix_en_dessous_de_50": n_below,
-         "parmi_les_dix_au_dessus_de_50": sum(1 for c in by_ban[:10]
-                                              if significance(ds.wr(c, GLOBAL)) == "above")})
-
-    low_ban = sorted([c for c in ds.champions() if ds.stats(c, GLOBAL)[0] >= 5000
-                      and significance(ds.wr(c, GLOBAL)) == "above" and ban_rate(c) < 0.02],
-                     key=lambda c: -ds.wr(c, GLOBAL)["lo"])[:8]
-    rows, precis_rows = [], []
-    for cid in low_ban:
-        b = f.winrate(cid, GLOBAL, "toutes régions, tous ranks")
-        br = f.rate(cid, GLOBAL, "ban_rate", "toutes régions, tous ranks")
-        rows.append([ds.names[cid], f.cell(b), f.d(b + ".games"), f.d(br)])
-        precis_rows.append(_row_precis(f, cid, [br, *_wr_ids(b)]))
-    before = []
-    if low_ban:
-        before = [f.key_figure(f.winrate(low_ban[0], GLOBAL, "toutes régions, tous ranks"),
-                               f"Winrate de {ds.names[low_ban[0]]}, banni dans moins de 2 % des parties.")]
-    s2 = Section(
-        "peu-bannis",
-        "Les champions au winrate significativement au-dessus de 50 % (au moins 5 000 parties) "
-        "et bannis dans moins de 2 % des parties. S'il n'y en a aucun, le dire simplement.",
-        before,
-        [md_table(["Champion", "Winrate (IC 95 %)", "Parties", "Ban rate"], rows)] if rows else [],
-        {"lignes": precis_rows, "nombre": len(low_ban)})
-
-    by_bucket_rows, precis_rows = [], []
-    for cid in by_ban[:6]:
-        ids = [f.rate(cid, {"buckets": [b]}, "ban_rate", BUCKET_LABELS[b]) for b in BUCKETS]
-        by_bucket_rows.append([ds.names[cid], *[f.d(i) for i in ids]])
-        precis_rows.append(_row_precis(f, cid, ids))
-    s3 = Section(
-        "par-rank",
-        "Le ban rate des six champions les plus bannis, bucket par bucket : les niveaux de jeu "
-        "ne bannissent pas les mêmes champions dans les mêmes proportions. Rappeler que le "
-        "bucket est celui du joueur échantillonné.",
-        [], [md_table(["Champion", *[BUCKET_LABELS[b] for b in BUCKETS]], by_bucket_rows)],
-        {"lignes": precis_rows})
-    plan.sections = [s1, s2, s3]
-    return plan
-
-
-def plan_rank(ds: Dataset) -> StudyPlan:
-    f = Facts(ds)
-    patch = ds.patch
-    lo_b, hi_b = {"buckets": ["IRON_BRONZE"]}, {"buckets": ["DIAMOND_PLUS"]}
-    min_g = 1500
-    f.param("min_bucket", min_g, "parties minimum par bucket")
-    base = [c for c in ds.champions()
-            if ds.stats(c, lo_b)[0] >= min_g and ds.stats(c, hi_b)[0] >= min_g]
-    if len(base) < 20:
-        raise NotFeasible("moins de 20 champions assez joués en Fer–Bronze et en Diamant+")
-    gap = lambda c: ds.wr(c, hi_b)["wr"] - ds.wr(c, lo_b)["wr"]
-    net = lambda c: ds.wr(c, hi_b)["lo"] > ds.wr(c, lo_b)["hi"] or ds.wr(c, lo_b)["lo"] > ds.wr(c, hi_b)["hi"]
-    plan = StudyPlan("tierlist-par-rank", "tierlist-rank", f"Tier list par rank — patch {patch}",
-                     "Ce qui gagne en Fer–Bronze ne gagne pas en Diamant+ : le classement "
-                     "refait bucket par bucket.",
-                     ["Tier list", "Par rank", "EUW · KR · NA"], f, [])
-
-    def gap_section(key, champs, consigne, kf_label, chart_id, chart_title):
-        rows, precis_rows, bases = [], [], []
-        for cid in champs:
-            a = f.winrate(cid, lo_b, "Fer–Bronze")
-            z = f.winrate(cid, hi_b, "Diamant+")
-            d = f.diff(cid, hi_b, lo_b, "Diamant+ moins Fer–Bronze")
-            rows.append([ds.names[cid], f"{f.cell(a)} ({f.d(a + '.games')})",
-                         f"{f.cell(z)} ({f.d(z + '.games')})", f.d(d), "oui" if net(cid) else "non"])
-            precis_rows.append(_row_precis(f, cid, [*_wr_ids(a), *_wr_ids(z), d],
-                                           ecart_net=net(cid)))
-            bases += [(f"{ds.names[cid]} — Fer–Bronze", a), (f"{ds.names[cid]} — Diamant+", z)]
-        kf = f.diff(champs[0], hi_b, lo_b, "Diamant+ moins Fer–Bronze")
-        return Section(key, consigne,
-                       [f.key_value(kf, kf_label.format(name=ds.names[champs[0]]))],
-                       [md_table(["Champion", "Fer–Bronze", "Diamant+", "Écart", "Écart net"], rows),
-                        chart(f, plan.charts, bases[:8], chart_id, chart_title,
-                              "intervalle de confiance à 95 %, toutes régions")],
-                       {"lignes": precis_rows})
-
-    up = sorted(base, key=lambda c: -gap(c))[:6]
-    down = sorted(base, key=gap)[:6]
-    s1 = gap_section("montent", up,
-                     "Les champions dont le winrate est le plus haut en Diamant+ qu'en Fer–Bronze. "
-                     "ecart_net indique si les deux intervalles sont disjoints. Rappeler que le "
-                     "bucket est celui du joueur échantillonné.",
-                     "Écart de winrate de {name} entre Diamant+ et Fer–Bronze, le plus grand du patch en faveur du haut de ladder.",
-                     "montent", "Champions qui gagnent davantage en Diamant+")
-    s2 = gap_section("descendent", down,
-                     "Les champions dont le winrate est le plus haut en Fer–Bronze qu'en Diamant+. "
-                     "Ne pas parler de champion fort ou faible sans préciser le niveau.",
-                     "Écart de winrate de {name} entre Diamant+ et Fer–Bronze, le plus grand du patch en faveur du bas de ladder.",
-                     "descendent", "Champions qui gagnent davantage en Fer–Bronze")
-    stable_scopes = [{"buckets": [b]} for b in BUCKETS]
-    stable = sorted([c for c in ds.champions()
-                     if all(ds.stats(c, s)[0] >= 1000 and significance(ds.wr(c, s)) == "above"
-                            for s in stable_scopes)],
-                    key=lambda c: -min(ds.wr(c, s)["lo"] for s in stable_scopes))
-    f.param("min_stable", 1000, "parties minimum par bucket pour la stabilité")
-    n_stable = f.add("rank.count.stable", {"kind": "count", "min_games": 1000, "condition": "above",
-                     "scopes": stable_scopes},
-                     "champions significativement au-dessus de 50 % dans les quatre buckets")
-    rows, precis_rows = [], []
-    for cid in stable[:6]:
-        ids, cells = [], []
-        for s, b in zip(stable_scopes, BUCKETS):
-            base_id = f.winrate(cid, s, BUCKET_LABELS[b])
-            cells.append(f.d(base_id + ".wr"))
-            ids += _wr_ids(base_id)
-        rows.append([ds.names[cid], *cells])
-        precis_rows.append(_row_precis(f, cid, ids))
-    s3 = Section(
-        "stables",
-        "Les champions au-dessus de 50 % dans les quatre buckets à la fois : ceux dont le "
-        "résultat ne dépend pas du niveau. S'il n'y en a aucun, le dire.",
-        [f.key_value(n_stable, f"Champions significativement au-dessus de 50 % dans les quatre buckets, parmi ceux joués au moins {f.d('param.min_stable')} fois dans chacun.", unit="champions")],
-        [md_table(["Champion", *[BUCKET_LABELS[b] for b in BUCKETS]], rows)] if rows else [],
-        {"lignes": precis_rows, "faits_globaux": {n_stable: f"{f.d(n_stable)} — {f.items[n_stable]['meaning']}"}})
-    plan.sections = [s1, s2, s3]
-    return plan
-
-
-def plan_role(ds: Dataset, role: str) -> StudyPlan:
-    f = Facts(ds)
-    patch = ds.patch
-    label = ROLE_LABELS[role]
-    rs = {"role": role}
-    min_g = 1500
-    f.param("min_role", min_g, "parties minimum au poste")
-    base = [c for c in ds.champions() if ds.stats(c, rs)[0] >= min_g]
-    if len(base) < 12:
-        raise NotFeasible(f"moins de 12 champions joués au poste {role}")
-    plan = StudyPlan(f"meta-role-{role.lower()}", f"meta-{slugify(label)}",
-                     f"Méta par poste — {label}, patch {patch}",
-                     f"Qui gagne réellement au poste {label}, une fois le rôle isolé.",
-                     ["Méta par poste", label, "Tous ranks", "EUW · KR · NA"], f, [])
-    where = f"au poste {label}"
-    best = sorted(base, key=lambda c: -ds.wr(c, rs)["lo"])[:8]
-    rows, precis_rows, bases = [], [], []
-    for cid in best:
-        b = f.winrate(cid, rs, where)
-        p = f.rate(cid, rs, "pick_rate", where)
-        verdict = VERDICT[significance(ds.wr(cid, rs))]
-        rows.append([ds.names[cid], f.cell(b), f.d(b + ".games"), f.d(p), verdict])
-        precis_rows.append(_row_precis(f, cid, [p, *_wr_ids(b)], lecture=verdict))
-        bases.append((ds.names[cid], b))
-    s1 = Section(
-        "meilleurs",
-        f"Les meilleurs winrates {where}, classés par la borne basse de l'intervalle "
-        "(la valeur que l'échantillon garantit). Le pick rate est calculé sur toutes les parties.",
-        [f.key_figure(f.winrate(best[0], rs, where),
-                      f"Winrate de {ds.names[best[0]]} {where}, meilleure borne basse d'intervalle du poste.")],
-        [md_table(["Champion", "Winrate (IC 95 %)", "Parties", "Pick rate", "Lecture"], rows),
-         chart(f, plan.charts, bases, "meilleurs", f"Meilleurs winrates {where}",
-               "toutes régions, tous ranks")],
-        {"lignes": precis_rows})
-
-    played = sorted(base, key=lambda c: -ds.stats(c, rs)[0])[:8]
-    rows, precis_rows = [], []
-    for cid in played:
-        b = f.winrate(cid, rs, where)
-        p = f.rate(cid, rs, "pick_rate", where)
-        verdict = VERDICT[significance(ds.wr(cid, rs))]
-        rows.append([ds.names[cid], f.d(p), f.cell(b), f.d(b + ".games"), verdict])
-        precis_rows.append(_row_precis(f, cid, [p, *_wr_ids(b)], lecture=verdict))
-    s2 = Section(
-        "plus-joues",
-        f"Les champions les plus joués {where} et la lecture de leur winrate. Comparer avec "
-        "la section précédente sans en tirer de cause.",
-        [f.key_value(f.rate(played[0], rs, "pick_rate", where),
-                     f"Pick rate de {ds.names[played[0]]} {where}, le plus joué du poste.")],
-        [md_table(["Champion", "Pick rate", "Winrate (IC 95 %)", "Parties", "Lecture"], rows)],
-        {"lignes": precis_rows})
-
-    lo_b, hi_b = {"role": role, "buckets": ["IRON_BRONZE"]}, {"role": role, "buckets": ["DIAMOND_PLUS"]}
-    both = [c for c in base if ds.stats(c, lo_b)[0] >= 500 and ds.stats(c, hi_b)[0] >= 500]
-    f.param("min_bucket_role", 500, "parties minimum par bucket au poste")
-    both.sort(key=lambda c: -abs(ds.wr(c, hi_b)["wr"] - ds.wr(c, lo_b)["wr"]))
-    rows, precis_rows = [], []
-    for cid in both[:6]:
-        a = f.winrate(cid, lo_b, f"Fer–Bronze, {where}")
-        z = f.winrate(cid, hi_b, f"Diamant+, {where}")
-        d = f.diff(cid, hi_b, lo_b, f"Diamant+ moins Fer–Bronze, {where}")
-        net = ds.wr(cid, hi_b)["lo"] > ds.wr(cid, lo_b)["hi"] or ds.wr(cid, lo_b)["lo"] > ds.wr(cid, hi_b)["hi"]
-        rows.append([ds.names[cid], f"{f.cell(a)} ({f.d(a + '.games')})",
-                     f"{f.cell(z)} ({f.d(z + '.games')})", f.d(d), "oui" if net else "non"])
-        precis_rows.append(_row_precis(f, cid, [*_wr_ids(a), *_wr_ids(z), d], ecart_net=net))
-    s3 = Section(
-        "niveaux",
-        f"Les plus grands écarts entre Fer–Bronze et Diamant+ {where}. ecart_net dit si les "
-        "intervalles sont disjoints. Rappeler que le bucket est celui du joueur échantillonné.",
-        [], [md_table(["Champion", "Fer–Bronze", "Diamant+", "Écart", "Écart net"], rows)] if rows else [],
-        {"lignes": precis_rows})
-    plan.sections = [s1, s2, s3]
-    return plan
-
-
-TOPIC_BUILDERS = {
-    "tierlist-globale": plan_tierlist,
-    "comparaison-regionale": plan_regions,
-    "champions-pieges": plan_champions_pieges,
-    "bans-justifies": plan_bans,
-    "tierlist-par-rank": plan_rank,
-    **{f"meta-role-{r.lower()}": (lambda ds, r=r: plan_role(ds, r)) for r in ROLES},
-}
 
 
 # ---------------------------------------------------------------------------

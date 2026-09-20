@@ -1,0 +1,1183 @@
+{
+ "_doc": {
+  "role": "Catalogue des études récurrentes d'EloLab, instanciées à chaque patch par lolcollector.editorial.sync_templates. Un gabarit + ses variantes = autant d'articles ; scripts/generate_study.py daily en publie un par jour, le premier éligible et non publié sur le patch courant.",
+  "champs": {
+   "generateur": "constructeur de lolcollector.studytopics.BUILDERS",
+   "params": "paramètres du constructeur (role, bucket, region, metric, seuils) ; ceux de la variante complètent ceux du gabarit",
+   "donnees_requises": "données vérifiées en base par lolcollector.editorial.DATA_CHECKS avant de rendre l'article rédigeable",
+   "variantes": "déclinaisons d'un même gabarit ; « role_slug » ou « suffixe » donne l'identifiant et le slug, « label » s'insère dans le titre et l'angle"
+  },
+  "regime": "Tous les gabarits sont en patch_courant : la purge ne garde que le patch courant en base, aucun sujet multi-patch n'est calculable.",
+  "comptage": "17 gabarits, 66 articles instanciés par patch."
+ },
+ "templates": [
+  {
+   "id": "meta-role",
+   "famille": "meta-role",
+   "generateur": "wr-ranking",
+   "titre_template": "Méta par poste — {label}, patch {patch}",
+   "slug_template": "meta-{role_slug}/{patch-slug}",
+   "angle": "Qui gagne réellement au poste {label} sur le patch {patch}, une fois le rôle isolé.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "team_position"
+   ],
+   "jour_prefere": 0,
+   "variantes": [
+    {
+     "role_slug": "top",
+     "label": "Top",
+     "params": {
+      "role": "TOP"
+     },
+     "tags": [
+      "Méta par poste",
+      "Top",
+      "Tous ranks",
+      "EUW · KR · NA"
+     ],
+     "jour_prefere": 0
+    },
+    {
+     "role_slug": "jungle",
+     "label": "Jungle",
+     "params": {
+      "role": "JUNGLE"
+     },
+     "tags": [
+      "Méta par poste",
+      "Jungle",
+      "Tous ranks",
+      "EUW · KR · NA"
+     ],
+     "jour_prefere": 1
+    },
+    {
+     "role_slug": "mid",
+     "label": "Mid",
+     "params": {
+      "role": "MIDDLE"
+     },
+     "tags": [
+      "Méta par poste",
+      "Mid",
+      "Tous ranks",
+      "EUW · KR · NA"
+     ],
+     "jour_prefere": 2
+    },
+    {
+     "role_slug": "bot",
+     "label": "Bot (ADC)",
+     "params": {
+      "role": "BOTTOM"
+     },
+     "tags": [
+      "Méta par poste",
+      "Bot (ADC)",
+      "Tous ranks",
+      "EUW · KR · NA"
+     ],
+     "jour_prefere": 3
+    },
+    {
+     "role_slug": "support",
+     "label": "Support",
+     "params": {
+      "role": "UTILITY"
+     },
+     "tags": [
+      "Méta par poste",
+      "Support",
+      "Tous ranks",
+      "EUW · KR · NA"
+     ],
+     "jour_prefere": 4
+    }
+   ]
+  },
+  {
+   "id": "meta-rank",
+   "famille": "meta-rank",
+   "generateur": "wr-ranking",
+   "titre_template": "Tier list en {label}, patch {patch}",
+   "slug_template": "meta-{suffixe}/{patch-slug}",
+   "angle": "Le classement du patch {patch} refait pour les seules parties de {label}.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "tier_bucket_source"
+   ],
+   "jour_prefere": 1,
+   "variantes": [
+    {
+     "suffixe": "fer-bronze",
+     "label": "Fer–Bronze",
+     "params": {
+      "bucket": "IRON_BRONZE"
+     },
+     "tags": [
+      "Tier list",
+      "Fer–Bronze",
+      "EUW · KR · NA"
+     ],
+     "jour_prefere": 0
+    },
+    {
+     "suffixe": "argent-or",
+     "label": "Argent–Or",
+     "params": {
+      "bucket": "SILVER_GOLD"
+     },
+     "tags": [
+      "Tier list",
+      "Argent–Or",
+      "EUW · KR · NA"
+     ],
+     "jour_prefere": 1
+    },
+    {
+     "suffixe": "platine-emeraude",
+     "label": "Platine–Émeraude",
+     "params": {
+      "bucket": "PLAT_EMERALD"
+     },
+     "tags": [
+      "Tier list",
+      "Platine–Émeraude",
+      "EUW · KR · NA"
+     ],
+     "jour_prefere": 2
+    },
+    {
+     "suffixe": "diamant",
+     "label": "Diamant+",
+     "params": {
+      "bucket": "DIAMOND_PLUS"
+     },
+     "tags": [
+      "Tier list",
+      "Diamant+",
+      "EUW · KR · NA"
+     ],
+     "jour_prefere": 3
+    }
+   ]
+  },
+  {
+   "id": "champions-pieges",
+   "famille": "champions-pieges",
+   "generateur": "wr-outliers",
+   "titre_template": "Champions pièges{label}, patch {patch}",
+   "slug_template": "champions-pieges{suffixe}/{patch-slug}",
+   "angle": "Les champions très joués{label} dont l'intervalle de confiance est entièrement sous 50 %.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants"
+   ],
+   "jour_prefere": 2,
+   "params": {
+    "direction": "below"
+   },
+   "variantes": [
+    {
+     "suffixe": "",
+     "label": "",
+     "params": {},
+     "tags": [
+      "Champions pièges",
+      "Tous ranks",
+      "EUW · KR · NA"
+     ],
+     "jour_prefere": 2
+    },
+    {
+     "suffixe": "-fer-bronze",
+     "label": " en Fer–Bronze",
+     "params": {
+      "bucket": "IRON_BRONZE"
+     },
+     "tags": [
+      "Champions pièges",
+      "Fer–Bronze",
+      "EUW · KR · NA"
+     ],
+     "jour_prefere": 2
+    },
+    {
+     "suffixe": "-argent-or",
+     "label": " en Argent–Or",
+     "params": {
+      "bucket": "SILVER_GOLD"
+     },
+     "tags": [
+      "Champions pièges",
+      "Argent–Or",
+      "EUW · KR · NA"
+     ],
+     "jour_prefere": 2
+    },
+    {
+     "suffixe": "-platine-emeraude",
+     "label": " en Platine–Émeraude",
+     "params": {
+      "bucket": "PLAT_EMERALD"
+     },
+     "tags": [
+      "Champions pièges",
+      "Platine–Émeraude",
+      "EUW · KR · NA"
+     ],
+     "jour_prefere": 2
+    },
+    {
+     "suffixe": "-diamant",
+     "label": " en Diamant+",
+     "params": {
+      "bucket": "DIAMOND_PLUS"
+     },
+     "tags": [
+      "Champions pièges",
+      "Diamant+",
+      "EUW · KR · NA"
+     ],
+     "jour_prefere": 2
+    }
+   ]
+  },
+  {
+   "id": "champions-surperformants",
+   "famille": "champions-surperformants",
+   "generateur": "wr-outliers",
+   "titre_template": "Champions qui surperforment{label}, patch {patch}",
+   "slug_template": "champions-surperformants{suffixe}/{patch-slug}",
+   "angle": "Les champions très joués{label} dont l'intervalle de confiance est entièrement au-dessus de 50 %.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants"
+   ],
+   "jour_prefere": 3,
+   "params": {
+    "direction": "above"
+   },
+   "variantes": [
+    {
+     "suffixe": "",
+     "label": "",
+     "params": {},
+     "tags": [
+      "Surperformance",
+      "Tous ranks",
+      "EUW · KR · NA"
+     ],
+     "jour_prefere": 3
+    },
+    {
+     "suffixe": "-fer-bronze",
+     "label": " en Fer–Bronze",
+     "params": {
+      "bucket": "IRON_BRONZE"
+     },
+     "tags": [
+      "Surperformance",
+      "Fer–Bronze",
+      "EUW · KR · NA"
+     ],
+     "jour_prefere": 3
+    },
+    {
+     "suffixe": "-argent-or",
+     "label": " en Argent–Or",
+     "params": {
+      "bucket": "SILVER_GOLD"
+     },
+     "tags": [
+      "Surperformance",
+      "Argent–Or",
+      "EUW · KR · NA"
+     ],
+     "jour_prefere": 3
+    },
+    {
+     "suffixe": "-platine-emeraude",
+     "label": " en Platine–Émeraude",
+     "params": {
+      "bucket": "PLAT_EMERALD"
+     },
+     "tags": [
+      "Surperformance",
+      "Platine–Émeraude",
+      "EUW · KR · NA"
+     ],
+     "jour_prefere": 3
+    },
+    {
+     "suffixe": "-diamant",
+     "label": " en Diamant+",
+     "params": {
+      "bucket": "DIAMOND_PLUS"
+     },
+     "tags": [
+      "Surperformance",
+      "Diamant+",
+      "EUW · KR · NA"
+     ],
+     "jour_prefere": 3
+    }
+   ]
+  },
+  {
+   "id": "bans",
+   "famille": "bans",
+   "generateur": "bans",
+   "titre_template": "Les bans du patch {patch}{label}",
+   "slug_template": "bans{suffixe}/{patch-slug}",
+   "angle": "Confronter le ban rate au winrate{label} : ce que les bans visent, et ce que les champions bannis font réellement.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "bans"
+   ],
+   "jour_prefere": 4,
+   "variantes": [
+    {
+     "suffixe": "",
+     "label": "",
+     "params": {},
+     "tags": [
+      "Bans",
+      "Tous ranks",
+      "EUW · KR · NA"
+     ],
+     "jour_prefere": 4
+    },
+    {
+     "suffixe": "-euw",
+     "label": " en Europe (EUW)",
+     "params": {
+      "region": "europe"
+     },
+     "tags": [
+      "Bans",
+      "Europe (EUW)"
+     ],
+     "jour_prefere": 4
+    },
+    {
+     "suffixe": "-kr",
+     "label": " en Asie (KR)",
+     "params": {
+      "region": "asia"
+     },
+     "tags": [
+      "Bans",
+      "Asie (KR)"
+     ],
+     "jour_prefere": 4
+    },
+    {
+     "suffixe": "-na",
+     "label": " en Amériques (NA)",
+     "params": {
+      "region": "americas"
+     },
+     "tags": [
+      "Bans",
+      "Amériques (NA)"
+     ],
+     "jour_prefere": 4
+    },
+    {
+     "suffixe": "-fer-bronze",
+     "label": " en Fer–Bronze",
+     "params": {
+      "bucket": "IRON_BRONZE"
+     },
+     "tags": [
+      "Bans",
+      "Fer–Bronze",
+      "EUW · KR · NA"
+     ],
+     "jour_prefere": 5
+    },
+    {
+     "suffixe": "-argent-or",
+     "label": " en Argent–Or",
+     "params": {
+      "bucket": "SILVER_GOLD"
+     },
+     "tags": [
+      "Bans",
+      "Argent–Or",
+      "EUW · KR · NA"
+     ],
+     "jour_prefere": 5
+    },
+    {
+     "suffixe": "-platine-emeraude",
+     "label": " en Platine–Émeraude",
+     "params": {
+      "bucket": "PLAT_EMERALD"
+     },
+     "tags": [
+      "Bans",
+      "Platine–Émeraude",
+      "EUW · KR · NA"
+     ],
+     "jour_prefere": 5
+    },
+    {
+     "suffixe": "-diamant",
+     "label": " en Diamant+",
+     "params": {
+      "bucket": "DIAMOND_PLUS"
+     },
+     "tags": [
+      "Bans",
+      "Diamant+",
+      "EUW · KR · NA"
+     ],
+     "jour_prefere": 5
+    }
+   ]
+  },
+  {
+   "id": "regions",
+   "famille": "regions",
+   "generateur": "regions",
+   "titre_template": "EUW, KR, NA : trois métas ? Patch {patch}",
+   "slug_template": "regions/{patch-slug}",
+   "angle": "Mesurer l'écart réel entre les trois régions sur le patch {patch}, et distinguer les vraies différences de méta du bruit d'échantillonnage.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "region"
+   ],
+   "jour_prefere": 5,
+   "tags": [
+    "Régions",
+    "Tous ranks",
+    "EUW · KR · NA"
+   ]
+  },
+  {
+   "id": "regions-role",
+   "famille": "regions",
+   "generateur": "regions",
+   "titre_template": "EUW, KR, NA au poste {label}, patch {patch}",
+   "slug_template": "regions-{role_slug}/{patch-slug}",
+   "angle": "Les écarts entre régions au poste {label} sur le patch {patch}, intervalles de confiance à l'appui.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "region",
+    "team_position"
+   ],
+   "jour_prefere": 6,
+   "variantes": [
+    {
+     "role_slug": "top",
+     "label": "Top",
+     "params": {
+      "role": "TOP",
+      "min_games": 600
+     },
+     "tags": [
+      "Régions",
+      "Top",
+      "EUW · KR · NA"
+     ],
+     "jour_prefere": 6
+    },
+    {
+     "role_slug": "jungle",
+     "label": "Jungle",
+     "params": {
+      "role": "JUNGLE",
+      "min_games": 600
+     },
+     "tags": [
+      "Régions",
+      "Jungle",
+      "EUW · KR · NA"
+     ],
+     "jour_prefere": 6
+    },
+    {
+     "role_slug": "mid",
+     "label": "Mid",
+     "params": {
+      "role": "MIDDLE",
+      "min_games": 600
+     },
+     "tags": [
+      "Régions",
+      "Mid",
+      "EUW · KR · NA"
+     ],
+     "jour_prefere": 6
+    },
+    {
+     "role_slug": "bot",
+     "label": "Bot (ADC)",
+     "params": {
+      "role": "BOTTOM",
+      "min_games": 600
+     },
+     "tags": [
+      "Régions",
+      "Bot (ADC)",
+      "EUW · KR · NA"
+     ],
+     "jour_prefere": 6
+    },
+    {
+     "role_slug": "support",
+     "label": "Support",
+     "params": {
+      "role": "UTILITY",
+      "min_games": 600
+     },
+     "tags": [
+      "Régions",
+      "Support",
+      "EUW · KR · NA"
+     ],
+     "jour_prefere": 6
+    }
+   ]
+  },
+  {
+   "id": "tierlist-par-rank",
+   "famille": "tierlist-rank",
+   "generateur": "rank-gap",
+   "titre_template": "Tier list par rank — patch {patch}",
+   "slug_template": "tierlist-rank/{patch-slug}",
+   "angle": "Ce qui gagne en Fer–Bronze ne gagne pas en Diamant+ : le classement du patch {patch} refait bucket par bucket.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "tier_bucket_source"
+   ],
+   "jour_prefere": 0,
+   "tags": [
+    "Tier list",
+    "Par rank",
+    "EUW · KR · NA"
+   ]
+  },
+  {
+   "id": "rank-gap-role",
+   "famille": "tierlist-rank",
+   "generateur": "rank-gap",
+   "titre_template": "Fer–Bronze contre Diamant+ au poste {label}, patch {patch}",
+   "slug_template": "rank-{role_slug}/{patch-slug}",
+   "angle": "Les écarts de winrate entre Fer–Bronze et Diamant+ au poste {label} sur le patch {patch}.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "tier_bucket_source",
+    "team_position"
+   ],
+   "jour_prefere": 1,
+   "variantes": [
+    {
+     "role_slug": "top",
+     "label": "Top",
+     "params": {
+      "role": "TOP",
+      "min_games": 400
+     },
+     "tags": [
+      "Par rank",
+      "Top",
+      "EUW · KR · NA"
+     ],
+     "jour_prefere": 1
+    },
+    {
+     "role_slug": "jungle",
+     "label": "Jungle",
+     "params": {
+      "role": "JUNGLE",
+      "min_games": 400
+     },
+     "tags": [
+      "Par rank",
+      "Jungle",
+      "EUW · KR · NA"
+     ],
+     "jour_prefere": 1
+    },
+    {
+     "role_slug": "mid",
+     "label": "Mid",
+     "params": {
+      "role": "MIDDLE",
+      "min_games": 400
+     },
+     "tags": [
+      "Par rank",
+      "Mid",
+      "EUW · KR · NA"
+     ],
+     "jour_prefere": 1
+    },
+    {
+     "role_slug": "bot",
+     "label": "Bot (ADC)",
+     "params": {
+      "role": "BOTTOM",
+      "min_games": 400
+     },
+     "tags": [
+      "Par rank",
+      "Bot (ADC)",
+      "EUW · KR · NA"
+     ],
+     "jour_prefere": 1
+    },
+    {
+     "role_slug": "support",
+     "label": "Support",
+     "params": {
+      "role": "UTILITY",
+      "min_games": 400
+     },
+     "tags": [
+      "Par rank",
+      "Support",
+      "EUW · KR · NA"
+     ],
+     "jour_prefere": 1
+    }
+   ]
+  },
+  {
+   "id": "vision-role",
+   "famille": "vision-role",
+   "generateur": "metric-ranking",
+   "titre_template": "Vision au poste {label}, patch {patch}",
+   "slug_template": "vision-{role_slug}/{patch-slug}",
+   "angle": "Le vision score moyen au poste {label} sur le patch {patch}, champion par champion.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "vision_score",
+    "team_position"
+   ],
+   "jour_prefere": 2,
+   "params": {
+    "metric": "vision_score"
+   },
+   "variantes": [
+    {
+     "role_slug": "top",
+     "label": "Top",
+     "params": {
+      "role": "TOP"
+     },
+     "tags": [
+      "Vision",
+      "Top",
+      "Tous ranks"
+     ],
+     "jour_prefere": 2
+    },
+    {
+     "role_slug": "jungle",
+     "label": "Jungle",
+     "params": {
+      "role": "JUNGLE"
+     },
+     "tags": [
+      "Vision",
+      "Jungle",
+      "Tous ranks"
+     ],
+     "jour_prefere": 2
+    },
+    {
+     "role_slug": "mid",
+     "label": "Mid",
+     "params": {
+      "role": "MIDDLE"
+     },
+     "tags": [
+      "Vision",
+      "Mid",
+      "Tous ranks"
+     ],
+     "jour_prefere": 2
+    },
+    {
+     "role_slug": "bot",
+     "label": "Bot (ADC)",
+     "params": {
+      "role": "BOTTOM"
+     },
+     "tags": [
+      "Vision",
+      "Bot (ADC)",
+      "Tous ranks"
+     ],
+     "jour_prefere": 2
+    },
+    {
+     "role_slug": "support",
+     "label": "Support",
+     "params": {
+      "role": "UTILITY"
+     },
+     "tags": [
+      "Vision",
+      "Support",
+      "Tous ranks"
+     ],
+     "jour_prefere": 2
+    }
+   ]
+  },
+  {
+   "id": "degats-par-or",
+   "famille": "degats-par-or",
+   "generateur": "metric-ranking",
+   "titre_template": "Dégâts par or gagné au poste {label}, patch {patch}",
+   "slug_template": "degats-or-{role_slug}/{patch-slug}",
+   "angle": "Combien de dégâts aux champions chaque or gagné produit au poste {label}, sur le patch {patch}.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "damage_to_champions",
+    "gold_earned",
+    "team_position"
+   ],
+   "jour_prefere": 3,
+   "params": {
+    "metric": "damage_per_gold"
+   },
+   "variantes": [
+    {
+     "role_slug": "top",
+     "label": "Top",
+     "params": {
+      "role": "TOP"
+     },
+     "tags": [
+      "Dégâts",
+      "Top",
+      "Tous ranks"
+     ],
+     "jour_prefere": 3
+    },
+    {
+     "role_slug": "jungle",
+     "label": "Jungle",
+     "params": {
+      "role": "JUNGLE"
+     },
+     "tags": [
+      "Dégâts",
+      "Jungle",
+      "Tous ranks"
+     ],
+     "jour_prefere": 3
+    },
+    {
+     "role_slug": "mid",
+     "label": "Mid",
+     "params": {
+      "role": "MIDDLE"
+     },
+     "tags": [
+      "Dégâts",
+      "Mid",
+      "Tous ranks"
+     ],
+     "jour_prefere": 3
+    },
+    {
+     "role_slug": "bot",
+     "label": "Bot (ADC)",
+     "params": {
+      "role": "BOTTOM"
+     },
+     "tags": [
+      "Dégâts",
+      "Bot (ADC)",
+      "Tous ranks"
+     ],
+     "jour_prefere": 3
+    },
+    {
+     "role_slug": "support",
+     "label": "Support",
+     "params": {
+      "role": "UTILITY"
+     },
+     "tags": [
+      "Dégâts",
+      "Support",
+      "Tous ranks"
+     ],
+     "jour_prefere": 3
+    }
+   ]
+  },
+  {
+   "id": "cs10-role",
+   "famille": "cs10-role",
+   "generateur": "metric-ranking",
+   "titre_template": "CS à 10 minutes au poste {label}, patch {patch}",
+   "slug_template": "cs10-{role_slug}/{patch-slug}",
+   "angle": "Le nombre de CS à 10 minutes au poste {label} sur le patch {patch}, champion par champion.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "cs_at10",
+    "team_position"
+   ],
+   "jour_prefere": 4,
+   "params": {
+    "metric": "cs_at10"
+   },
+   "variantes": [
+    {
+     "role_slug": "top",
+     "label": "Top",
+     "params": {
+      "role": "TOP"
+     },
+     "tags": [
+      "CS",
+      "Top",
+      "Tous ranks"
+     ],
+     "jour_prefere": 4
+    },
+    {
+     "role_slug": "jungle",
+     "label": "Jungle",
+     "params": {
+      "role": "JUNGLE"
+     },
+     "tags": [
+      "CS",
+      "Jungle",
+      "Tous ranks"
+     ],
+     "jour_prefere": 4
+    },
+    {
+     "role_slug": "mid",
+     "label": "Mid",
+     "params": {
+      "role": "MIDDLE"
+     },
+     "tags": [
+      "CS",
+      "Mid",
+      "Tous ranks"
+     ],
+     "jour_prefere": 4
+    },
+    {
+     "role_slug": "bot",
+     "label": "Bot (ADC)",
+     "params": {
+      "role": "BOTTOM"
+     },
+     "tags": [
+      "CS",
+      "Bot (ADC)",
+      "Tous ranks"
+     ],
+     "jour_prefere": 4
+    },
+    {
+     "role_slug": "support",
+     "label": "Support",
+     "params": {
+      "role": "UTILITY"
+     },
+     "tags": [
+      "CS",
+      "Support",
+      "Tous ranks"
+     ],
+     "jour_prefere": 4
+    }
+   ]
+  },
+  {
+   "id": "temps-mort-rank",
+   "famille": "temps-mort-rank",
+   "generateur": "metric-ranking",
+   "titre_template": "Temps passé mort en {label}, patch {patch}",
+   "slug_template": "temps-mort-{suffixe}/{patch-slug}",
+   "angle": "Le temps passé mort par partie en {label} sur le patch {patch}, champion par champion.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "time_spent_dead",
+    "tier_bucket_source"
+   ],
+   "jour_prefere": 5,
+   "params": {
+    "metric": "time_spent_dead"
+   },
+   "variantes": [
+    {
+     "suffixe": "fer-bronze",
+     "label": "Fer–Bronze",
+     "params": {
+      "bucket": "IRON_BRONZE"
+     },
+     "tags": [
+      "Temps mort",
+      "Fer–Bronze",
+      "EUW · KR · NA"
+     ],
+     "jour_prefere": 5
+    },
+    {
+     "suffixe": "argent-or",
+     "label": "Argent–Or",
+     "params": {
+      "bucket": "SILVER_GOLD"
+     },
+     "tags": [
+      "Temps mort",
+      "Argent–Or",
+      "EUW · KR · NA"
+     ],
+     "jour_prefere": 5
+    },
+    {
+     "suffixe": "platine-emeraude",
+     "label": "Platine–Émeraude",
+     "params": {
+      "bucket": "PLAT_EMERALD"
+     },
+     "tags": [
+      "Temps mort",
+      "Platine–Émeraude",
+      "EUW · KR · NA"
+     ],
+     "jour_prefere": 5
+    },
+    {
+     "suffixe": "diamant",
+     "label": "Diamant+",
+     "params": {
+      "bucket": "DIAMOND_PLUS"
+     },
+     "tags": [
+      "Temps mort",
+      "Diamant+",
+      "EUW · KR · NA"
+     ],
+     "jour_prefere": 5
+    }
+   ]
+  },
+  {
+   "id": "plates-top",
+   "famille": "plates-top",
+   "generateur": "metric-ranking",
+   "titre_template": "Plates de tourelle au poste Top, patch {patch}",
+   "slug_template": "plates-top/{patch-slug}",
+   "angle": "Les plates de tourelle prises au poste Top sur le patch {patch}, champion par champion.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "turret_plates_taken",
+    "team_position"
+   ],
+   "jour_prefere": 6,
+   "params": {
+    "metric": "turret_plates_taken"
+   },
+   "variantes": [
+    {
+     "suffixe": "",
+     "params": {
+      "role": "TOP"
+     },
+     "tags": [
+      "Plates",
+      "Top",
+      "Tous ranks"
+     ],
+     "jour_prefere": 6
+    }
+   ]
+  },
+  {
+   "id": "pinks-support",
+   "famille": "pinks-support",
+   "generateur": "metric-ranking",
+   "titre_template": "Pinks achetés au poste Support, patch {patch}",
+   "slug_template": "pinks-support/{patch-slug}",
+   "angle": "Les pinks achetés par partie au poste Support sur le patch {patch}, champion par champion.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "control_wards_bought",
+    "team_position"
+   ],
+   "jour_prefere": 0,
+   "params": {
+    "metric": "control_wards_bought"
+   },
+   "variantes": [
+    {
+     "suffixe": "",
+     "params": {
+      "role": "UTILITY"
+     },
+     "tags": [
+      "Vision",
+      "Support",
+      "Tous ranks"
+     ],
+     "jour_prefere": 0
+    }
+   ]
+  },
+  {
+   "id": "morts-precoces",
+   "famille": "morts-precoces",
+   "generateur": "timeline-rate",
+   "titre_template": "Morts avant 5 minutes — patch {patch}",
+   "slug_template": "morts-precoces/{patch-slug}",
+   "angle": "Quels champions meurent le plus tôt en partie sur le patch {patch}, mesuré sur les timelines collectées.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "timelines_collectees",
+    "participant_id",
+    "timeline_events"
+   ],
+   "jour_prefere": 1,
+   "params": {
+    "event": "morts_avant_5min"
+   },
+   "tags": [
+    "Timelines",
+    "Tous rôles",
+    "Tous ranks"
+   ]
+  },
+  {
+   "id": "morts-precoces-role",
+   "famille": "morts-precoces",
+   "generateur": "timeline-rate",
+   "titre_template": "Morts avant 5 minutes au poste {label}, patch {patch}",
+   "slug_template": "morts-precoces-{role_slug}/{patch-slug}",
+   "angle": "La fréquence des morts avant la cinquième minute au poste {label} sur le patch {patch}.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "timelines_collectees",
+    "participant_id",
+    "timeline_events",
+    "team_position"
+   ],
+   "jour_prefere": 2,
+   "params": {
+    "event": "morts_avant_5min"
+   },
+   "variantes": [
+    {
+     "role_slug": "top",
+     "label": "Top",
+     "params": {
+      "role": "TOP",
+      "min_n": 300
+     },
+     "tags": [
+      "Timelines",
+      "Top",
+      "Tous ranks"
+     ],
+     "jour_prefere": 2
+    },
+    {
+     "role_slug": "jungle",
+     "label": "Jungle",
+     "params": {
+      "role": "JUNGLE",
+      "min_n": 300
+     },
+     "tags": [
+      "Timelines",
+      "Jungle",
+      "Tous ranks"
+     ],
+     "jour_prefere": 2
+    },
+    {
+     "role_slug": "mid",
+     "label": "Mid",
+     "params": {
+      "role": "MIDDLE",
+      "min_n": 300
+     },
+     "tags": [
+      "Timelines",
+      "Mid",
+      "Tous ranks"
+     ],
+     "jour_prefere": 2
+    },
+    {
+     "role_slug": "bot",
+     "label": "Bot (ADC)",
+     "params": {
+      "role": "BOTTOM",
+      "min_n": 300
+     },
+     "tags": [
+      "Timelines",
+      "Bot (ADC)",
+      "Tous ranks"
+     ],
+     "jour_prefere": 2
+    },
+    {
+     "role_slug": "support",
+     "label": "Support",
+     "params": {
+      "role": "UTILITY",
+      "min_n": 300
+     },
+     "tags": [
+      "Timelines",
+      "Support",
+      "Tous ranks"
+     ],
+     "jour_prefere": 2
+    }
+   ]
+  }
+ ]
+}

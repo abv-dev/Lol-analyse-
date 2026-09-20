@@ -345,16 +345,16 @@ lignes.
 
 ## Études automatiques (`scripts/generate_study.py`)
 
-1. `scripts/study_job.sh weekly` publie un sujet par semaine, pris dans l'ordre de `studies/topics.json` (gabarits du Lot 3), qui n'a pas encore été publié sur le patch courant. L'état est tenu dans `studies/state.json`.
-2. `scripts/study_job.sh tierlist` publie la tier list du patch, une fois par patch, dès que les gates passent. Pas de prose LLM : les textes sont fixes.
-3. Gates, sinon arrêt sans rien écrire (code 2) : au moins **20 000 matchs par région**, patch collecté depuis au moins 3 jours et au moins 50 000 matchs au total (`QUEUE_MIN_PATCH_AGE_DAYS`, `QUEUE_MIN_PATCH_MATCHES`).
-4. `matches.db` est lue uniquement en `mode=ro`. La lecture se fait sous verrou partagé avec la purge : si une purge est en cours, le job s'arrête (code 4).
-5. Les chiffres, tableaux et graphiques viennent du code (`lolcollector/studygen.py`) ; chaque chiffre est un « fait » enregistré avec sa formule dans `study.json`.
-6. La prose est écrite par `claude -p` (`ELOLAB_WRITER_MODEL`, `claude-opus-5` par défaut), qui cite les chiffres uniquement par repères `{{id}}`. Un chiffre en dur, un repère inconnu ou un terme interdit par la charte provoque un rejet ; au bout de 3 rejets, le job s'arrête (code 3).
-7. `scripts/verify_generated.py` recalcule chaque fait depuis les JSON exportés et vérifie chaque nombre du MDX dans son contexte champion ; pour la tier list, `verify_study.py` s'ajoute.
-8. Ensuite `npm run build`, puis commit et push sur `main`, et Vercel déploie. Tout échec avant le commit supprime les fichiers créés.
-9. Cron (`crontab -e`) : `15 7 * * 1 /home/aristide/lol-studies-collector/scripts/study_job.sh weekly` et `45 */6 * * * /home/aristide/lol-studies-collector/scripts/study_job.sh tierlist`.
-10. Journal : `logs/studies.log`. Tests hors ligne : `python3 tests/test_generate_study.py`.
+1. `scripts/study_job.sh daily` publie **une étude par jour**. Le sujet vient de la file éditoriale : `queue/templates.json` (17 gabarits, 66 articles instanciés par patch) est instancié en mémoire à chaque passage, et `lolcollector/editorial.py` applique ses règles d'éligibilité existantes.
+2. Sujet retenu = le premier article **éligible** (données présentes en base, régime, maturité du patch), **non publié sur le patch courant**, dont l'échantillon suffit. Un sujet trop maigre lève `NotFeasible` et on passe au suivant ; si aucun ne convient, le job logge et s'arrête sans rien publier.
+3. `scripts/study_job.sh tierlist` publie la tier list du patch, une fois par patch, sans prose LLM.
+4. Gates, sinon arrêt sans rien écrire (code 2) : au moins **20 000 matchs par région**, patch collecté depuis 3 jours et 50 000 matchs (`QUEUE_MIN_PATCH_AGE_DAYS`, `QUEUE_MIN_PATCH_MATCHES`). `matches.db` n'est lue qu'en `mode=ro`, sous verrou partagé avec la purge (code 4 si une purge tourne).
+5. Chiffres, tableaux et graphiques viennent du code (`lolcollector/studygen.py` et `studytopics.py`) : winrates et intervalles de Wilson, moyennes des métriques du Lot 13 (vision, dégâts par or, CS à 10 min, temps mort, plates, pinks) avec leur IC, et taux tirés des timelines (morts avant 5 minutes).
+6. La prose est écrite par `claude -p` (`ELOLAB_WRITER_MODEL`), qui ne cite les chiffres que par repères `{{id}}`. Chiffre en dur, repère inconnu ou terme interdit par la charte : rejet ; 3 rejets, le job s'arrête (code 3).
+7. `scripts/verify_generated.py` recalcule chaque fait depuis les JSON exportés (`tierlist.json`, `tierlist-roles.json`, `metrics.json`, `timeline.json`) et vérifie chaque nombre du MDX dans son contexte champion. Seuls le titre du catalogue, « 50 % » et « 95 % » sont exemptés.
+8. Puis `npm run build`, commit et push sur `main` (étude + `queue/articles.json` + `studies/state.json`), et Vercel déploie. Tout échec avant le commit supprime les fichiers créés et restaure la file.
+9. Cron : `15 7 * * * /home/aristide/lol-studies-collector/scripts/study_job.sh daily` et `45 */6 * * * /home/aristide/lol-studies-collector/scripts/study_job.sh tierlist`.
+10. Voir ce qui sortira : `python3 scripts/generate_study.py daily --dry-run 14` (lecture seule, n'écrit rien). Journal : `logs/studies.log`. Tests : `python3 tests/test_generate_study.py` et `tests/test_editorial_queue.py`.
 
 ## Diffusion
 

@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Générateur d'études EloLab : de matches.db à une étude publiée.
 
-    python3 scripts/generate_study.py weekly     # sujet de la semaine, prose claude -p
+    python3 scripts/generate_study.py daily      # sujet du jour, prose claude -p
     python3 scripts/generate_study.py tierlist   # tier list du patch, sans LLM
-    options : --no-push  --no-git  --skip-build  --topic <id>  --db <chemin>
+    python3 scripts/generate_study.py daily --dry-run   # les 14 prochains sujets
+    options : --no-push  --no-git  --skip-build  --article <id>  --db <chemin>
 
 Séquence, chaque étape pouvant arrêter le job SANS RIEN PUBLIER :
 
@@ -11,8 +12,11 @@ Séquence, chaque étape pouvant arrêter le job SANS RIEN PUBLIER :
   2. purge en cours ? (verrou data/.purge.lock) -> arrêt
   3. lecture seule de matches.db (mode=ro) : patch courant, couverture
   4. GATES : >= 20 000 matchs par région analysée, patch mûr (Lot 3)
-  5. sujet : topics.json dans l'ordre, jamais publié sur ce patch,
-     le moins récemment publié d'abord (tierlist : une fois par patch)
+  5. sujet : la file éditoriale (queue/articles.json, instanciée depuis
+     queue/templates.json) dans l'ordre de lolcollector.editorial —
+     premier article éligible non publié sur le patch courant, dont
+     l'échantillon suffit ; sinon on passe au suivant, et si aucun ne
+     convient le job s'arrête sans rien publier
   6. calcul des faits (chiffres, tableaux, graphiques : le code)
   7. prose : claude -p reçoit le précis, écrit avec des repères {{id}} ;
      tout chiffre en dur ou repère inconnu est rejeté (3 tentatives)
@@ -44,11 +48,12 @@ sys.path.insert(0, CODE)
 # Racine du dépôt où lire/écrire les études ; surchargeable pour les tests.
 REPO = os.environ.get("ELOLAB_REPO", CODE)
 
-from lolcollector import studygen as sg  # noqa: E402
+from lolcollector import editorial, studygen as sg  # noqa: E402
+from lolcollector.studytopics import BUILDERS  # noqa: E402
 from lolcollector.export import MIN_REGION_MATCHES, fetch_champion_names  # noqa: E402
 
-TOPICS_PATH = os.path.join(REPO, "studies", "topics.json")
 STATE_PATH = os.path.join(REPO, "studies", "state.json")
+CONTENT_ROOT = os.path.join(REPO, "site", "content", "etudes")
 WRITER_MODEL = os.environ.get("ELOLAB_WRITER_MODEL", "claude-opus-5")
 CLAUDE_TIMEOUT = int(os.environ.get("ELOLAB_CLAUDE_TIMEOUT", "900"))
 MAX_ATTEMPTS = 3
@@ -117,15 +122,37 @@ def published_on(state, topic, patch):
     return any(e["topic"] == topic and e["patch"] == patch for e in state["published"])
 
 
-def topic_order(topics, state, patch):
-    """Ordre défini par topics.json ; jamais publié sur ce patch ;
-    le moins récemment publié d'abord, l'ordre du fichier départage."""
-    last = {}
-    for e in state["published"]:
-        last[e["topic"]] = max(last.get(e["topic"], ""), e["date"])
-    candidates = [(last.get(t["id"], ""), i, t) for i, t in enumerate(topics)
-                  if not published_on(state, t["id"], patch)]
-    return [t for _, _, t in sorted(candidates, key=lambda x: (x[0], x[1]))]
+def published_titles(patch: str) -> set:
+    """Titres déjà en ligne pour ce patch : deux études ne peuvent pas porter
+    le même titre le même patch."""
+    titles = set()
+    for family in sorted(os.listdir(CONTENT_ROOT)) if os.path.isdir(CONTENT_ROOT) else []:
+        meta_path = os.path.join(CONTENT_ROOT, family, sg.patch_to_slug(patch), "meta.json")
+        if os.path.exists(meta_path):
+            with open(meta_path, encoding="utf-8") as fh:
+                titles.add(json.load(fh).get("title"))
+    return titles
+
+
+def queue_for(db_path: str):
+    """File éditoriale du patch courant : (état des données, file, articles).
+
+    L'instanciation des gabarits se fait EN MÉMOIRE. queue/articles.json n'est
+    écrit qu'au moment de publier : un job qui ne publie rien ne doit pas
+    laisser le dépôt modifié, sinon le job suivant refuserait de démarrer.
+    """
+    state = editorial.DataState(db_path)
+    queue = editorial.load_queue()
+    if state.patch:
+        editorial.sync_templates(queue, editorial.load_json(
+            editorial.TEMPLATES_PATH)["templates"], state.patch)
+    return state, queue, queue.get("articles", [])
+
+
+def candidates_for(articles, data_state):
+    """Articles éligibles, dans l'ordre de la règle de sélection existante."""
+    stock = editorial.stock_count(articles)
+    return editorial.selection_order(articles, data_state, stock, stock_min=0)
 
 
 # ---------------------------------------------------------------------------
@@ -230,6 +257,18 @@ def write_study(plan, model):
     content, data = os.path.join(REPO, rel_content), os.path.join(REPO, rel_data)
     mdx = sg.render_mdx(plan)  # peut ajouter les faits de la phrase de lecture
     ds = plan.facts.ds
+    # Les données que le vérificateur devra relire : uniquement les métriques
+    # et les événements réellement cités par l'étude.
+    metrics = sorted({f["spec"]["metric"] for f in plan.facts.items.values()
+                      if "metric" in f["spec"]})
+    events = sorted({f["spec"]["event"] for f in plan.facts.items.values()
+                     if "event" in f["spec"]})
+    if metrics:
+        sg.write_json(os.path.join(data, "metrics.json"),
+                      {m: ds.metric_rows(m) for m in metrics}, compact=True)
+    if events:
+        sg.write_json(os.path.join(data, "timeline.json"),
+                      {e: ds.timeline_rows(e) for e in events}, compact=True)
     sg.write_json(os.path.join(data, "tierlist.json"), ds.rows)
     sg.write_json(os.path.join(data, "tierlist-roles.json"), ds.role_rows, compact=True)
     sg.write_json(os.path.join(data, "meta.json"), ds.export_meta(getattr(ds, "ddragon_version", None)))
@@ -264,28 +303,79 @@ def build_site():
     run([npm, "run", "build"], cwd=site, timeout=1800)
 
 
+def probe(ds, article):
+    """Construit le plan d'un article. (plan, None) ou (None, raison)."""
+    builder = BUILDERS.get(article.get("generateur"))
+    if builder is None:
+        return None, f"générateur inconnu : {article.get('generateur')}"
+    try:
+        plan = builder(ds, article)
+    except sg.NotFeasible as exc:
+        return None, f"échantillon insuffisant — {exc}"
+    except (KeyError, ValueError, ZeroDivisionError) as exc:
+        return None, f"calcul impossible — {type(exc).__name__}: {exc}"
+    return plan, None
+
+
+def dry_run(ds, data_state, articles, patch, limit):
+    """Liste les prochains sujets et leur éligibilité. N'écrit rien."""
+    ordered = candidates_for(articles, data_state)
+    titles = published_titles(patch)
+    blocked = [(a, editorial.blockers(a, data_state)) for a in articles]
+    blocked = [(a, r) for a, r in blocked if r]
+    log(f"file du patch {patch} : {len(articles)} articles, {len(ordered)} éligibles, "
+        f"{len(blocked)} bloqués")
+    print(f"\n{'#':>2}  {'article':38} {'sujet':56} état")
+    print("-" * 132)
+    shown = 0
+    for article in ordered:
+        if shown >= limit:
+            break
+        shown += 1
+        rel = os.path.join("site", "content", "etudes", *article["slug"].split("/"))
+        if os.path.exists(os.path.join(REPO, rel)):
+            etat = "déjà publié (dossier présent)"
+        elif article["titre"] in titles:
+            etat = "titre déjà utilisé sur ce patch"
+        else:
+            plan, reason = probe(ds, article)
+            etat = (f"réalisable — {len(plan.facts.items)} faits, "
+                    f"{len(plan.sections)} sections") if plan else f"NON — {reason}"
+        print(f"{shown:>2}  {article['id']:38} {article['titre'][:56]:56} {etat}")
+    if blocked:
+        print(f"\nBloqués par les données ({len(blocked)}) :")
+        for article, reasons in blocked[:12]:
+            print(f"    {article['id']:38} {reasons[0]}")
+    return 0
+
+
 def main(argv=None):
-    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("mode", choices=["weekly", "tierlist"])
+    ap = argparse.ArgumentParser(description=__doc__,
+                                 formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("mode", choices=["daily", "tierlist", "weekly"],
+                    help="daily : le sujet du jour ; tierlist : la tier list du patch")
     ap.add_argument("--db", default=os.environ.get("DB_PATH", os.path.join(REPO, "data", "matches.db")))
-    ap.add_argument("--topic", help="forcer un sujet de topics.json (les gates s'appliquent)")
+    ap.add_argument("--article", help="forcer un article de la file (les gates s'appliquent)")
+    ap.add_argument("--dry-run", nargs="?", type=int, const=14, default=None,
+                    metavar="N", help="liste les N prochains sujets (défaut 14) et leur "
+                                      "éligibilité, sans rien écrire")
     ap.add_argument("--no-push", action="store_true", help="commit local, sans push")
     ap.add_argument("--no-git", action="store_true", help="aucune opération git (tests)")
     ap.add_argument("--skip-build", action="store_true")
     args = ap.parse_args(argv)
+    mode = "daily" if args.mode == "weekly" else args.mode
 
     created = []
-    state_backup = None
+    state_backup = queue_backup = None
     try:
         # 1. dépôt propre et à jour
-        if not args.no_git:
+        if not args.no_git and args.dry_run is None:
             dirty = run(["git", "status", "--porcelain", "--", "site/content", "site/data",
-                         "studies"]).stdout.strip()
+                         "studies", "queue"]).stdout.strip()
             if dirty:
                 raise Stop(5, f"dépôt modifié localement, rien n'est tenté :\n{dirty}")
             run(["git", "pull", "--ff-only", "--quiet"], timeout=300)
 
-        topics = load_json(TOPICS_PATH, {"topics": []})["topics"]
         state = load_json(STATE_PATH, {"published": []})
 
         # 2-3. lecture seule sous verrou partagé de la purge
@@ -297,63 +387,79 @@ def main(argv=None):
             log(f"patch {patch} : " + ", ".join(f"{r} {n}" for r, n in cov["per_region"].items())
                 + f", total {cov['total']}")
 
-            # 4. gates
+            # 4. gates de couverture et de maturité
             reasons = sg.check_gates(cov, MIN_REGION_MATCHES, MIN_AGE_DAYS, MIN_TOTAL)
             if reasons:
-                raise Stop(2, "gates non franchis, rien n'est publié :\n  - " + "\n  - ".join(reasons))
+                raise Stop(2, "gates non franchis, rien n'est publié :\n  - "
+                              + "\n  - ".join(reasons))
             log("gates franchis")
-
-            # 5. sujet
-            if args.mode == "tierlist":
-                candidates = [{"id": "tierlist-globale"}]
-                if published_on(state, "tierlist-globale", patch) or os.path.exists(
-                        os.path.join(REPO, "site", "content", "etudes", "tierlist",
-                                     sg.patch_to_slug(patch))):
-                    log(f"tier list du patch {patch} déjà publiée : rien à faire")
-                    return 0
-            elif args.topic:
-                candidates = [t for t in topics if t["id"] == args.topic]
-                if not candidates:
-                    raise Stop(1, f"sujet inconnu : {args.topic}")
-            else:
-                candidates = topic_order(topics, state, patch)
-            if not candidates:
-                log("tous les sujets sont déjà publiés pour ce patch : rien à faire")
-                return 0
 
             log("calcul des agrégats (lecture seule)…")
             ds = sg.Dataset.load(conn, patch, None)
-            row = conn.execute("SELECT value FROM meta WHERE key = 'ddragon_current'").fetchone()
+            row = conn.execute(
+                "SELECT value FROM meta WHERE key = 'ddragon_current'").fetchone()
+            ddragon = row[0] if row and row[0].startswith(patch + ".") else f"{patch}.1"
+            names = {} if os.environ.get("ELOLAB_OFFLINE") else fetch_champion_names(ddragon)
+            for r in ds.rows:
+                if r["champion_id"] in names:
+                    r["champion_name"] = names[r["champion_id"]]
+            ds = sg.Dataset(ds.patch, ds.rows, ds.role_rows, ds.cells, ds.first, ds.last)
+            ds.conn = conn                     # métriques et timelines à la demande
+            ds.ddragon_version = ddragon if names else None
 
-        ddragon = row[0] if row and row[0].startswith(patch + ".") else f"{patch}.1"
-        names = {} if os.environ.get("ELOLAB_OFFLINE") else fetch_champion_names(ddragon)
-        for row in ds.rows:
-            if row["champion_id"] in names:
-                row["champion_name"] = names[row["champion_id"]]
-        ds = sg.Dataset(ds.patch, ds.rows, ds.role_rows, ds.cells, ds.first, ds.last)
-        ds.ddragon_version = ddragon if names else None
+            # 5. le sujet du jour vient de la file éditoriale
+            plan = article = None
+            if mode == "tierlist":
+                rel = os.path.join("site", "content", "etudes", "tierlist",
+                                   sg.patch_to_slug(patch))
+                if os.path.exists(os.path.join(REPO, rel)):
+                    log(f"tier list du patch {patch} déjà publiée : rien à faire")
+                    return 0
+                article = {"id": "tierlist-globale", "gabarit": "tierlist-globale"}
+                plan = sg.plan_tierlist(ds)
+                queue = None
+            else:
+                data_state, queue, articles = queue_for(args.db)
+                if data_state.patch != patch:
+                    log(f"! la file voit le patch {data_state.patch}, la lecture {patch}")
+                if args.dry_run is not None:
+                    return dry_run(ds, data_state, articles, patch, args.dry_run)
+                candidates = candidates_for(articles, data_state)
+                log(f"file : {len(articles)} articles instanciés, "
+                    f"{len(candidates)} éligibles aujourd'hui")
+                if args.article:
+                    candidates = [a for a in candidates if a["id"] == args.article]
+                    if not candidates:
+                        raise Stop(2, f"{args.article} : inconnu ou non éligible aujourd'hui")
+                titles = published_titles(patch)
+                for candidate in candidates:
+                    rel = os.path.join("site", "content", "etudes",
+                                       *candidate["slug"].split("/"))
+                    if os.path.exists(os.path.join(REPO, rel)):
+                        log(f"  {candidate['id']} : déjà publié, sujet suivant")
+                        candidate["statut"] = "publie"
+                        continue
+                    if candidate["titre"] in titles:
+                        log(f"  {candidate['id']} : titre déjà utilisé ce patch, sujet suivant")
+                        continue
+                    plan, reason = probe(ds, candidate)
+                    if plan is None:
+                        log(f"  {candidate['id']} : {reason}")
+                        continue
+                    article = candidate
+                    break
+            if plan is None:
+                log("aucun sujet éligible et réalisable aujourd'hui : rien n'est publié")
+                return 0
+            log(f"sujet retenu : {article['id']} -> {plan.family}/{plan.slug}")
+            precis = sg.build_precis(plan) if plan.prose else None
 
-        plan = topic = None
-        for topic in candidates:
-            try:
-                plan = sg.TOPIC_BUILDERS[topic["id"]](ds)
-            except sg.NotFeasible as exc:
-                log(f"sujet {topic['id']} non réalisable sur ce patch : {exc}")
-                continue
-            if os.path.exists(os.path.join(REPO, paths_for(plan)[0])):
-                log(f"sujet {topic['id']} : {paths_for(plan)[0]} existe déjà, sujet suivant")
-                plan = None
-                continue
-            break
-        if plan is None:
-            raise Stop(2, "aucun sujet réalisable avec les données de ce patch")
-        log(f"sujet retenu : {plan.topic} -> {plan.family}/{plan.slug}")
+        ds.conn = None   # la base est refermée : plus aucun chargement possible
 
         # 7. prose
         cost = 0.0
         attempts = 0
         if plan.prose:
-            precis = sg.build_precis(plan)
             digest = hashlib.sha256(json.dumps(precis, sort_keys=True).encode()).hexdigest()[:16]
             log(f"précis {digest} : {len(plan.facts.items)} faits")
             feedback = []
@@ -388,17 +494,27 @@ def main(argv=None):
         # 10. état + git
         state_backup = json.dumps(state)
         state["published"].append({
-            "topic": plan.topic, "patch": patch, "path": rel_content.replace(os.sep, "/"),
-            "date": time.strftime("%Y-%m-%d"), "mode": args.mode,
+            "topic": article["id"], "gabarit": article.get("gabarit"), "patch": patch,
+            "path": rel_content.replace(os.sep, "/"),
+            "date": time.strftime("%Y-%m-%d"), "mode": mode,
             "attempts": attempts, "cost_usd": round(cost, 4),
             "writer_model": WRITER_MODEL if plan.prose else None,
         })
         sg.write_json(STATE_PATH, state)
+        if queue is not None:
+            queue_backup = json.dumps(queue)
+            article["statut"] = "publie"
+            article["publie_le"] = time.strftime("%Y-%m-%d")
+            article["chemin"] = rel_content.replace(os.sep, "/")
+            editorial.save_queue(queue)
         log(f"étude écrite : {rel_content} (coût rédaction {cost:.2f} $)")
         if not args.no_git:
-            run(["git", "add", "--", rel_content, rel_data, os.path.relpath(STATE_PATH, REPO)])
+            paths = [rel_content, rel_data, os.path.relpath(STATE_PATH, REPO)]
+            if queue is not None:
+                paths.append(os.path.relpath(editorial.QUEUE_PATH, REPO))
+            run(["git", "add", "--", *paths])
             message = (f"Étude automatique : {plan.title}\n\n"
-                       f"Sujet {plan.topic}, patch {patch}, {ds.total_matches} matchs. "
+                       f"Sujet {article['id']}, patch {patch}, {ds.total_matches} matchs. "
                        f"Généré par scripts/generate_study.py ({args.mode}) ; "
                        f"chiffres vérifiés par scripts/verify_generated.py.")
             run(["git", "commit", "--quiet", "-m", message])
@@ -415,11 +531,11 @@ def main(argv=None):
 
     except Stop as stop:
         log(f"ARRÊT (code {stop.code}) : {stop}")
-        _rollback(created, state_backup)
+        _rollback(created, state_backup, queue_backup)
         return stop.code
     except Exception:  # noqa: BLE001
         log("ERREUR INATTENDUE :\n" + traceback.format_exc())
-        _rollback(created, state_backup)
+        _rollback(created, state_backup, queue_backup)
         return 1
 
 
@@ -444,13 +560,16 @@ class sg_readonly:
         self.guard.__exit__()
 
 
-def _rollback(created, state_backup):
+def _rollback(created, state_backup, queue_backup=None):
     for rel in created:
         shutil.rmtree(os.path.join(REPO, rel), ignore_errors=True)
         log(f"supprimé : {rel}")
     if state_backup is not None:
         with open(STATE_PATH, "w", encoding="utf-8") as fh:
             fh.write(state_backup)
+    if queue_backup is not None:
+        with open(editorial.QUEUE_PATH, "w", encoding="utf-8") as fh:
+            fh.write(queue_backup)
 
 
 if __name__ == "__main__":

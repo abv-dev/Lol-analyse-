@@ -1,0 +1,21 @@
+{
+ "_doc": {
+  "role": "File éditoriale d'EloLab. Contient deux populations : les articles RÉCURRENTS instanciés depuis queue/templates.json à chaque patch (scripts/queue_sync.py), et le RÉSERVOIR STRUCTUREL, unique et non récurrent, qui sert de tampon quand le patch courant est trop jeune pour être analysé.",
+  "champs": {
+   "id": "identifiant stable, jamais réutilisé. Un article instancié depuis un gabarit porte « <gabarit>-<patch-slug> ».",
+   "slug": "chemin de l'étude sous site/content/etudes/",
+   "famille": "tierlist | meta-role | objectifs | regions | patch-compare | …",
+   "titre": "titre provisoire, réécrit à la rédaction",
+   "angle": "ce que l'article démontre, en une phrase — pas son sujet",
+   "regime": "patch_courant (périme au patch suivant) | structurel (ne périme pas) | comparatif (met deux patchs en regard)",
+   "donnees_requises": "champs ou tables nécessaires, vérifiés par scripts/queue_status.py",
+   "patch_cible": "patch visé ; null sur un structurel, qui n'en dépend pas",
+   "debloque_par": "donnée qui manque encore, avec le volume attendu. Tant qu'elle n'est pas disponible en quantité suffisante, l'article est INVISIBLE à la rédaction ; il le devient automatiquement quand elle l'est. Absent = rien à attendre.",
+   "statut": "en_attente | donnees_pretes | redige | verifie | publie | bloque",
+   "tentatives": "rédactions échouées ; à 3, l'article passe en bloque et n'est plus retenté"
+  },
+  "reservoir_structurel": "Objectif 15 à 20 articles vérifiés en stock. batch_write.py priorise le structurel quand le stock descend sous STOCK_MIN — c'est le tampon : il ne périme pas et reste rédigeable même le jour où un patch vient de sortir.",
+  "a_completer": "Les 17 sujets structurels n'ont pas été transmis (le message contenait le marqueur de collage, pas les tableaux). Les ajouter dans « articles » avec regime « structurel », patch_cible null, et debloque_par sur ceux qui attendent une donnée."
+ },
+ "articles": []
+}
