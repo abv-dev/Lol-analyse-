@@ -9,6 +9,17 @@
    "attempts": 0,
    "cost_usd": 0.0,
    "writer_model": null
+  },
+  {
+   "topic": "meta-rank-fer-bronze-16-18",
+   "gabarit": "meta-rank",
+   "patch": "16.18",
+   "path": "site/content/etudes/meta-fer-bronze/16-18",
+   "date": "2026-09-21",
+   "mode": "daily",
+   "attempts": 2,
+   "cost_usd": 4.0948,
+   "writer_model": "claude-opus-5"
   }
  ]
 }

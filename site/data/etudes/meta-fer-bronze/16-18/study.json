@@ -1,0 +1,2676 @@
+{
+ "topic": "meta-rank-fer-bronze-16-18",
+ "patch": "16.18",
+ "generated_at": "2026-09-21T07:24:14Z",
+ "writer_model": "claude-opus-5",
+ "facts": {
+  "param.min_games": {
+   "spec": {
+    "kind": "param",
+    "value": 1500
+   },
+   "value": 1500,
+   "display": "1 500",
+   "champion_id": null,
+   "meaning": "parties minimum en Fer–Bronze"
+  },
+  "illaoi.ferbronze.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 420,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.5332341837318385,
+   "display": "53,32 %",
+   "champion_id": 420,
+   "meaning": "winrate de Illaoi (en Fer–Bronze)"
+  },
+  "illaoi.ferbronze.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 420,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.5227632117670196,
+   "display": "52,28",
+   "champion_id": 420,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Illaoi (en Fer–Bronze)"
+  },
+  "illaoi.ferbronze.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 420,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.5436759572832051,
+   "display": "54,37",
+   "champion_id": 420,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Illaoi (en Fer–Bronze)"
+  },
+  "illaoi.ferbronze.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 420,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 8741,
+   "display": "8 741",
+   "champion_id": 420,
+   "meaning": "parties de Illaoi (en Fer–Bronze)"
+  },
+  "illaoi.ferbronze.pick_rate": {
+   "spec": {
+    "kind": "pick_rate",
+    "champion_id": 420,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.06483122816646518,
+   "display": "6,48 %",
+   "champion_id": 420,
+   "meaning": "pick rate de Illaoi (en Fer–Bronze)"
+  },
+  "amumu.ferbronze.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 32,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.5315570864147503,
+   "display": "53,16 %",
+   "champion_id": 32,
+   "meaning": "winrate de Amumu (en Fer–Bronze)"
+  },
+  "amumu.ferbronze.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 32,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.5217027355671305,
+   "display": "52,17",
+   "champion_id": 32,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Amumu (en Fer–Bronze)"
+  },
+  "amumu.ferbronze.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 32,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.5413868849192325,
+   "display": "54,14",
+   "champion_id": 32,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Amumu (en Fer–Bronze)"
+  },
+  "amumu.ferbronze.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 32,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 9871,
+   "display": "9 871",
+   "champion_id": 32,
+   "meaning": "parties de Amumu (en Fer–Bronze)"
+  },
+  "amumu.ferbronze.pick_rate": {
+   "spec": {
+    "kind": "pick_rate",
+    "champion_id": 32,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.07321233877487447,
+   "display": "7,32 %",
+   "champion_id": 32,
+   "meaning": "pick rate de Amumu (en Fer–Bronze)"
+  },
+  "briar.ferbronze.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 233,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.5293348586370322,
+   "display": "52,93 %",
+   "champion_id": 233,
+   "meaning": "winrate de Briar (en Fer–Bronze)"
+  },
+  "briar.ferbronze.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 233,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.5204837408737635,
+   "display": "52,05",
+   "champion_id": 233,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Briar (en Fer–Bronze)"
+  },
+  "briar.ferbronze.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 233,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.538167565991729,
+   "display": "53,82",
+   "champion_id": 233,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Briar (en Fer–Bronze)"
+  },
+  "briar.ferbronze.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 233,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 12238,
+   "display": "12 238",
+   "champion_id": 233,
+   "meaning": "parties de Briar (en Fer–Bronze)"
+  },
+  "briar.ferbronze.pick_rate": {
+   "spec": {
+    "kind": "pick_rate",
+    "champion_id": 233,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.09076816958027695,
+   "display": "9,08 %",
+   "champion_id": 233,
+   "meaning": "pick rate de Briar (en Fer–Bronze)"
+  },
+  "yorick.ferbronze.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 83,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.5313720385316324,
+   "display": "53,14 %",
+   "champion_id": 83,
+   "meaning": "winrate de Yorick (en Fer–Bronze)"
+  },
+  "yorick.ferbronze.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 83,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.520200159366043,
+   "display": "52,02",
+   "champion_id": 83,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Yorick (en Fer–Bronze)"
+  },
+  "yorick.ferbronze.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 83,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.542512557593117,
+   "display": "54,25",
+   "champion_id": 83,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Yorick (en Fer–Bronze)"
+  },
+  "yorick.ferbronze.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 83,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 7682,
+   "display": "7 682",
+   "champion_id": 83,
+   "meaning": "parties de Yorick (en Fer–Bronze)"
+  },
+  "yorick.ferbronze.pick_rate": {
+   "spec": {
+    "kind": "pick_rate",
+    "champion_id": 83,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.05697671831309752,
+   "display": "5,70 %",
+   "champion_id": 83,
+   "meaning": "pick rate de Yorick (en Fer–Bronze)"
+  },
+  "swain.ferbronze.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 50,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.5284677951198066,
+   "display": "52,85 %",
+   "champion_id": 50,
+   "meaning": "winrate de Swain (en Fer–Bronze)"
+  },
+  "swain.ferbronze.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 50,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.5182004724211472,
+   "display": "51,82",
+   "champion_id": 50,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Swain (en Fer–Bronze)"
+  },
+  "swain.ferbronze.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 50,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.5387110879860054,
+   "display": "53,87",
+   "champion_id": 50,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Swain (en Fer–Bronze)"
+  },
+  "swain.ferbronze.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 50,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 9098,
+   "display": "9 098",
+   "champion_id": 50,
+   "meaning": "parties de Swain (en Fer–Bronze)"
+  },
+  "swain.ferbronze.pick_rate": {
+   "spec": {
+    "kind": "pick_rate",
+    "champion_id": 50,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.06747906576575909,
+   "display": "6,75 %",
+   "champion_id": 50,
+   "meaning": "pick rate de Swain (en Fer–Bronze)"
+  },
+  "teemo.ferbronze.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 17,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.524894877675841,
+   "display": "52,49 %",
+   "champion_id": 17,
+   "meaning": "winrate de Teemo (en Fer–Bronze)"
+  },
+  "teemo.ferbronze.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 17,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.5181251890537105,
+   "display": "51,81",
+   "champion_id": 17,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Teemo (en Fer–Bronze)"
+  },
+  "teemo.ferbronze.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 17,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.5316554287696152,
+   "display": "53,17",
+   "champion_id": 17,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Teemo (en Fer–Bronze)"
+  },
+  "teemo.ferbronze.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 17,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 20928,
+   "display": "20 928",
+   "champion_id": 17,
+   "meaning": "parties de Teemo (en Fer–Bronze)"
+  },
+  "teemo.ferbronze.pick_rate": {
+   "spec": {
+    "kind": "pick_rate",
+    "champion_id": 17,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.1552211352325573,
+   "display": "15,52 %",
+   "champion_id": 17,
+   "meaning": "pick rate de Teemo (en Fer–Bronze)"
+  },
+  "veigar.ferbronze.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 45,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.523533242555207,
+   "display": "52,35 %",
+   "champion_id": 45,
+   "meaning": "winrate de Veigar (en Fer–Bronze)"
+  },
+  "veigar.ferbronze.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 45,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.5159967715696222,
+   "display": "51,60",
+   "champion_id": 45,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Veigar (en Fer–Bronze)"
+  },
+  "veigar.ferbronze.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 45,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.5310590118147751,
+   "display": "53,11",
+   "champion_id": 45,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Veigar (en Fer–Bronze)"
+  },
+  "veigar.ferbronze.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 45,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 16891,
+   "display": "16 891",
+   "champion_id": 45,
+   "meaning": "parties de Veigar (en Fer–Bronze)"
+  },
+  "veigar.ferbronze.pick_rate": {
+   "spec": {
+    "kind": "pick_rate",
+    "champion_id": 45,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.12527906131561187,
+   "display": "12,53 %",
+   "champion_id": 45,
+   "meaning": "pick rate de Veigar (en Fer–Bronze)"
+  },
+  "sett.ferbronze.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 875,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.5235712404529892,
+   "display": "52,36 %",
+   "champion_id": 875,
+   "meaning": "winrate de Sett (en Fer–Bronze)"
+  },
+  "sett.ferbronze.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 875,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.5156232802035543,
+   "display": "51,56",
+   "champion_id": 875,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Sett (en Fer–Bronze)"
+  },
+  "sett.ferbronze.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 875,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.5315072801001984,
+   "display": "53,15",
+   "champion_id": 875,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Sett (en Fer–Bronze)"
+  },
+  "sett.ferbronze.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 875,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 15188,
+   "display": "15 188",
+   "champion_id": 875,
+   "meaning": "parties de Sett (en Fer–Bronze)"
+  },
+  "sett.ferbronze.pick_rate": {
+   "spec": {
+    "kind": "pick_rate",
+    "champion_id": 875,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.11264806010665519,
+   "display": "11,26 %",
+   "champion_id": 875,
+   "meaning": "pick rate de Sett (en Fer–Bronze)"
+  },
+  "yone.ferbronze.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 777,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.5165609038848475,
+   "display": "51,66 %",
+   "champion_id": 777,
+   "meaning": "winrate de Yone (en Fer–Bronze)"
+  },
+  "yone.ferbronze.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 777,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.5115849540425033,
+   "display": "51,16",
+   "champion_id": 777,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Yone (en Fer–Bronze)"
+  },
+  "yone.ferbronze.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 777,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.5215335718963711,
+   "display": "52,15",
+   "champion_id": 777,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Yone (en Fer–Bronze)"
+  },
+  "yone.ferbronze.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 777,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 38766,
+   "display": "38 766",
+   "champion_id": 777,
+   "meaning": "parties de Yone (en Fer–Bronze)"
+  },
+  "yone.ferbronze.pick_rate": {
+   "spec": {
+    "kind": "pick_rate",
+    "champion_id": 777,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.2875240122527387,
+   "display": "28,75 %",
+   "champion_id": 777,
+   "meaning": "pick rate de Yone (en Fer–Bronze)"
+  },
+  "lux.ferbronze.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 99,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.5147845447880746,
+   "display": "51,48 %",
+   "champion_id": 99,
+   "meaning": "winrate de Lux (en Fer–Bronze)"
+  },
+  "lux.ferbronze.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 99,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.5096790040651812,
+   "display": "50,97",
+   "champion_id": 99,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Lux (en Fer–Bronze)"
+  },
+  "lux.ferbronze.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 99,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.5198870016207365,
+   "display": "51,99",
+   "champion_id": 99,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Lux (en Fer–Bronze)"
+  },
+  "lux.ferbronze.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 99,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 36829,
+   "display": "36 829",
+   "champion_id": 99,
+   "meaning": "parties de Lux (en Fer–Bronze)"
+  },
+  "lux.ferbronze.pick_rate": {
+   "spec": {
+    "kind": "pick_rate",
+    "champion_id": 99,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.27315745362575744,
+   "display": "27,32 %",
+   "champion_id": 99,
+   "meaning": "pick rate de Lux (en Fer–Bronze)"
+  },
+  "missfortune.ferbronze.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 21,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.5098566046552379,
+   "display": "50,99 %",
+   "champion_id": 21,
+   "meaning": "winrate de Miss Fortune (en Fer–Bronze)"
+  },
+  "missfortune.ferbronze.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 21,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.5045608628012047,
+   "display": "50,46",
+   "champion_id": 21,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Miss Fortune (en Fer–Bronze)"
+  },
+  "missfortune.ferbronze.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 21,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.5151501351548432,
+   "display": "51,52",
+   "champion_id": 21,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Miss Fortune (en Fer–Bronze)"
+  },
+  "missfortune.ferbronze.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 21,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 34241,
+   "display": "34 241",
+   "champion_id": 21,
+   "meaning": "parties de Miss Fortune (en Fer–Bronze)"
+  },
+  "missfortune.ferbronze.pick_rate": {
+   "spec": {
+    "kind": "pick_rate",
+    "champion_id": 21,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.2539624852588873,
+   "display": "25,40 %",
+   "champion_id": 21,
+   "meaning": "pick rate de Miss Fortune (en Fer–Bronze)"
+  },
+  "caitlyn.ferbronze.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 51,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.5064714839424141,
+   "display": "50,65 %",
+   "champion_id": 51,
+   "meaning": "winrate de Caitlyn (en Fer–Bronze)"
+  },
+  "caitlyn.ferbronze.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 51,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.5007064907671765,
+   "display": "50,07",
+   "champion_id": 51,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Caitlyn (en Fer–Bronze)"
+  },
+  "caitlyn.ferbronze.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 51,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.5122347566972052,
+   "display": "51,22",
+   "champion_id": 51,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Caitlyn (en Fer–Bronze)"
+  },
+  "caitlyn.ferbronze.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 51,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 28896,
+   "display": "28 896",
+   "champion_id": 51,
+   "meaning": "parties de Caitlyn (en Fer–Bronze)"
+  },
+  "caitlyn.ferbronze.pick_rate": {
+   "spec": {
+    "kind": "pick_rate",
+    "champion_id": 51,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.21431909038990707,
+   "display": "21,43 %",
+   "champion_id": 51,
+   "meaning": "pick rate de Caitlyn (en Fer–Bronze)"
+  },
+  "yasuo.ferbronze.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 157,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.4995918367346939,
+   "display": "49,96 %",
+   "champion_id": 157,
+   "meaning": "winrate de Yasuo (en Fer–Bronze)"
+  },
+  "yasuo.ferbronze.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 157,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.49375399597474856,
+   "display": "49,38",
+   "champion_id": 157,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Yasuo (en Fer–Bronze)"
+  },
+  "yasuo.ferbronze.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 157,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.5054297887797238,
+   "display": "50,54",
+   "champion_id": 157,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Yasuo (en Fer–Bronze)"
+  },
+  "yasuo.ferbronze.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 157,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 28175,
+   "display": "28 175",
+   "champion_id": 157,
+   "meaning": "parties de Yasuo (en Fer–Bronze)"
+  },
+  "yasuo.ferbronze.pick_rate": {
+   "spec": {
+    "kind": "pick_rate",
+    "champion_id": 157,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.20897149680701937,
+   "display": "20,90 %",
+   "champion_id": 157,
+   "meaning": "pick rate de Yasuo (en Fer–Bronze)"
+  },
+  "seraphine.ferbronze.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 147,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.5140233981560394,
+   "display": "51,40 %",
+   "champion_id": 147,
+   "meaning": "winrate de Séraphine (en Fer–Bronze)"
+  },
+  "seraphine.ferbronze.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 147,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.5079247175817433,
+   "display": "50,79",
+   "champion_id": 147,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Séraphine (en Fer–Bronze)"
+  },
+  "seraphine.ferbronze.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 147,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.5201179056234063,
+   "display": "52,01",
+   "champion_id": 147,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Séraphine (en Fer–Bronze)"
+  },
+  "seraphine.ferbronze.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 147,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 25814,
+   "display": "25 814",
+   "champion_id": 147,
+   "meaning": "parties de Séraphine (en Fer–Bronze)"
+  },
+  "seraphine.ferbronze.pick_rate": {
+   "spec": {
+    "kind": "pick_rate",
+    "champion_id": 147,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.19146016747387393,
+   "display": "19,15 %",
+   "champion_id": 147,
+   "meaning": "pick rate de Séraphine (en Fer–Bronze)"
+  },
+  "jinx.ferbronze.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 222,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.5094530102790015,
+   "display": "50,95 %",
+   "champion_id": 222,
+   "meaning": "winrate de Jinx (en Fer–Bronze)"
+  },
+  "jinx.ferbronze.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 222,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.5028146217186267,
+   "display": "50,28",
+   "champion_id": 222,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Jinx (en Fer–Bronze)"
+  },
+  "jinx.ferbronze.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 222,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.5160880667037681,
+   "display": "51,61",
+   "champion_id": 222,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Jinx (en Fer–Bronze)"
+  },
+  "jinx.ferbronze.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 222,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 21792,
+   "display": "21 792",
+   "champion_id": 222,
+   "meaning": "parties de Jinx (en Fer–Bronze)"
+  },
+  "jinx.ferbronze.pick_rate": {
+   "spec": {
+    "kind": "pick_rate",
+    "champion_id": 222,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.1616293472375711,
+   "display": "16,16 %",
+   "champion_id": 222,
+   "meaning": "pick rate de Jinx (en Fer–Bronze)"
+  },
+  "mel.ferbronze.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 800,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.4732500589205751,
+   "display": "47,33 %",
+   "champion_id": 800,
+   "meaning": "winrate de Mel (en Fer–Bronze)"
+  },
+  "mel.ferbronze.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 800,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.4665369797440532,
+   "display": "46,65",
+   "champion_id": 800,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Mel (en Fer–Bronze)"
+  },
+  "mel.ferbronze.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 800,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.4799728237151654,
+   "display": "48,00",
+   "champion_id": 800,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Mel (en Fer–Bronze)"
+  },
+  "mel.ferbronze.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 800,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 21215,
+   "display": "21 215",
+   "champion_id": 800,
+   "meaning": "parties de Mel (en Fer–Bronze)"
+  },
+  "mel.ferbronze.pick_rate": {
+   "spec": {
+    "kind": "pick_rate",
+    "champion_id": 800,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.15734978898885238,
+   "display": "15,73 %",
+   "champion_id": 800,
+   "meaning": "pick rate de Mel (en Fer–Bronze)"
+  },
+  "illaoi.euw-ferbronze.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 420,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "europe"
+     ]
+    }
+   },
+   "value": 0.5338414634146341,
+   "display": "53,38 %",
+   "champion_id": 420,
+   "meaning": "winrate de Illaoi (Europe (EUW))"
+  },
+  "illaoi.euw-ferbronze.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 420,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "europe"
+     ]
+    }
+   },
+   "value": 0.5167398281654121,
+   "display": "51,67",
+   "champion_id": 420,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Illaoi (Europe (EUW))"
+  },
+  "illaoi.euw-ferbronze.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 420,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "europe"
+     ]
+    }
+   },
+   "value": 0.550863922741529,
+   "display": "55,09",
+   "champion_id": 420,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Illaoi (Europe (EUW))"
+  },
+  "illaoi.euw-ferbronze.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 420,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "europe"
+     ]
+    }
+   },
+   "value": 3280,
+   "display": "3 280",
+   "champion_id": 420,
+   "meaning": "parties de Illaoi (Europe (EUW))"
+  },
+  "illaoi.kr-ferbronze.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 420,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "asia"
+     ]
+    }
+   },
+   "value": 0.5371655104063429,
+   "display": "53,72 %",
+   "champion_id": 420,
+   "meaning": "winrate de Illaoi (Asie (KR))"
+  },
+  "illaoi.kr-ferbronze.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 420,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "asia"
+     ]
+    }
+   },
+   "value": 0.5193669100231743,
+   "display": "51,94",
+   "champion_id": 420,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Illaoi (Asie (KR))"
+  },
+  "illaoi.kr-ferbronze.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 420,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "asia"
+     ]
+    }
+   },
+   "value": 0.5548698994757784,
+   "display": "55,49",
+   "champion_id": 420,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Illaoi (Asie (KR))"
+  },
+  "illaoi.kr-ferbronze.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 420,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "asia"
+     ]
+    }
+   },
+   "value": 3027,
+   "display": "3 027",
+   "champion_id": 420,
+   "meaning": "parties de Illaoi (Asie (KR))"
+  },
+  "illaoi.na-ferbronze.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 420,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "americas"
+     ]
+    }
+   },
+   "value": 0.5275267050123253,
+   "display": "52,75 %",
+   "champion_id": 420,
+   "meaning": "winrate de Illaoi (Amériques (NA))"
+  },
+  "illaoi.na-ferbronze.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 420,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "americas"
+     ]
+    }
+   },
+   "value": 0.5076654464657251,
+   "display": "50,77",
+   "champion_id": 420,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Illaoi (Amériques (NA))"
+  },
+  "illaoi.na-ferbronze.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 420,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "americas"
+     ]
+    }
+   },
+   "value": 0.5473012124673879,
+   "display": "54,73",
+   "champion_id": 420,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Illaoi (Amériques (NA))"
+  },
+  "illaoi.na-ferbronze.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 420,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "americas"
+     ]
+    }
+   },
+   "value": 2434,
+   "display": "2 434",
+   "champion_id": 420,
+   "meaning": "parties de Illaoi (Amériques (NA))"
+  },
+  "amumu.euw-ferbronze.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 32,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "europe"
+     ]
+    }
+   },
+   "value": 0.5236739053043787,
+   "display": "52,37 %",
+   "champion_id": 32,
+   "meaning": "winrate de Amumu (Europe (EUW))"
+  },
+  "amumu.euw-ferbronze.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 32,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "europe"
+     ]
+    }
+   },
+   "value": 0.5051846731273147,
+   "display": "50,52",
+   "champion_id": 32,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Amumu (Europe (EUW))"
+  },
+  "amumu.euw-ferbronze.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 32,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "europe"
+     ]
+    }
+   },
+   "value": 0.5420984752289246,
+   "display": "54,21",
+   "champion_id": 32,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Amumu (Europe (EUW))"
+  },
+  "amumu.euw-ferbronze.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 32,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "europe"
+     ]
+    }
+   },
+   "value": 2809,
+   "display": "2 809",
+   "champion_id": 32,
+   "meaning": "parties de Amumu (Europe (EUW))"
+  },
+  "amumu.kr-ferbronze.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 32,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "asia"
+     ]
+    }
+   },
+   "value": 0.5294257803192757,
+   "display": "52,94 %",
+   "champion_id": 32,
+   "meaning": "winrate de Amumu (Asie (KR))"
+  },
+  "amumu.kr-ferbronze.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 32,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "asia"
+     ]
+    }
+   },
+   "value": 0.5143051187533628,
+   "display": "51,43",
+   "champion_id": 32,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Amumu (Asie (KR))"
+  },
+  "amumu.kr-ferbronze.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 32,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "asia"
+     ]
+    }
+   },
+   "value": 0.5444926250846873,
+   "display": "54,45",
+   "champion_id": 32,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Amumu (Asie (KR))"
+  },
+  "amumu.kr-ferbronze.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 32,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "asia"
+     ]
+    }
+   },
+   "value": 4197,
+   "display": "4 197",
+   "champion_id": 32,
+   "meaning": "parties de Amumu (Asie (KR))"
+  },
+  "amumu.na-ferbronze.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 32,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "americas"
+     ]
+    }
+   },
+   "value": 0.5424083769633508,
+   "display": "54,24 %",
+   "champion_id": 32,
+   "meaning": "winrate de Amumu (Amériques (NA))"
+  },
+  "amumu.na-ferbronze.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 32,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "americas"
+     ]
+    }
+   },
+   "value": 0.5241210670169917,
+   "display": "52,41",
+   "champion_id": 32,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Amumu (Amériques (NA))"
+  },
+  "amumu.na-ferbronze.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 32,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "americas"
+     ]
+    }
+   },
+   "value": 0.5605821149078438,
+   "display": "56,06",
+   "champion_id": 32,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Amumu (Amériques (NA))"
+  },
+  "amumu.na-ferbronze.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 32,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "americas"
+     ]
+    }
+   },
+   "value": 2865,
+   "display": "2 865",
+   "champion_id": 32,
+   "meaning": "parties de Amumu (Amériques (NA))"
+  },
+  "briar.euw-ferbronze.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 233,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "europe"
+     ]
+    }
+   },
+   "value": 0.5351230425055928,
+   "display": "53,51 %",
+   "champion_id": 233,
+   "meaning": "winrate de Briar (Europe (EUW))"
+  },
+  "briar.euw-ferbronze.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 233,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "europe"
+     ]
+    }
+   },
+   "value": 0.5204776910747363,
+   "display": "52,05",
+   "champion_id": 233,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Briar (Europe (EUW))"
+  },
+  "briar.euw-ferbronze.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 233,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "europe"
+     ]
+    }
+   },
+   "value": 0.5497080772163847,
+   "display": "54,97",
+   "champion_id": 233,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Briar (Europe (EUW))"
+  },
+  "briar.euw-ferbronze.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 233,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "europe"
+     ]
+    }
+   },
+   "value": 4470,
+   "display": "4 470",
+   "champion_id": 233,
+   "meaning": "parties de Briar (Europe (EUW))"
+  },
+  "briar.kr-ferbronze.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 233,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "asia"
+     ]
+    }
+   },
+   "value": 0.5271122320302648,
+   "display": "52,71 %",
+   "champion_id": 233,
+   "meaning": "winrate de Briar (Asie (KR))"
+  },
+  "briar.kr-ferbronze.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 233,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "asia"
+     ]
+    }
+   },
+   "value": 0.511553273224866,
+   "display": "51,16",
+   "champion_id": 233,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Briar (Asie (KR))"
+  },
+  "briar.kr-ferbronze.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 233,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "asia"
+     ]
+    }
+   },
+   "value": 0.5426187067422766,
+   "display": "54,26",
+   "champion_id": 233,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Briar (Asie (KR))"
+  },
+  "briar.kr-ferbronze.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 233,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "asia"
+     ]
+    }
+   },
+   "value": 3965,
+   "display": "3 965",
+   "champion_id": 233,
+   "meaning": "parties de Briar (Asie (KR))"
+  },
+  "briar.na-ferbronze.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 233,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "americas"
+     ]
+    }
+   },
+   "value": 0.5248488035761241,
+   "display": "52,48 %",
+   "champion_id": 233,
+   "meaning": "winrate de Briar (Amériques (NA))"
+  },
+  "briar.na-ferbronze.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 233,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "americas"
+     ]
+    }
+   },
+   "value": 0.5089602198700666,
+   "display": "50,90",
+   "champion_id": 233,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Briar (Amériques (NA))"
+  },
+  "briar.na-ferbronze.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 233,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "americas"
+     ]
+    }
+   },
+   "value": 0.540687237751809,
+   "display": "54,07",
+   "champion_id": 233,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Briar (Amériques (NA))"
+  },
+  "briar.na-ferbronze.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 233,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "americas"
+     ]
+    }
+   },
+   "value": 3803,
+   "display": "3 803",
+   "champion_id": 233,
+   "meaning": "parties de Briar (Amériques (NA))"
+  },
+  "yorick.euw-ferbronze.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 83,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "europe"
+     ]
+    }
+   },
+   "value": 0.531470777135517,
+   "display": "53,15 %",
+   "champion_id": 83,
+   "meaning": "winrate de Yorick (Europe (EUW))"
+  },
+  "yorick.euw-ferbronze.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 83,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "europe"
+     ]
+    }
+   },
+   "value": 0.513916194247472,
+   "display": "51,39",
+   "champion_id": 83,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Yorick (Europe (EUW))"
+  },
+  "yorick.euw-ferbronze.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 83,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "europe"
+     ]
+    }
+   },
+   "value": 0.5489478104136681,
+   "display": "54,89",
+   "champion_id": 83,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Yorick (Europe (EUW))"
+  },
+  "yorick.euw-ferbronze.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 83,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "europe"
+     ]
+    }
+   },
+   "value": 3114,
+   "display": "3 114",
+   "champion_id": 83,
+   "meaning": "parties de Yorick (Europe (EUW))"
+  },
+  "yorick.kr-ferbronze.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 83,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "asia"
+     ]
+    }
+   },
+   "value": 0.5396990140114167,
+   "display": "53,97 %",
+   "champion_id": 83,
+   "meaning": "winrate de Yorick (Asie (KR))"
+  },
+  "yorick.kr-ferbronze.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 83,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "asia"
+     ]
+    }
+   },
+   "value": 0.5173882490946836,
+   "display": "51,74",
+   "champion_id": 83,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Yorick (Asie (KR))"
+  },
+  "yorick.kr-ferbronze.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 83,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "asia"
+     ]
+    }
+   },
+   "value": 0.5618518145061095,
+   "display": "56,19",
+   "champion_id": 83,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Yorick (Asie (KR))"
+  },
+  "yorick.kr-ferbronze.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 83,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "asia"
+     ]
+    }
+   },
+   "value": 1927,
+   "display": "1 927",
+   "champion_id": 83,
+   "meaning": "parties de Yorick (Asie (KR))"
+  },
+  "yorick.na-ferbronze.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 83,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "americas"
+     ]
+    }
+   },
+   "value": 0.5251798561151079,
+   "display": "52,52 %",
+   "champion_id": 83,
+   "meaning": "winrate de Yorick (Amériques (NA))"
+  },
+  "yorick.na-ferbronze.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 83,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "americas"
+     ]
+    }
+   },
+   "value": 0.5061120185042369,
+   "display": "50,61",
+   "champion_id": 83,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Yorick (Amériques (NA))"
+  },
+  "yorick.na-ferbronze.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 83,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "americas"
+     ]
+    }
+   },
+   "value": 0.5441745495455935,
+   "display": "54,42",
+   "champion_id": 83,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Yorick (Amériques (NA))"
+  },
+  "yorick.na-ferbronze.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 83,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "americas"
+     ]
+    }
+   },
+   "value": 2641,
+   "display": "2 641",
+   "champion_id": 83,
+   "meaning": "parties de Yorick (Amériques (NA))"
+  },
+  "swain.euw-ferbronze.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 50,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "europe"
+     ]
+    }
+   },
+   "value": 0.5308411214953271,
+   "display": "53,08 %",
+   "champion_id": 50,
+   "meaning": "winrate de Swain (Europe (EUW))"
+  },
+  "swain.euw-ferbronze.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 50,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "europe"
+     ]
+    }
+   },
+   "value": 0.5135506821231953,
+   "display": "51,36",
+   "champion_id": 50,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Swain (Europe (EUW))"
+  },
+  "swain.euw-ferbronze.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 50,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "europe"
+     ]
+    }
+   },
+   "value": 0.5480578329628772,
+   "display": "54,81",
+   "champion_id": 50,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Swain (Europe (EUW))"
+  },
+  "swain.euw-ferbronze.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 50,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "europe"
+     ]
+    }
+   },
+   "value": 3210,
+   "display": "3 210",
+   "champion_id": 50,
+   "meaning": "parties de Swain (Europe (EUW))"
+  },
+  "swain.kr-ferbronze.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 50,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "asia"
+     ]
+    }
+   },
+   "value": 0.5226148409893993,
+   "display": "52,26 %",
+   "champion_id": 50,
+   "meaning": "winrate de Swain (Asie (KR))"
+  },
+  "swain.kr-ferbronze.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 50,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "asia"
+     ]
+    }
+   },
+   "value": 0.5041939938394788,
+   "display": "50,42",
+   "champion_id": 50,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Swain (Asie (KR))"
+  },
+  "swain.kr-ferbronze.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 50,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "asia"
+     ]
+    }
+   },
+   "value": 0.5409743763251905,
+   "display": "54,10",
+   "champion_id": 50,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Swain (Asie (KR))"
+  },
+  "swain.kr-ferbronze.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 50,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "asia"
+     ]
+    }
+   },
+   "value": 2830,
+   "display": "2 830",
+   "champion_id": 50,
+   "meaning": "parties de Swain (Asie (KR))"
+  },
+  "swain.na-ferbronze.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 50,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "americas"
+     ]
+    }
+   },
+   "value": 0.5313930673642904,
+   "display": "53,14 %",
+   "champion_id": 50,
+   "meaning": "winrate de Swain (Amériques (NA))"
+  },
+  "swain.na-ferbronze.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 50,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "americas"
+     ]
+    }
+   },
+   "value": 0.5136782456506277,
+   "display": "51,37",
+   "champion_id": 50,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Swain (Amériques (NA))"
+  },
+  "swain.na-ferbronze.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 50,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "americas"
+     ]
+    }
+   },
+   "value": 0.5490291161060947,
+   "display": "54,90",
+   "champion_id": 50,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Swain (Amériques (NA))"
+  },
+  "swain.na-ferbronze.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 50,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "americas"
+     ]
+    }
+   },
+   "value": 3058,
+   "display": "3 058",
+   "champion_id": 50,
+   "meaning": "parties de Swain (Amériques (NA))"
+  },
+  "teemo.euw-ferbronze.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 17,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "europe"
+     ]
+    }
+   },
+   "value": 0.5206611570247934,
+   "display": "52,07 %",
+   "champion_id": 17,
+   "meaning": "winrate de Teemo (Europe (EUW))"
+  },
+  "teemo.euw-ferbronze.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 17,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "europe"
+     ]
+    }
+   },
+   "value": 0.5096970882628721,
+   "display": "50,97",
+   "champion_id": 17,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Teemo (Europe (EUW))"
+  },
+  "teemo.euw-ferbronze.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 17,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "europe"
+     ]
+    }
+   },
+   "value": 0.531605358312671,
+   "display": "53,16",
+   "champion_id": 17,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Teemo (Europe (EUW))"
+  },
+  "teemo.euw-ferbronze.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 17,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "europe"
+     ]
+    }
+   },
+   "value": 7986,
+   "display": "7 986",
+   "champion_id": 17,
+   "meaning": "parties de Teemo (Europe (EUW))"
+  },
+  "teemo.kr-ferbronze.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 17,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "asia"
+     ]
+    }
+   },
+   "value": 0.5330634278002699,
+   "display": "53,31 %",
+   "champion_id": 17,
+   "meaning": "winrate de Teemo (Asie (KR))"
+  },
+  "teemo.kr-ferbronze.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 17,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "asia"
+     ]
+    }
+   },
+   "value": 0.521073911988622,
+   "display": "52,11",
+   "champion_id": 17,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Teemo (Asie (KR))"
+  },
+  "teemo.kr-ferbronze.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 17,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "asia"
+     ]
+    }
+   },
+   "value": 0.5450148753325651,
+   "display": "54,50",
+   "champion_id": 17,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Teemo (Asie (KR))"
+  },
+  "teemo.kr-ferbronze.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 17,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "asia"
+     ]
+    }
+   },
+   "value": 6669,
+   "display": "6 669",
+   "champion_id": 17,
+   "meaning": "parties de Teemo (Asie (KR))"
+  },
+  "teemo.na-ferbronze.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 17,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "americas"
+     ]
+    }
+   },
+   "value": 0.5216005101227483,
+   "display": "52,16 %",
+   "champion_id": 17,
+   "meaning": "winrate de Teemo (Amériques (NA))"
+  },
+  "teemo.na-ferbronze.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 17,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "americas"
+     ]
+    }
+   },
+   "value": 0.5092294633192752,
+   "display": "50,92",
+   "champion_id": 17,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Teemo (Amériques (NA))"
+  },
+  "teemo.na-ferbronze.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 17,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "americas"
+     ]
+    }
+   },
+   "value": 0.5339451176826348,
+   "display": "53,39",
+   "champion_id": 17,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Teemo (Amériques (NA))"
+  },
+  "teemo.na-ferbronze.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 17,
+    "scope": {
+     "buckets": [
+      "IRON_BRONZE"
+     ],
+     "regions": [
+      "americas"
+     ]
+    }
+   },
+   "value": 6273,
+   "display": "6 273",
+   "champion_id": 17,
+   "meaning": "parties de Teemo (Amériques (NA))"
+  },
+  "global.matches": {
+   "spec": {
+    "kind": "matches",
+    "scope": {}
+   },
+   "value": 683236,
+   "display": "683 236",
+   "champion_id": null,
+   "meaning": "matchs du patch"
+  },
+  "yone.global.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 777,
+    "scope": {}
+   },
+   "value": 0.5060602840647469,
+   "display": "50,61 %",
+   "champion_id": 777,
+   "meaning": "winrate de Yone (toutes régions, tous ranks)"
+  },
+  "yone.global.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 777,
+    "scope": {}
+   },
+   "value": 0.5034520640207053,
+   "display": "50,35",
+   "champion_id": 777,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Yone (toutes régions, tous ranks)"
+  },
+  "yone.global.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 777,
+    "scope": {}
+   },
+   "value": 0.5086681742862662,
+   "display": "50,87",
+   "champion_id": 777,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Yone (toutes régions, tous ranks)"
+  },
+  "yone.global.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 777,
+    "scope": {}
+   },
+   "value": 141165,
+   "display": "141 165",
+   "champion_id": 777,
+   "meaning": "parties de Yone (toutes régions, tous ranks)"
+  },
+  "yasuo.global.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 157,
+    "scope": {}
+   },
+   "value": 0.5007798584257012,
+   "display": "50,08 %",
+   "champion_id": 157,
+   "meaning": "winrate de Yasuo (toutes régions, tous ranks)"
+  },
+  "yasuo.global.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 157,
+    "scope": {}
+   },
+   "value": 0.49780275836384025,
+   "display": "49,78",
+   "champion_id": 157,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Yasuo (toutes régions, tous ranks)"
+  },
+  "yasuo.global.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 157,
+    "scope": {}
+   },
+   "value": 0.5037569031925944,
+   "display": "50,38",
+   "champion_id": 157,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Yasuo (toutes régions, tous ranks)"
+  },
+  "yasuo.global.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 157,
+    "scope": {}
+   },
+   "value": 108353,
+   "display": "108 353",
+   "champion_id": 157,
+   "meaning": "parties de Yasuo (toutes régions, tous ranks)"
+  }
+ },
+ "charts": {
+  "meilleurs": {
+   "title": "Meilleurs winrates en Fer–Bronze",
+   "subtitle": "en Fer–Bronze",
+   "rows": [
+    {
+     "label": "Illaoi",
+     "wr": "illaoi.ferbronze.wr",
+     "lo": "illaoi.ferbronze.wr_lo",
+     "hi": "illaoi.ferbronze.wr_hi",
+     "games": "illaoi.ferbronze.games"
+    },
+    {
+     "label": "Amumu",
+     "wr": "amumu.ferbronze.wr",
+     "lo": "amumu.ferbronze.wr_lo",
+     "hi": "amumu.ferbronze.wr_hi",
+     "games": "amumu.ferbronze.games"
+    },
+    {
+     "label": "Briar",
+     "wr": "briar.ferbronze.wr",
+     "lo": "briar.ferbronze.wr_lo",
+     "hi": "briar.ferbronze.wr_hi",
+     "games": "briar.ferbronze.games"
+    },
+    {
+     "label": "Yorick",
+     "wr": "yorick.ferbronze.wr",
+     "lo": "yorick.ferbronze.wr_lo",
+     "hi": "yorick.ferbronze.wr_hi",
+     "games": "yorick.ferbronze.games"
+    },
+    {
+     "label": "Swain",
+     "wr": "swain.ferbronze.wr",
+     "lo": "swain.ferbronze.wr_lo",
+     "hi": "swain.ferbronze.wr_hi",
+     "games": "swain.ferbronze.games"
+    },
+    {
+     "label": "Teemo",
+     "wr": "teemo.ferbronze.wr",
+     "lo": "teemo.ferbronze.wr_lo",
+     "hi": "teemo.ferbronze.wr_hi",
+     "games": "teemo.ferbronze.games"
+    },
+    {
+     "label": "Veigar",
+     "wr": "veigar.ferbronze.wr",
+     "lo": "veigar.ferbronze.wr_lo",
+     "hi": "veigar.ferbronze.wr_hi",
+     "games": "veigar.ferbronze.games"
+    },
+    {
+     "label": "Sett",
+     "wr": "sett.ferbronze.wr",
+     "lo": "sett.ferbronze.wr_lo",
+     "hi": "sett.ferbronze.wr_hi",
+     "games": "sett.ferbronze.games"
+    }
+   ]
+  }
+ }
+}

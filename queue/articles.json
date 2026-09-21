@@ -17,5 +17,1878 @@
   "reservoir_structurel": "Objectif 15 à 20 articles vérifiés en stock. batch_write.py priorise le structurel quand le stock descend sous STOCK_MIN — c'est le tampon : il ne périme pas et reste rédigeable même le jour où un patch vient de sortir.",
   "a_completer": "Les 17 sujets structurels n'ont pas été transmis (le message contenait le marqueur de collage, pas les tableaux). Les ajouter dans « articles » avec regime « structurel », patch_cible null, et debloque_par sur ceux qui attendent une donnée."
  },
- "articles": []
+ "articles": [
+  {
+   "id": "meta-role-top-16-18",
+   "slug": "meta-top/16-18",
+   "famille": "meta-role",
+   "titre": "Méta par poste — Top, patch 16.18",
+   "angle": "Qui gagne réellement au poste Top sur le patch 16.18, une fois le rôle isolé.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "team_position"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 0,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "meta-role",
+   "generateur": "wr-ranking",
+   "params": {
+    "role": "TOP"
+   },
+   "tags": [
+    "Méta par poste",
+    "Top",
+    "Tous ranks",
+    "EUW · KR · NA"
+   ]
+  },
+  {
+   "id": "meta-role-jungle-16-18",
+   "slug": "meta-jungle/16-18",
+   "famille": "meta-role",
+   "titre": "Méta par poste — Jungle, patch 16.18",
+   "angle": "Qui gagne réellement au poste Jungle sur le patch 16.18, une fois le rôle isolé.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "team_position"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 1,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "meta-role",
+   "generateur": "wr-ranking",
+   "params": {
+    "role": "JUNGLE"
+   },
+   "tags": [
+    "Méta par poste",
+    "Jungle",
+    "Tous ranks",
+    "EUW · KR · NA"
+   ]
+  },
+  {
+   "id": "meta-role-mid-16-18",
+   "slug": "meta-mid/16-18",
+   "famille": "meta-role",
+   "titre": "Méta par poste — Mid, patch 16.18",
+   "angle": "Qui gagne réellement au poste Mid sur le patch 16.18, une fois le rôle isolé.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "team_position"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 2,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "meta-role",
+   "generateur": "wr-ranking",
+   "params": {
+    "role": "MIDDLE"
+   },
+   "tags": [
+    "Méta par poste",
+    "Mid",
+    "Tous ranks",
+    "EUW · KR · NA"
+   ]
+  },
+  {
+   "id": "meta-role-bot-16-18",
+   "slug": "meta-bot/16-18",
+   "famille": "meta-role",
+   "titre": "Méta par poste — Bot (ADC), patch 16.18",
+   "angle": "Qui gagne réellement au poste Bot (ADC) sur le patch 16.18, une fois le rôle isolé.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "team_position"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 3,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "meta-role",
+   "generateur": "wr-ranking",
+   "params": {
+    "role": "BOTTOM"
+   },
+   "tags": [
+    "Méta par poste",
+    "Bot (ADC)",
+    "Tous ranks",
+    "EUW · KR · NA"
+   ]
+  },
+  {
+   "id": "meta-role-support-16-18",
+   "slug": "meta-support/16-18",
+   "famille": "meta-role",
+   "titre": "Méta par poste — Support, patch 16.18",
+   "angle": "Qui gagne réellement au poste Support sur le patch 16.18, une fois le rôle isolé.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "team_position"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 4,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "meta-role",
+   "generateur": "wr-ranking",
+   "params": {
+    "role": "UTILITY"
+   },
+   "tags": [
+    "Méta par poste",
+    "Support",
+    "Tous ranks",
+    "EUW · KR · NA"
+   ]
+  },
+  {
+   "id": "meta-rank-fer-bronze-16-18",
+   "slug": "meta-fer-bronze/16-18",
+   "famille": "meta-rank",
+   "titre": "Tier list en Fer–Bronze, patch 16.18",
+   "angle": "Le classement du patch 16.18 refait pour les seules parties de Fer–Bronze.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "tier_bucket_source"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 0,
+   "statut": "publie",
+   "tentatives": 0,
+   "gabarit": "meta-rank",
+   "generateur": "wr-ranking",
+   "params": {
+    "bucket": "IRON_BRONZE"
+   },
+   "tags": [
+    "Tier list",
+    "Fer–Bronze",
+    "EUW · KR · NA"
+   ],
+   "publie_le": "2026-09-21",
+   "chemin": "site/content/etudes/meta-fer-bronze/16-18"
+  },
+  {
+   "id": "meta-rank-argent-or-16-18",
+   "slug": "meta-argent-or/16-18",
+   "famille": "meta-rank",
+   "titre": "Tier list en Argent–Or, patch 16.18",
+   "angle": "Le classement du patch 16.18 refait pour les seules parties de Argent–Or.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "tier_bucket_source"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 1,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "meta-rank",
+   "generateur": "wr-ranking",
+   "params": {
+    "bucket": "SILVER_GOLD"
+   },
+   "tags": [
+    "Tier list",
+    "Argent–Or",
+    "EUW · KR · NA"
+   ]
+  },
+  {
+   "id": "meta-rank-platine-emeraude-16-18",
+   "slug": "meta-platine-emeraude/16-18",
+   "famille": "meta-rank",
+   "titre": "Tier list en Platine–Émeraude, patch 16.18",
+   "angle": "Le classement du patch 16.18 refait pour les seules parties de Platine–Émeraude.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "tier_bucket_source"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 2,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "meta-rank",
+   "generateur": "wr-ranking",
+   "params": {
+    "bucket": "PLAT_EMERALD"
+   },
+   "tags": [
+    "Tier list",
+    "Platine–Émeraude",
+    "EUW · KR · NA"
+   ]
+  },
+  {
+   "id": "meta-rank-diamant-16-18",
+   "slug": "meta-diamant/16-18",
+   "famille": "meta-rank",
+   "titre": "Tier list en Diamant+, patch 16.18",
+   "angle": "Le classement du patch 16.18 refait pour les seules parties de Diamant+.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "tier_bucket_source"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 3,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "meta-rank",
+   "generateur": "wr-ranking",
+   "params": {
+    "bucket": "DIAMOND_PLUS"
+   },
+   "tags": [
+    "Tier list",
+    "Diamant+",
+    "EUW · KR · NA"
+   ]
+  },
+  {
+   "id": "champions-pieges-16-18",
+   "slug": "champions-pieges/16-18",
+   "famille": "champions-pieges",
+   "titre": "Champions pièges, patch 16.18",
+   "angle": "Les champions très joués dont l'intervalle de confiance est entièrement sous 50 %.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 2,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "champions-pieges",
+   "generateur": "wr-outliers",
+   "params": {
+    "direction": "below"
+   },
+   "tags": [
+    "Champions pièges",
+    "Tous ranks",
+    "EUW · KR · NA"
+   ]
+  },
+  {
+   "id": "champions-pieges-fer-bronze-16-18",
+   "slug": "champions-pieges-fer-bronze/16-18",
+   "famille": "champions-pieges",
+   "titre": "Champions pièges en Fer–Bronze, patch 16.18",
+   "angle": "Les champions très joués en Fer–Bronze dont l'intervalle de confiance est entièrement sous 50 %.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 2,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "champions-pieges",
+   "generateur": "wr-outliers",
+   "params": {
+    "direction": "below",
+    "bucket": "IRON_BRONZE"
+   },
+   "tags": [
+    "Champions pièges",
+    "Fer–Bronze",
+    "EUW · KR · NA"
+   ]
+  },
+  {
+   "id": "champions-pieges-argent-or-16-18",
+   "slug": "champions-pieges-argent-or/16-18",
+   "famille": "champions-pieges",
+   "titre": "Champions pièges en Argent–Or, patch 16.18",
+   "angle": "Les champions très joués en Argent–Or dont l'intervalle de confiance est entièrement sous 50 %.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 2,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "champions-pieges",
+   "generateur": "wr-outliers",
+   "params": {
+    "direction": "below",
+    "bucket": "SILVER_GOLD"
+   },
+   "tags": [
+    "Champions pièges",
+    "Argent–Or",
+    "EUW · KR · NA"
+   ]
+  },
+  {
+   "id": "champions-pieges-platine-emeraude-16-18",
+   "slug": "champions-pieges-platine-emeraude/16-18",
+   "famille": "champions-pieges",
+   "titre": "Champions pièges en Platine–Émeraude, patch 16.18",
+   "angle": "Les champions très joués en Platine–Émeraude dont l'intervalle de confiance est entièrement sous 50 %.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 2,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "champions-pieges",
+   "generateur": "wr-outliers",
+   "params": {
+    "direction": "below",
+    "bucket": "PLAT_EMERALD"
+   },
+   "tags": [
+    "Champions pièges",
+    "Platine–Émeraude",
+    "EUW · KR · NA"
+   ]
+  },
+  {
+   "id": "champions-pieges-diamant-16-18",
+   "slug": "champions-pieges-diamant/16-18",
+   "famille": "champions-pieges",
+   "titre": "Champions pièges en Diamant+, patch 16.18",
+   "angle": "Les champions très joués en Diamant+ dont l'intervalle de confiance est entièrement sous 50 %.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 2,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "champions-pieges",
+   "generateur": "wr-outliers",
+   "params": {
+    "direction": "below",
+    "bucket": "DIAMOND_PLUS"
+   },
+   "tags": [
+    "Champions pièges",
+    "Diamant+",
+    "EUW · KR · NA"
+   ]
+  },
+  {
+   "id": "champions-surperformants-16-18",
+   "slug": "champions-surperformants/16-18",
+   "famille": "champions-surperformants",
+   "titre": "Champions qui surperforment, patch 16.18",
+   "angle": "Les champions très joués dont l'intervalle de confiance est entièrement au-dessus de 50 %.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 3,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "champions-surperformants",
+   "generateur": "wr-outliers",
+   "params": {
+    "direction": "above"
+   },
+   "tags": [
+    "Surperformance",
+    "Tous ranks",
+    "EUW · KR · NA"
+   ]
+  },
+  {
+   "id": "champions-surperformants-fer-bronze-16-18",
+   "slug": "champions-surperformants-fer-bronze/16-18",
+   "famille": "champions-surperformants",
+   "titre": "Champions qui surperforment en Fer–Bronze, patch 16.18",
+   "angle": "Les champions très joués en Fer–Bronze dont l'intervalle de confiance est entièrement au-dessus de 50 %.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 3,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "champions-surperformants",
+   "generateur": "wr-outliers",
+   "params": {
+    "direction": "above",
+    "bucket": "IRON_BRONZE"
+   },
+   "tags": [
+    "Surperformance",
+    "Fer–Bronze",
+    "EUW · KR · NA"
+   ]
+  },
+  {
+   "id": "champions-surperformants-argent-or-16-18",
+   "slug": "champions-surperformants-argent-or/16-18",
+   "famille": "champions-surperformants",
+   "titre": "Champions qui surperforment en Argent–Or, patch 16.18",
+   "angle": "Les champions très joués en Argent–Or dont l'intervalle de confiance est entièrement au-dessus de 50 %.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 3,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "champions-surperformants",
+   "generateur": "wr-outliers",
+   "params": {
+    "direction": "above",
+    "bucket": "SILVER_GOLD"
+   },
+   "tags": [
+    "Surperformance",
+    "Argent–Or",
+    "EUW · KR · NA"
+   ]
+  },
+  {
+   "id": "champions-surperformants-platine-emeraude-16-18",
+   "slug": "champions-surperformants-platine-emeraude/16-18",
+   "famille": "champions-surperformants",
+   "titre": "Champions qui surperforment en Platine–Émeraude, patch 16.18",
+   "angle": "Les champions très joués en Platine–Émeraude dont l'intervalle de confiance est entièrement au-dessus de 50 %.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 3,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "champions-surperformants",
+   "generateur": "wr-outliers",
+   "params": {
+    "direction": "above",
+    "bucket": "PLAT_EMERALD"
+   },
+   "tags": [
+    "Surperformance",
+    "Platine–Émeraude",
+    "EUW · KR · NA"
+   ]
+  },
+  {
+   "id": "champions-surperformants-diamant-16-18",
+   "slug": "champions-surperformants-diamant/16-18",
+   "famille": "champions-surperformants",
+   "titre": "Champions qui surperforment en Diamant+, patch 16.18",
+   "angle": "Les champions très joués en Diamant+ dont l'intervalle de confiance est entièrement au-dessus de 50 %.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 3,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "champions-surperformants",
+   "generateur": "wr-outliers",
+   "params": {
+    "direction": "above",
+    "bucket": "DIAMOND_PLUS"
+   },
+   "tags": [
+    "Surperformance",
+    "Diamant+",
+    "EUW · KR · NA"
+   ]
+  },
+  {
+   "id": "bans-16-18",
+   "slug": "bans/16-18",
+   "famille": "bans",
+   "titre": "Les bans du patch 16.18",
+   "angle": "Confronter le ban rate au winrate : ce que les bans visent, et ce que les champions bannis font réellement.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "bans"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 4,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "bans",
+   "generateur": "bans",
+   "params": {},
+   "tags": [
+    "Bans",
+    "Tous ranks",
+    "EUW · KR · NA"
+   ]
+  },
+  {
+   "id": "bans-euw-16-18",
+   "slug": "bans-euw/16-18",
+   "famille": "bans",
+   "titre": "Les bans du patch 16.18 en Europe (EUW)",
+   "angle": "Confronter le ban rate au winrate en Europe (EUW) : ce que les bans visent, et ce que les champions bannis font réellement.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "bans"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 4,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "bans",
+   "generateur": "bans",
+   "params": {
+    "region": "europe"
+   },
+   "tags": [
+    "Bans",
+    "Europe (EUW)"
+   ]
+  },
+  {
+   "id": "bans-kr-16-18",
+   "slug": "bans-kr/16-18",
+   "famille": "bans",
+   "titre": "Les bans du patch 16.18 en Asie (KR)",
+   "angle": "Confronter le ban rate au winrate en Asie (KR) : ce que les bans visent, et ce que les champions bannis font réellement.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "bans"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 4,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "bans",
+   "generateur": "bans",
+   "params": {
+    "region": "asia"
+   },
+   "tags": [
+    "Bans",
+    "Asie (KR)"
+   ]
+  },
+  {
+   "id": "bans-na-16-18",
+   "slug": "bans-na/16-18",
+   "famille": "bans",
+   "titre": "Les bans du patch 16.18 en Amériques (NA)",
+   "angle": "Confronter le ban rate au winrate en Amériques (NA) : ce que les bans visent, et ce que les champions bannis font réellement.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "bans"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 4,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "bans",
+   "generateur": "bans",
+   "params": {
+    "region": "americas"
+   },
+   "tags": [
+    "Bans",
+    "Amériques (NA)"
+   ]
+  },
+  {
+   "id": "bans-fer-bronze-16-18",
+   "slug": "bans-fer-bronze/16-18",
+   "famille": "bans",
+   "titre": "Les bans du patch 16.18 en Fer–Bronze",
+   "angle": "Confronter le ban rate au winrate en Fer–Bronze : ce que les bans visent, et ce que les champions bannis font réellement.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "bans"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 5,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "bans",
+   "generateur": "bans",
+   "params": {
+    "bucket": "IRON_BRONZE"
+   },
+   "tags": [
+    "Bans",
+    "Fer–Bronze",
+    "EUW · KR · NA"
+   ]
+  },
+  {
+   "id": "bans-argent-or-16-18",
+   "slug": "bans-argent-or/16-18",
+   "famille": "bans",
+   "titre": "Les bans du patch 16.18 en Argent–Or",
+   "angle": "Confronter le ban rate au winrate en Argent–Or : ce que les bans visent, et ce que les champions bannis font réellement.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "bans"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 5,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "bans",
+   "generateur": "bans",
+   "params": {
+    "bucket": "SILVER_GOLD"
+   },
+   "tags": [
+    "Bans",
+    "Argent–Or",
+    "EUW · KR · NA"
+   ]
+  },
+  {
+   "id": "bans-platine-emeraude-16-18",
+   "slug": "bans-platine-emeraude/16-18",
+   "famille": "bans",
+   "titre": "Les bans du patch 16.18 en Platine–Émeraude",
+   "angle": "Confronter le ban rate au winrate en Platine–Émeraude : ce que les bans visent, et ce que les champions bannis font réellement.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "bans"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 5,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "bans",
+   "generateur": "bans",
+   "params": {
+    "bucket": "PLAT_EMERALD"
+   },
+   "tags": [
+    "Bans",
+    "Platine–Émeraude",
+    "EUW · KR · NA"
+   ]
+  },
+  {
+   "id": "bans-diamant-16-18",
+   "slug": "bans-diamant/16-18",
+   "famille": "bans",
+   "titre": "Les bans du patch 16.18 en Diamant+",
+   "angle": "Confronter le ban rate au winrate en Diamant+ : ce que les bans visent, et ce que les champions bannis font réellement.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "bans"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 5,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "bans",
+   "generateur": "bans",
+   "params": {
+    "bucket": "DIAMOND_PLUS"
+   },
+   "tags": [
+    "Bans",
+    "Diamant+",
+    "EUW · KR · NA"
+   ]
+  },
+  {
+   "id": "regions-16-18",
+   "slug": "regions/16-18",
+   "famille": "regions",
+   "titre": "EUW, KR, NA : trois métas ? Patch 16.18",
+   "angle": "Mesurer l'écart réel entre les trois régions sur le patch 16.18, et distinguer les vraies différences de méta du bruit d'échantillonnage.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "region"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 5,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "regions",
+   "generateur": "regions",
+   "params": {},
+   "tags": [
+    "Régions",
+    "Tous ranks",
+    "EUW · KR · NA"
+   ]
+  },
+  {
+   "id": "regions-role-top-16-18",
+   "slug": "regions-top/16-18",
+   "famille": "regions",
+   "titre": "EUW, KR, NA au poste Top, patch 16.18",
+   "angle": "Les écarts entre régions au poste Top sur le patch 16.18, intervalles de confiance à l'appui.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "region",
+    "team_position"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 6,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "regions-role",
+   "generateur": "regions",
+   "params": {
+    "role": "TOP",
+    "min_games": 600
+   },
+   "tags": [
+    "Régions",
+    "Top",
+    "EUW · KR · NA"
+   ]
+  },
+  {
+   "id": "regions-role-jungle-16-18",
+   "slug": "regions-jungle/16-18",
+   "famille": "regions",
+   "titre": "EUW, KR, NA au poste Jungle, patch 16.18",
+   "angle": "Les écarts entre régions au poste Jungle sur le patch 16.18, intervalles de confiance à l'appui.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "region",
+    "team_position"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 6,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "regions-role",
+   "generateur": "regions",
+   "params": {
+    "role": "JUNGLE",
+    "min_games": 600
+   },
+   "tags": [
+    "Régions",
+    "Jungle",
+    "EUW · KR · NA"
+   ]
+  },
+  {
+   "id": "regions-role-mid-16-18",
+   "slug": "regions-mid/16-18",
+   "famille": "regions",
+   "titre": "EUW, KR, NA au poste Mid, patch 16.18",
+   "angle": "Les écarts entre régions au poste Mid sur le patch 16.18, intervalles de confiance à l'appui.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "region",
+    "team_position"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 6,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "regions-role",
+   "generateur": "regions",
+   "params": {
+    "role": "MIDDLE",
+    "min_games": 600
+   },
+   "tags": [
+    "Régions",
+    "Mid",
+    "EUW · KR · NA"
+   ]
+  },
+  {
+   "id": "regions-role-bot-16-18",
+   "slug": "regions-bot/16-18",
+   "famille": "regions",
+   "titre": "EUW, KR, NA au poste Bot (ADC), patch 16.18",
+   "angle": "Les écarts entre régions au poste Bot (ADC) sur le patch 16.18, intervalles de confiance à l'appui.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "region",
+    "team_position"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 6,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "regions-role",
+   "generateur": "regions",
+   "params": {
+    "role": "BOTTOM",
+    "min_games": 600
+   },
+   "tags": [
+    "Régions",
+    "Bot (ADC)",
+    "EUW · KR · NA"
+   ]
+  },
+  {
+   "id": "regions-role-support-16-18",
+   "slug": "regions-support/16-18",
+   "famille": "regions",
+   "titre": "EUW, KR, NA au poste Support, patch 16.18",
+   "angle": "Les écarts entre régions au poste Support sur le patch 16.18, intervalles de confiance à l'appui.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "region",
+    "team_position"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 6,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "regions-role",
+   "generateur": "regions",
+   "params": {
+    "role": "UTILITY",
+    "min_games": 600
+   },
+   "tags": [
+    "Régions",
+    "Support",
+    "EUW · KR · NA"
+   ]
+  },
+  {
+   "id": "tierlist-par-rank-16-18",
+   "slug": "tierlist-rank/16-18",
+   "famille": "tierlist-rank",
+   "titre": "Tier list par rank — patch 16.18",
+   "angle": "Ce qui gagne en Fer–Bronze ne gagne pas en Diamant+ : le classement du patch 16.18 refait bucket par bucket.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "tier_bucket_source"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 0,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "tierlist-par-rank",
+   "generateur": "rank-gap",
+   "params": {},
+   "tags": [
+    "Tier list",
+    "Par rank",
+    "EUW · KR · NA"
+   ]
+  },
+  {
+   "id": "rank-gap-role-top-16-18",
+   "slug": "rank-top/16-18",
+   "famille": "tierlist-rank",
+   "titre": "Fer–Bronze contre Diamant+ au poste Top, patch 16.18",
+   "angle": "Les écarts de winrate entre Fer–Bronze et Diamant+ au poste Top sur le patch 16.18.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "tier_bucket_source",
+    "team_position"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 1,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "rank-gap-role",
+   "generateur": "rank-gap",
+   "params": {
+    "role": "TOP",
+    "min_games": 400
+   },
+   "tags": [
+    "Par rank",
+    "Top",
+    "EUW · KR · NA"
+   ]
+  },
+  {
+   "id": "rank-gap-role-jungle-16-18",
+   "slug": "rank-jungle/16-18",
+   "famille": "tierlist-rank",
+   "titre": "Fer–Bronze contre Diamant+ au poste Jungle, patch 16.18",
+   "angle": "Les écarts de winrate entre Fer–Bronze et Diamant+ au poste Jungle sur le patch 16.18.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "tier_bucket_source",
+    "team_position"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 1,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "rank-gap-role",
+   "generateur": "rank-gap",
+   "params": {
+    "role": "JUNGLE",
+    "min_games": 400
+   },
+   "tags": [
+    "Par rank",
+    "Jungle",
+    "EUW · KR · NA"
+   ]
+  },
+  {
+   "id": "rank-gap-role-mid-16-18",
+   "slug": "rank-mid/16-18",
+   "famille": "tierlist-rank",
+   "titre": "Fer–Bronze contre Diamant+ au poste Mid, patch 16.18",
+   "angle": "Les écarts de winrate entre Fer–Bronze et Diamant+ au poste Mid sur le patch 16.18.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "tier_bucket_source",
+    "team_position"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 1,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "rank-gap-role",
+   "generateur": "rank-gap",
+   "params": {
+    "role": "MIDDLE",
+    "min_games": 400
+   },
+   "tags": [
+    "Par rank",
+    "Mid",
+    "EUW · KR · NA"
+   ]
+  },
+  {
+   "id": "rank-gap-role-bot-16-18",
+   "slug": "rank-bot/16-18",
+   "famille": "tierlist-rank",
+   "titre": "Fer–Bronze contre Diamant+ au poste Bot (ADC), patch 16.18",
+   "angle": "Les écarts de winrate entre Fer–Bronze et Diamant+ au poste Bot (ADC) sur le patch 16.18.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "tier_bucket_source",
+    "team_position"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 1,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "rank-gap-role",
+   "generateur": "rank-gap",
+   "params": {
+    "role": "BOTTOM",
+    "min_games": 400
+   },
+   "tags": [
+    "Par rank",
+    "Bot (ADC)",
+    "EUW · KR · NA"
+   ]
+  },
+  {
+   "id": "rank-gap-role-support-16-18",
+   "slug": "rank-support/16-18",
+   "famille": "tierlist-rank",
+   "titre": "Fer–Bronze contre Diamant+ au poste Support, patch 16.18",
+   "angle": "Les écarts de winrate entre Fer–Bronze et Diamant+ au poste Support sur le patch 16.18.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "tier_bucket_source",
+    "team_position"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 1,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "rank-gap-role",
+   "generateur": "rank-gap",
+   "params": {
+    "role": "UTILITY",
+    "min_games": 400
+   },
+   "tags": [
+    "Par rank",
+    "Support",
+    "EUW · KR · NA"
+   ]
+  },
+  {
+   "id": "vision-role-top-16-18",
+   "slug": "vision-top/16-18",
+   "famille": "vision-role",
+   "titre": "Vision au poste Top, patch 16.18",
+   "angle": "Le vision score moyen au poste Top sur le patch 16.18, champion par champion.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "vision_score",
+    "team_position"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 2,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "vision-role",
+   "generateur": "metric-ranking",
+   "params": {
+    "metric": "vision_score",
+    "role": "TOP"
+   },
+   "tags": [
+    "Vision",
+    "Top",
+    "Tous ranks"
+   ]
+  },
+  {
+   "id": "vision-role-jungle-16-18",
+   "slug": "vision-jungle/16-18",
+   "famille": "vision-role",
+   "titre": "Vision au poste Jungle, patch 16.18",
+   "angle": "Le vision score moyen au poste Jungle sur le patch 16.18, champion par champion.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "vision_score",
+    "team_position"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 2,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "vision-role",
+   "generateur": "metric-ranking",
+   "params": {
+    "metric": "vision_score",
+    "role": "JUNGLE"
+   },
+   "tags": [
+    "Vision",
+    "Jungle",
+    "Tous ranks"
+   ]
+  },
+  {
+   "id": "vision-role-mid-16-18",
+   "slug": "vision-mid/16-18",
+   "famille": "vision-role",
+   "titre": "Vision au poste Mid, patch 16.18",
+   "angle": "Le vision score moyen au poste Mid sur le patch 16.18, champion par champion.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "vision_score",
+    "team_position"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 2,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "vision-role",
+   "generateur": "metric-ranking",
+   "params": {
+    "metric": "vision_score",
+    "role": "MIDDLE"
+   },
+   "tags": [
+    "Vision",
+    "Mid",
+    "Tous ranks"
+   ]
+  },
+  {
+   "id": "vision-role-bot-16-18",
+   "slug": "vision-bot/16-18",
+   "famille": "vision-role",
+   "titre": "Vision au poste Bot (ADC), patch 16.18",
+   "angle": "Le vision score moyen au poste Bot (ADC) sur le patch 16.18, champion par champion.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "vision_score",
+    "team_position"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 2,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "vision-role",
+   "generateur": "metric-ranking",
+   "params": {
+    "metric": "vision_score",
+    "role": "BOTTOM"
+   },
+   "tags": [
+    "Vision",
+    "Bot (ADC)",
+    "Tous ranks"
+   ]
+  },
+  {
+   "id": "vision-role-support-16-18",
+   "slug": "vision-support/16-18",
+   "famille": "vision-role",
+   "titre": "Vision au poste Support, patch 16.18",
+   "angle": "Le vision score moyen au poste Support sur le patch 16.18, champion par champion.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "vision_score",
+    "team_position"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 2,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "vision-role",
+   "generateur": "metric-ranking",
+   "params": {
+    "metric": "vision_score",
+    "role": "UTILITY"
+   },
+   "tags": [
+    "Vision",
+    "Support",
+    "Tous ranks"
+   ]
+  },
+  {
+   "id": "degats-par-or-top-16-18",
+   "slug": "degats-or-top/16-18",
+   "famille": "degats-par-or",
+   "titre": "Dégâts par or gagné au poste Top, patch 16.18",
+   "angle": "Combien de dégâts aux champions chaque or gagné produit au poste Top, sur le patch 16.18.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "damage_to_champions",
+    "gold_earned",
+    "team_position"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 3,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "degats-par-or",
+   "generateur": "metric-ranking",
+   "params": {
+    "metric": "damage_per_gold",
+    "role": "TOP"
+   },
+   "tags": [
+    "Dégâts",
+    "Top",
+    "Tous ranks"
+   ]
+  },
+  {
+   "id": "degats-par-or-jungle-16-18",
+   "slug": "degats-or-jungle/16-18",
+   "famille": "degats-par-or",
+   "titre": "Dégâts par or gagné au poste Jungle, patch 16.18",
+   "angle": "Combien de dégâts aux champions chaque or gagné produit au poste Jungle, sur le patch 16.18.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "damage_to_champions",
+    "gold_earned",
+    "team_position"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 3,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "degats-par-or",
+   "generateur": "metric-ranking",
+   "params": {
+    "metric": "damage_per_gold",
+    "role": "JUNGLE"
+   },
+   "tags": [
+    "Dégâts",
+    "Jungle",
+    "Tous ranks"
+   ]
+  },
+  {
+   "id": "degats-par-or-mid-16-18",
+   "slug": "degats-or-mid/16-18",
+   "famille": "degats-par-or",
+   "titre": "Dégâts par or gagné au poste Mid, patch 16.18",
+   "angle": "Combien de dégâts aux champions chaque or gagné produit au poste Mid, sur le patch 16.18.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "damage_to_champions",
+    "gold_earned",
+    "team_position"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 3,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "degats-par-or",
+   "generateur": "metric-ranking",
+   "params": {
+    "metric": "damage_per_gold",
+    "role": "MIDDLE"
+   },
+   "tags": [
+    "Dégâts",
+    "Mid",
+    "Tous ranks"
+   ]
+  },
+  {
+   "id": "degats-par-or-bot-16-18",
+   "slug": "degats-or-bot/16-18",
+   "famille": "degats-par-or",
+   "titre": "Dégâts par or gagné au poste Bot (ADC), patch 16.18",
+   "angle": "Combien de dégâts aux champions chaque or gagné produit au poste Bot (ADC), sur le patch 16.18.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "damage_to_champions",
+    "gold_earned",
+    "team_position"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 3,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "degats-par-or",
+   "generateur": "metric-ranking",
+   "params": {
+    "metric": "damage_per_gold",
+    "role": "BOTTOM"
+   },
+   "tags": [
+    "Dégâts",
+    "Bot (ADC)",
+    "Tous ranks"
+   ]
+  },
+  {
+   "id": "degats-par-or-support-16-18",
+   "slug": "degats-or-support/16-18",
+   "famille": "degats-par-or",
+   "titre": "Dégâts par or gagné au poste Support, patch 16.18",
+   "angle": "Combien de dégâts aux champions chaque or gagné produit au poste Support, sur le patch 16.18.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "damage_to_champions",
+    "gold_earned",
+    "team_position"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 3,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "degats-par-or",
+   "generateur": "metric-ranking",
+   "params": {
+    "metric": "damage_per_gold",
+    "role": "UTILITY"
+   },
+   "tags": [
+    "Dégâts",
+    "Support",
+    "Tous ranks"
+   ]
+  },
+  {
+   "id": "cs10-role-top-16-18",
+   "slug": "cs10-top/16-18",
+   "famille": "cs10-role",
+   "titre": "CS à 10 minutes au poste Top, patch 16.18",
+   "angle": "Le nombre de CS à 10 minutes au poste Top sur le patch 16.18, champion par champion.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "cs_at10",
+    "team_position"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 4,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "cs10-role",
+   "generateur": "metric-ranking",
+   "params": {
+    "metric": "cs_at10",
+    "role": "TOP"
+   },
+   "tags": [
+    "CS",
+    "Top",
+    "Tous ranks"
+   ]
+  },
+  {
+   "id": "cs10-role-jungle-16-18",
+   "slug": "cs10-jungle/16-18",
+   "famille": "cs10-role",
+   "titre": "CS à 10 minutes au poste Jungle, patch 16.18",
+   "angle": "Le nombre de CS à 10 minutes au poste Jungle sur le patch 16.18, champion par champion.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "cs_at10",
+    "team_position"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 4,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "cs10-role",
+   "generateur": "metric-ranking",
+   "params": {
+    "metric": "cs_at10",
+    "role": "JUNGLE"
+   },
+   "tags": [
+    "CS",
+    "Jungle",
+    "Tous ranks"
+   ]
+  },
+  {
+   "id": "cs10-role-mid-16-18",
+   "slug": "cs10-mid/16-18",
+   "famille": "cs10-role",
+   "titre": "CS à 10 minutes au poste Mid, patch 16.18",
+   "angle": "Le nombre de CS à 10 minutes au poste Mid sur le patch 16.18, champion par champion.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "cs_at10",
+    "team_position"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 4,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "cs10-role",
+   "generateur": "metric-ranking",
+   "params": {
+    "metric": "cs_at10",
+    "role": "MIDDLE"
+   },
+   "tags": [
+    "CS",
+    "Mid",
+    "Tous ranks"
+   ]
+  },
+  {
+   "id": "cs10-role-bot-16-18",
+   "slug": "cs10-bot/16-18",
+   "famille": "cs10-role",
+   "titre": "CS à 10 minutes au poste Bot (ADC), patch 16.18",
+   "angle": "Le nombre de CS à 10 minutes au poste Bot (ADC) sur le patch 16.18, champion par champion.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "cs_at10",
+    "team_position"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 4,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "cs10-role",
+   "generateur": "metric-ranking",
+   "params": {
+    "metric": "cs_at10",
+    "role": "BOTTOM"
+   },
+   "tags": [
+    "CS",
+    "Bot (ADC)",
+    "Tous ranks"
+   ]
+  },
+  {
+   "id": "cs10-role-support-16-18",
+   "slug": "cs10-support/16-18",
+   "famille": "cs10-role",
+   "titre": "CS à 10 minutes au poste Support, patch 16.18",
+   "angle": "Le nombre de CS à 10 minutes au poste Support sur le patch 16.18, champion par champion.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "cs_at10",
+    "team_position"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 4,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "cs10-role",
+   "generateur": "metric-ranking",
+   "params": {
+    "metric": "cs_at10",
+    "role": "UTILITY"
+   },
+   "tags": [
+    "CS",
+    "Support",
+    "Tous ranks"
+   ]
+  },
+  {
+   "id": "temps-mort-rank-fer-bronze-16-18",
+   "slug": "temps-mort-fer-bronze/16-18",
+   "famille": "temps-mort-rank",
+   "titre": "Temps passé mort en Fer–Bronze, patch 16.18",
+   "angle": "Le temps passé mort par partie en Fer–Bronze sur le patch 16.18, champion par champion.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "time_spent_dead",
+    "tier_bucket_source"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 5,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "temps-mort-rank",
+   "generateur": "metric-ranking",
+   "params": {
+    "metric": "time_spent_dead",
+    "bucket": "IRON_BRONZE"
+   },
+   "tags": [
+    "Temps mort",
+    "Fer–Bronze",
+    "EUW · KR · NA"
+   ]
+  },
+  {
+   "id": "temps-mort-rank-argent-or-16-18",
+   "slug": "temps-mort-argent-or/16-18",
+   "famille": "temps-mort-rank",
+   "titre": "Temps passé mort en Argent–Or, patch 16.18",
+   "angle": "Le temps passé mort par partie en Argent–Or sur le patch 16.18, champion par champion.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "time_spent_dead",
+    "tier_bucket_source"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 5,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "temps-mort-rank",
+   "generateur": "metric-ranking",
+   "params": {
+    "metric": "time_spent_dead",
+    "bucket": "SILVER_GOLD"
+   },
+   "tags": [
+    "Temps mort",
+    "Argent–Or",
+    "EUW · KR · NA"
+   ]
+  },
+  {
+   "id": "temps-mort-rank-platine-emeraude-16-18",
+   "slug": "temps-mort-platine-emeraude/16-18",
+   "famille": "temps-mort-rank",
+   "titre": "Temps passé mort en Platine–Émeraude, patch 16.18",
+   "angle": "Le temps passé mort par partie en Platine–Émeraude sur le patch 16.18, champion par champion.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "time_spent_dead",
+    "tier_bucket_source"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 5,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "temps-mort-rank",
+   "generateur": "metric-ranking",
+   "params": {
+    "metric": "time_spent_dead",
+    "bucket": "PLAT_EMERALD"
+   },
+   "tags": [
+    "Temps mort",
+    "Platine–Émeraude",
+    "EUW · KR · NA"
+   ]
+  },
+  {
+   "id": "temps-mort-rank-diamant-16-18",
+   "slug": "temps-mort-diamant/16-18",
+   "famille": "temps-mort-rank",
+   "titre": "Temps passé mort en Diamant+, patch 16.18",
+   "angle": "Le temps passé mort par partie en Diamant+ sur le patch 16.18, champion par champion.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "time_spent_dead",
+    "tier_bucket_source"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 5,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "temps-mort-rank",
+   "generateur": "metric-ranking",
+   "params": {
+    "metric": "time_spent_dead",
+    "bucket": "DIAMOND_PLUS"
+   },
+   "tags": [
+    "Temps mort",
+    "Diamant+",
+    "EUW · KR · NA"
+   ]
+  },
+  {
+   "id": "plates-top-16-18",
+   "slug": "plates-top/16-18",
+   "famille": "plates-top",
+   "titre": "Plates de tourelle au poste Top, patch 16.18",
+   "angle": "Les plates de tourelle prises au poste Top sur le patch 16.18, champion par champion.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "turret_plates_taken",
+    "team_position"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 6,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "plates-top",
+   "generateur": "metric-ranking",
+   "params": {
+    "metric": "turret_plates_taken",
+    "role": "TOP"
+   },
+   "tags": [
+    "Plates",
+    "Top",
+    "Tous ranks"
+   ]
+  },
+  {
+   "id": "pinks-support-16-18",
+   "slug": "pinks-support/16-18",
+   "famille": "pinks-support",
+   "titre": "Pinks achetés au poste Support, patch 16.18",
+   "angle": "Les pinks achetés par partie au poste Support sur le patch 16.18, champion par champion.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "control_wards_bought",
+    "team_position"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 0,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "pinks-support",
+   "generateur": "metric-ranking",
+   "params": {
+    "metric": "control_wards_bought",
+    "role": "UTILITY"
+   },
+   "tags": [
+    "Vision",
+    "Support",
+    "Tous ranks"
+   ]
+  },
+  {
+   "id": "morts-precoces-16-18",
+   "slug": "morts-precoces/16-18",
+   "famille": "morts-precoces",
+   "titre": "Morts avant 5 minutes — patch 16.18",
+   "angle": "Quels champions meurent le plus tôt en partie sur le patch 16.18, mesuré sur les timelines collectées.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "timelines_collectees",
+    "participant_id",
+    "timeline_events"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 1,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "morts-precoces",
+   "generateur": "timeline-rate",
+   "params": {
+    "event": "morts_avant_5min"
+   },
+   "tags": [
+    "Timelines",
+    "Tous rôles",
+    "Tous ranks"
+   ]
+  },
+  {
+   "id": "morts-precoces-role-top-16-18",
+   "slug": "morts-precoces-top/16-18",
+   "famille": "morts-precoces",
+   "titre": "Morts avant 5 minutes au poste Top, patch 16.18",
+   "angle": "La fréquence des morts avant la cinquième minute au poste Top sur le patch 16.18.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "timelines_collectees",
+    "participant_id",
+    "timeline_events",
+    "team_position"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 2,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "morts-precoces-role",
+   "generateur": "timeline-rate",
+   "params": {
+    "event": "morts_avant_5min",
+    "role": "TOP",
+    "min_n": 300
+   },
+   "tags": [
+    "Timelines",
+    "Top",
+    "Tous ranks"
+   ]
+  },
+  {
+   "id": "morts-precoces-role-jungle-16-18",
+   "slug": "morts-precoces-jungle/16-18",
+   "famille": "morts-precoces",
+   "titre": "Morts avant 5 minutes au poste Jungle, patch 16.18",
+   "angle": "La fréquence des morts avant la cinquième minute au poste Jungle sur le patch 16.18.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "timelines_collectees",
+    "participant_id",
+    "timeline_events",
+    "team_position"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 2,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "morts-precoces-role",
+   "generateur": "timeline-rate",
+   "params": {
+    "event": "morts_avant_5min",
+    "role": "JUNGLE",
+    "min_n": 300
+   },
+   "tags": [
+    "Timelines",
+    "Jungle",
+    "Tous ranks"
+   ]
+  },
+  {
+   "id": "morts-precoces-role-mid-16-18",
+   "slug": "morts-precoces-mid/16-18",
+   "famille": "morts-precoces",
+   "titre": "Morts avant 5 minutes au poste Mid, patch 16.18",
+   "angle": "La fréquence des morts avant la cinquième minute au poste Mid sur le patch 16.18.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "timelines_collectees",
+    "participant_id",
+    "timeline_events",
+    "team_position"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 2,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "morts-precoces-role",
+   "generateur": "timeline-rate",
+   "params": {
+    "event": "morts_avant_5min",
+    "role": "MIDDLE",
+    "min_n": 300
+   },
+   "tags": [
+    "Timelines",
+    "Mid",
+    "Tous ranks"
+   ]
+  },
+  {
+   "id": "morts-precoces-role-bot-16-18",
+   "slug": "morts-precoces-bot/16-18",
+   "famille": "morts-precoces",
+   "titre": "Morts avant 5 minutes au poste Bot (ADC), patch 16.18",
+   "angle": "La fréquence des morts avant la cinquième minute au poste Bot (ADC) sur le patch 16.18.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "timelines_collectees",
+    "participant_id",
+    "timeline_events",
+    "team_position"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 2,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "morts-precoces-role",
+   "generateur": "timeline-rate",
+   "params": {
+    "event": "morts_avant_5min",
+    "role": "BOTTOM",
+    "min_n": 300
+   },
+   "tags": [
+    "Timelines",
+    "Bot (ADC)",
+    "Tous ranks"
+   ]
+  },
+  {
+   "id": "morts-precoces-role-support-16-18",
+   "slug": "morts-precoces-support/16-18",
+   "famille": "morts-precoces",
+   "titre": "Morts avant 5 minutes au poste Support, patch 16.18",
+   "angle": "La fréquence des morts avant la cinquième minute au poste Support sur le patch 16.18.",
+   "regime": "patch_courant",
+   "donnees_requises": [
+    "matches",
+    "participants",
+    "timelines_collectees",
+    "participant_id",
+    "timeline_events",
+    "team_position"
+   ],
+   "patch_cible": "16.18",
+   "jour_prefere": 2,
+   "statut": "en_attente",
+   "tentatives": 0,
+   "gabarit": "morts-precoces-role",
+   "generateur": "timeline-rate",
+   "params": {
+    "event": "morts_avant_5min",
+    "role": "UTILITY",
+    "min_n": 300
+   },
+   "tags": [
+    "Timelines",
+    "Support",
+    "Tous ranks"
+   ]
+  }
+ ]
 }

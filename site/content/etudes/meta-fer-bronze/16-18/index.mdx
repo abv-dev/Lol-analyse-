@@ -1,0 +1,92 @@
+# Tier list en Fer–Bronze, patch 16.18
+
+<StudyMeta />
+
+## Comment lire cette étude
+
+<Chapo>
+**En Fer–Bronze, les champions les plus joués sont pour l'essentiel au-dessus de 50 %, Mel faisant exception.** Le haut du classement par borne basse revient à Illaoi, avec <Stat value="53,32" ci="52,28 – 54,37" /> sur 8 741 parties. Chaque winrate est donné avec son intervalle de confiance à 95 %, lu ainsi : celui de Yasuo, <Stat value="49,96" ci="49,38 – 50,54" />, contient encore 50 %, et ne permet donc de conclure ni dans un sens ni dans l'autre. Le niveau d'une partie est approximé par le bucket du joueur échantillonné, pas par le rang moyen des dix joueurs (voir la [méthodologie](/methodologie)).
+</Chapo>
+
+Chaque winrate est donné avec son **intervalle de confiance de Wilson à 95 %**, calculé sur le nombre réel de parties. Yone, à <Stat value="50,61" ci="50,35 – 50,87" /> sur 141 165 parties, est réellement au-dessus de 50 % : tout l'intervalle l'est. Yasuo, à <Stat value="50,08" ci="49,78 – 50,38" />, ne permet pas de conclure : son intervalle contient encore 50 %. Quand deux intervalles se recouvrent, l'écart entre deux champions n'est pas un classement.
+
+Le niveau d'une partie est approximé par le bucket du joueur échantillonné qui l'a fait découvrir, pas par le rang moyen des dix joueurs (voir la [méthodologie](/methodologie)).
+
+## Les winrates les plus hauts du bucket se tiennent dans un mouchoir
+
+<KeyFigure value="53,32" ci="52,28 – 54,37" label="Winrate de Illaoi en Fer–Bronze, meilleure borne basse d'intervalle de la sélection." sample="8 741 parties" />
+
+Le tableau est trié par la borne basse de l'intervalle de confiance, c'est-à-dire par la valeur que l'échantillon garantit plutôt que par la plus flatteuse. Illaoi y figure avec <Stat value="53,32" ci="52,28 – 54,37" /> sur 8 741 parties, Amumu avec <Stat value="53,16" ci="52,17 – 54,14" /> sur 9 871, Briar avec <Stat value="52,93" ci="52,05 – 53,82" /> sur 12 238. Ces intervalles se recouvrent largement : l'ordre des lignes n'est pas un classement, et la mesure ne permet pas de dire lequel de ces champions devance les autres.
+
+Ce que l'échantillon établit, en revanche, vaut pour tous : chaque intervalle est entièrement au-dessus de 50 %, y compris pour Yorick, <Stat value="53,14" ci="52,02 – 54,25" />, Swain, <Stat value="52,85" ci="51,82 – 53,87" />, Veigar, <Stat value="52,35" ci="51,60 – 53,11" /> et Sett, <Stat value="52,36" ci="51,56 – 53,15" />. Dans les parties de Fer–Bronze où ces champions apparaissent, les victoires l'emportent nettement sur les défaites.
+
+Les volumes, eux, diffèrent beaucoup d'une ligne à l'autre. Teemo réunit à lui seul 20 928 parties pour 15,52 % de présence dans le bucket, à <Stat value="52,49" ci="51,81 – 53,17" /> : un winrate haut adossé à un échantillon large, donc à un intervalle plus resserré. Yorick, à l'inverse, n'est joué que dans 5,70 % des parties du bucket, et son intervalle est d'autant plus large.
+
+| Champion | Winrate (IC 95 %) | Parties | Pick rate | Lecture |
+| --- | --- | --- | --- | --- |
+| Illaoi | 53,32 % `[52,28 – 54,37]` | 8 741 | 6,48 % | au-dessus de 50 % |
+| Amumu | 53,16 % `[52,17 – 54,14]` | 9 871 | 7,32 % | au-dessus de 50 % |
+| Briar | 52,93 % `[52,05 – 53,82]` | 12 238 | 9,08 % | au-dessus de 50 % |
+| Yorick | 53,14 % `[52,02 – 54,25]` | 7 682 | 5,70 % | au-dessus de 50 % |
+| Swain | 52,85 % `[51,82 – 53,87]` | 9 098 | 6,75 % | au-dessus de 50 % |
+| Teemo | 52,49 % `[51,81 – 53,17]` | 20 928 | 15,52 % | au-dessus de 50 % |
+| Veigar | 52,35 % `[51,60 – 53,11]` | 16 891 | 12,53 % | au-dessus de 50 % |
+| Sett | 52,36 % `[51,56 – 53,15]` | 15 188 | 11,26 % | au-dessus de 50 % |
+
+<IntervalChart id="meilleurs" />
+
+## Dans ce bucket, les champions les plus joués sont rarement sous l'équilibre
+
+<KeyFigure value="28,75" unit="%" label="Pick rate de Yone, le champion le plus joué en Fer–Bronze." />
+
+Yone est le champion le plus présent des parties de Fer–Bronze, avec 28,75 % de pick rate : les parties où Yone est joué sont gagnées à <Stat value="51,66" ci="51,16 – 52,15" /> sur 38 766 parties. Suivent Lux, <Stat value="51,48" ci="50,97 – 51,99" /> pour 27,32 % de présence, Miss Fortune, <Stat value="50,99" ci="50,46 – 51,52" />, et Caitlyn, <Stat value="50,65" ci="50,07 – 51,22" />. Séraphine, <Stat value="51,40" ci="50,79 – 52,01" />, et Jinx, <Stat value="50,95" ci="50,28 – 51,61" />, sont dans le même cas : intervalle entièrement au-dessus de 50 %.
+
+Deux lignes se lisent autrement. Yasuo, <Stat value="49,96" ci="49,38 – 50,54" /> sur 28 175 parties, a un intervalle qui contient encore 50 % : à cette taille d'échantillon, la mesure ne le distingue pas d'une pièce lancée en l'air. Mel est la seule de cette sélection dont l'intervalle est entièrement sous 50 %, à <Stat value="47,33" ci="46,65 – 48,00" /> sur 21 215 parties, alors même que sa présence atteint 15,73 % dans le bucket.
+
+Comparé à la section précédente, le contraste habituel entre popularité et résultats est ici atténué : les champions très joués du bucket et ceux dont l'intervalle est le plus haut appartiennent aux mêmes eaux. On décrit là des choix de pick et des issues de parties mesurées côte à côte, sans qu'aucun mécanisme ne soit établi par ces chiffres.
+
+| Champion | Winrate (IC 95 %) | Parties | Pick rate | Lecture |
+| --- | --- | --- | --- | --- |
+| Yone | 51,66 % `[51,16 – 52,15]` | 38 766 | 28,75 % | au-dessus de 50 % |
+| Lux | 51,48 % `[50,97 – 51,99]` | 36 829 | 27,32 % | au-dessus de 50 % |
+| Miss Fortune | 50,99 % `[50,46 – 51,52]` | 34 241 | 25,40 % | au-dessus de 50 % |
+| Caitlyn | 50,65 % `[50,07 – 51,22]` | 28 896 | 21,43 % | au-dessus de 50 % |
+| Yasuo | 49,96 % `[49,38 – 50,54]` | 28 175 | 20,90 % | indistinguable de 50 % |
+| Séraphine | 51,40 % `[50,79 – 52,01]` | 25 814 | 19,15 % | au-dessus de 50 % |
+| Jinx | 50,95 % `[50,28 – 51,61]` | 21 792 | 16,16 % | au-dessus de 50 % |
+| Mel | 47,33 % `[46,65 – 48,00]` | 21 215 | 15,73 % | en dessous de 50 % |
+
+## Les écarts entre régions ne se distinguent pas du bruit
+
+Les mêmes champions, mesurés région par région à l'intérieur du bucket, donnent des intervalles qui se recouvrent. Illaoi affiche <Stat value="53,38" ci="51,67 – 55,09" /> en Europe sur 3 280 parties, <Stat value="53,72" ci="51,94 – 55,49" /> en Asie sur 3 027, et <Stat value="52,75" ci="50,77 – 54,73" /> aux Amériques sur 2 434 : aucune de ces valeurs n'est séparée des autres, l'écart apparent n'est pas un classement.
+
+Amumu présente la dispersion la plus visible du tableau, de <Stat value="52,37" ci="50,52 – 54,21" /> en Europe à <Stat value="54,24" ci="52,41 – 56,06" /> aux Amériques, en passant par <Stat value="52,94" ci="51,43 – 54,45" /> en Asie. Les intervalles se chevauchent malgré tout, et cette dispersion reste compatible avec le simple effet de la taille des échantillons régionaux. Teemo, qui dispose des volumes les plus élevés de la sélection, ne fait pas mieux ressortir de différence : <Stat value="52,07" ci="50,97 – 53,16" /> en Europe, <Stat value="53,31" ci="52,11 – 54,50" /> en Asie, <Stat value="52,16" ci="50,92 – 53,39" /> aux Amériques.
+
+Le même constat vaut pour Briar, Yorick et Swain, dont les cellules régionales restent indistinguables les unes des autres. Rappelons que ces cellules découpent des populations de parties découvertes via un joueur de Fer ou de Bronze de la région concernée, et non des rangs comparés entre serveurs.
+
+| Champion | Europe (EUW) | Asie (KR) | Amériques (NA) |
+| --- | --- | --- | --- |
+| Illaoi | 53,38 % `[51,67 – 55,09]` (3 280) | 53,72 % `[51,94 – 55,49]` (3 027) | 52,75 % `[50,77 – 54,73]` (2 434) |
+| Amumu | 52,37 % `[50,52 – 54,21]` (2 809) | 52,94 % `[51,43 – 54,45]` (4 197) | 54,24 % `[52,41 – 56,06]` (2 865) |
+| Briar | 53,51 % `[52,05 – 54,97]` (4 470) | 52,71 % `[51,16 – 54,26]` (3 965) | 52,48 % `[50,90 – 54,07]` (3 803) |
+| Yorick | 53,15 % `[51,39 – 54,89]` (3 114) | 53,97 % `[51,74 – 56,19]` (1 927) | 52,52 % `[50,61 – 54,42]` (2 641) |
+| Swain | 53,08 % `[51,36 – 54,81]` (3 210) | 52,26 % `[50,42 – 54,10]` (2 830) | 53,14 % `[51,37 – 54,90]` (3 058) |
+| Teemo | 52,07 % `[50,97 – 53,16]` (7 986) | 53,31 % `[52,11 – 54,50]` (6 669) | 52,16 % `[50,92 – 53,39]` (6 273) |
+
+## Le tableau complet
+
+Trier par winrate, pick rate, ban rate ou volume ; filtrer par bucket de rank, région et poste. Les agrégats recombinent parties et victoires des cellules, jamais une moyenne de pourcentages, et recalculent l'intervalle de confiance sur l'échantillon obtenu.
+
+<TierTable />
+
+## Ce qu'il faut retenir
+
+Restreint aux parties de Fer–Bronze, le patch donne un tableau homogène : les champions dont l'intervalle est le plus haut, d'Illaoi à Sett, ne se départagent pas entre eux, et les champions les plus joués du bucket, de Yone à Jinx, se situent eux aussi au-dessus de 50 %, à l'exception de Yasuo, indistinguable de l'équilibre, et de Mel, dont l'intervalle est entièrement en dessous. Région par région, aucun écart mesuré ne sort de ce que la taille des échantillons laisse attendre. Ces chiffres décrivent des corrélations, pas des recommandations : un winrate élevé peut refléter le champion, la population qui le choisit ou les compositions dans lesquelles il apparaît, et l'étude ne mesure rien d'autre que l'issue des parties par champion. Enfin, le bucket est celui du joueur échantillonné qui a fait découvrir la partie au collecteur, pas le rang moyen des dix joueurs : tout ce qui précède porte sur des populations de parties, avec la marge d'approximation décrite dans la [méthodologie](/methodologie).
+
+## Limites
+
+Ces chiffres décrivent des **corrélations, pas des recommandations de jeu** : un winrate peut refléter le champion, la population qui le choisit ou les compositions dans lesquelles il apparaît. Cette étude ne mesure ni les builds, ni les runes, ni les matchups.
+
+Le bucket d'une partie est celui du joueur échantillonné qui l'a fait découvrir au collecteur, pas le rang moyen des dix joueurs. Les biais d'échantillonnage connus sont décrits dans la [méthodologie](/methodologie).
+
+*Le texte de cette étude est rédigé automatiquement à partir des données ci-dessus ; chaque chiffre est calculé et vérifié par le code, jamais saisi par le rédacteur.*

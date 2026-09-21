@@ -1,0 +1,20 @@
+{
+ "title": "Tier list en Fer–Bronze, patch 16.18",
+ "description": "Classement des champions dans les seules parties de Fer–Bronze : winrates donnés avec leur intervalle de confiance à 95 % et leur échantillon, champions les plus joués du bucket, et comparaison région par région.",
+ "date": "2026-09-21",
+ "patch": "16.18",
+ "patch_sensitive": true,
+ "sample_size": 683236,
+ "regions": [
+  "europe",
+  "asia",
+  "americas"
+ ],
+ "collected_at": "2026-09-21",
+ "tags": [
+  "Tier list",
+  "Fer–Bronze",
+  "EUW · KR · NA"
+ ],
+ "generated": true
+}
