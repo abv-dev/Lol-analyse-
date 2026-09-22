@@ -1,0 +1,88 @@
+{
+ "study": "tierlist",
+ "patch": "16.18",
+ "ddragon_version": "16.18.1",
+ "exported_at": "2026-09-22",
+ "collected_from": "2026-09-15",
+ "collected_to": "2026-09-22",
+ "total_matches": 812395,
+ "regions": [
+  "americas",
+  "asia",
+  "europe"
+ ],
+ "roles": [
+  "TOP",
+  "JUNGLE",
+  "MIDDLE",
+  "BOTTOM",
+  "UTILITY"
+ ],
+ "role_cells": 10054,
+ "min_cell_games": 200,
+ "min_region_matches": 20000,
+ "total_cells": 2076,
+ "usable_cells": 2076,
+ "cells": [
+  {
+   "region": "americas",
+   "bucket": "DIAMOND_PLUS",
+   "matches": 74970
+  },
+  {
+   "region": "americas",
+   "bucket": "IRON_BRONZE",
+   "matches": 44486
+  },
+  {
+   "region": "americas",
+   "bucket": "PLAT_EMERALD",
+   "matches": 76999
+  },
+  {
+   "region": "americas",
+   "bucket": "SILVER_GOLD",
+   "matches": 64309
+  },
+  {
+   "region": "asia",
+   "bucket": "DIAMOND_PLUS",
+   "matches": 87855
+  },
+  {
+   "region": "asia",
+   "bucket": "IRON_BRONZE",
+   "matches": 58900
+  },
+  {
+   "region": "asia",
+   "bucket": "PLAT_EMERALD",
+   "matches": 71910
+  },
+  {
+   "region": "asia",
+   "bucket": "SILVER_GOLD",
+   "matches": 54388
+  },
+  {
+   "region": "europe",
+   "bucket": "DIAMOND_PLUS",
+   "matches": 92349
+  },
+  {
+   "region": "europe",
+   "bucket": "IRON_BRONZE",
+   "matches": 57146
+  },
+  {
+   "region": "europe",
+   "bucket": "PLAT_EMERALD",
+   "matches": 75828
+  },
+  {
+   "region": "europe",
+   "bucket": "SILVER_GOLD",
+   "matches": 53255
+  }
+ ]
+}

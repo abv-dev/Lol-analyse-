@@ -1,0 +1,21 @@
+{
+ "title": "Méta par poste — Top, patch 16.18",
+ "description": "Une fois le poste Top isolé, les winrates mesurés au poste avec leurs intervalles de confiance, champion par champion, par volume de parties et par bucket de rang.",
+ "date": "2026-09-22",
+ "patch": "16.18",
+ "patch_sensitive": true,
+ "sample_size": 812395,
+ "regions": [
+  "europe",
+  "asia",
+  "americas"
+ ],
+ "collected_at": "2026-09-22",
+ "tags": [
+  "Méta par poste",
+  "Top",
+  "Tous ranks",
+  "EUW · KR · NA"
+ ],
+ "generated": true
+}

@@ -1,0 +1,92 @@
+# Méta par poste — Top, patch 16.18
+
+<StudyMeta />
+
+## Comment lire cette étude
+
+<Chapo>
+**Une fois le poste Top isolé, les champions les plus joués ne sont pas ceux dont le winrate est le mieux établi.** Illaoi affiche <Stat value="52,07" ci="51,51 – 52,62" /> au poste et Singed <Stat value="52,01" ci="51,32 – 52,71" /> : leurs intervalles restent entièrement au-dessus de 50 %. Yone, le plus choisi du poste avec 10,03 % de présence, mesure <Stat value="50,35" ci="50,00 – 50,69" />, un intervalle qui affleure l'équilibre, et Darius, presque aussi choisi, reste en dessous avec <Stat value="49,26" ci="48,86 – 49,66" />. Ces mesures portent sur 812 395 parties, et le niveau d'une partie est approximé par le bucket du joueur échantillonné.
+</Chapo>
+
+Chaque winrate est donné avec son **intervalle de confiance de Wilson à 95 %**, calculé sur le nombre réel de parties. Yone, à <Stat value="50,62" ci="50,38 – 50,85" /> sur 167 469 parties, est réellement au-dessus de 50 % : tout l'intervalle l'est. Yasuo, à <Stat value="50,21" ci="49,93 – 50,48" />, ne permet pas de conclure : son intervalle contient encore 50 %. Quand deux intervalles se recouvrent, l'écart entre deux champions n'est pas un classement.
+
+Le niveau d'une partie est approximé par le bucket du joueur échantillonné qui l'a fait découvrir, pas par le rang moyen des dix joueurs (voir la [méthodologie](/methodologie)).
+
+## Les winrates les mieux établis du poste se tiennent au-dessus de l'équilibre
+
+<KeyFigure value="52,07" ci="51,51 – 52,62" label="Winrate de Illaoi au poste Top, meilleure borne basse d'intervalle de la sélection." sample="31 248 parties" />
+
+Les champions sont ordonnés par la borne basse de leur intervalle, c'est-à-dire par le winrate que l'échantillon garantit plutôt que par la valeur la plus flatteuse. Illaoi ouvre la liste avec <Stat value="52,07" ci="51,51 – 52,62" /> sur 31 248 parties : l'intervalle de confiance à 95 % se lit comme la plage dans laquelle se situe le winrate réel, et celle d'Illaoi est tout entière au-dessus de 50 %. Singed suit avec <Stat value="52,01" ci="51,32 – 52,71" /> sur 19 766 parties, dans le même cas.
+
+Sett, Teemo, Nasus et Malphite complètent la sélection avec des intervalles également au-dessus de l'équilibre et les échantillons les plus larges du poste : <Stat value="51,49" ci="51,06 – 51,92" />, <Stat value="51,42" ci="51,00 – 51,85" />, <Stat value="51,26" ci="50,86 – 51,66" /> et <Stat value="51,23" ci="50,80 – 51,65" />, sur des volumes allant de 52 483 à 59 774 parties. Leurs intervalles se recouvrent largement, y compris avec ceux d'Illaoi et de Singed : l'ordre du tableau n'est pas un classement entre eux.
+
+Zilean et Anivia portent les valeurs les plus hautes de la sélection, <Stat value="53,57" ci="51,05 – 56,07" /> et <Stat value="52,20" ci="50,84 – 53,57" />, mais sur 1 514 et 5 128 parties. Leurs intervalles sont assez larges pour recouvrir ceux de tous les autres champions cités et ne les en distinguent donc pas. Ce sont aussi les pick rates les plus faibles de la liste, 0,19 % pour Zilean et 0,63 % pour Anivia.
+
+| Champion | Winrate (IC 95 %) | Parties | Pick rate | Lecture |
+| --- | --- | --- | --- | --- |
+| Illaoi | 52,07 % `[51,51 – 52,62]` | 31 248 | 3,85 % | au-dessus de 50 % |
+| Singed | 52,01 % `[51,32 – 52,71]` | 19 766 | 2,43 % | au-dessus de 50 % |
+| Sett | 51,49 % `[51,06 – 51,92]` | 52 755 | 6,49 % | au-dessus de 50 % |
+| Zilean | 53,57 % `[51,05 – 56,07]` | 1 514 | 0,19 % | au-dessus de 50 % |
+| Teemo | 51,42 % `[51,00 – 51,85]` | 53 294 | 6,56 % | au-dessus de 50 % |
+| Nasus | 51,26 % `[50,86 – 51,66]` | 59 774 | 7,36 % | au-dessus de 50 % |
+| Anivia | 52,20 % `[50,84 – 53,57]` | 5 128 | 0,63 % | au-dessus de 50 % |
+| Malphite | 51,23 % `[50,80 – 51,65]` | 52 483 | 6,46 % | au-dessus de 50 % |
+
+<IntervalChart id="meilleurs" />
+
+## Les champions les plus choisis au poste ne sont pas ceux dont le winrate est le mieux établi
+
+<KeyFigure value="10,03" unit="%" label="Pick rate de Yone, le champion le plus joué au poste Top." />
+
+Yone est le champion le plus joué du poste, avec 10,03 % de présence et 81 477 parties. Son winrate, <Stat value="50,35" ci="50,00 – 50,69" />, est au-dessus de l'équilibre, mais sa borne basse le touche : c'est le gain le plus ténu de cette liste, alors que l'échantillon y est le plus large.
+
+Garen et Nasus suivent en volume et affichent <Stat value="51,00" ci="50,61 – 51,39" /> et <Stat value="51,26" ci="50,86 – 51,66" />, intervalles entiers au-dessus de 50 %. Darius, choisi presque aussi souvent avec 7,35 % de présence, mesure <Stat value="49,26" ci="48,86 – 49,66" /> sur 59 719 parties : son intervalle est entièrement sous l'équilibre. Mordekaiser, à <Stat value="50,34" ci="49,90 – 50,78" />, reste indistinguable de 50 %, son intervalle contenant encore cette valeur : l'échantillon ne permet pas de dire que les parties où il est joué au poste sont gagnées ou perdues davantage qu'une autre.
+
+Teemo, Sett et Malphite figurent à la fois parmi les plus joués du poste et parmi les winrates les mieux établis, à <Stat value="51,42" ci="51,00 – 51,85" />, <Stat value="51,49" ci="51,06 – 51,92" /> et <Stat value="51,23" ci="50,80 – 51,65" />. La correspondance entre popularité et résultat mesuré n'est donc ni totale ni absente : les deux séries décrivent des choix d'un côté et des issues de parties de l'autre, sans que la mesure relie les uns aux autres.
+
+| Champion | Winrate (IC 95 %) | Parties | Pick rate | Lecture |
+| --- | --- | --- | --- | --- |
+| Yone | 50,35 % `[50,00 – 50,69]` | 81 477 | 10,03 % | au-dessus de 50 % |
+| Garen | 51,00 % `[50,61 – 51,39]` | 62 974 | 7,75 % | au-dessus de 50 % |
+| Nasus | 51,26 % `[50,86 – 51,66]` | 59 774 | 7,36 % | au-dessus de 50 % |
+| Darius | 49,26 % `[48,86 – 49,66]` | 59 719 | 7,35 % | en dessous de 50 % |
+| Teemo | 51,42 % `[51,00 – 51,85]` | 53 294 | 6,56 % | au-dessus de 50 % |
+| Sett | 51,49 % `[51,06 – 51,92]` | 52 755 | 6,49 % | au-dessus de 50 % |
+| Malphite | 51,23 % `[50,80 – 51,65]` | 52 483 | 6,46 % | au-dessus de 50 % |
+| Mordekaiser | 50,34 % `[49,90 – 50,78]` | 50 079 | 6,16 % | indistinguable de 50 % |
+
+## Les winrates du poste s'affaissent vers l'équilibre dans les buckets les plus élevés
+
+Le niveau d'une partie est approximé par le bucket du joueur échantillonné qui l'a fait découvrir au collecteur, et non par le rang moyen des joueurs présents : les comparaisons ci-dessous portent sur des populations de parties, pas sur des rangs. Illaoi passe ainsi de <Stat value="53,35" ci="52,36 – 54,33" /> en Fer–Bronze à <Stat value="50,04" ci="48,78 – 51,31" /> en Diamant+, en passant par <Stat value="52,96" ci="51,87 – 54,05" /> en Argent–Or et <Stat value="51,04" ci="49,90 – 52,18" /> en Platine–Émeraude. Dans le bucket le plus élevé, son intervalle contient encore 50 % ; sa ligne globale, <Stat value="52,07" ci="51,51 – 52,62" />, résume des mesures qui ne se rejoignent pas.
+
+Le même affaissement se lit chez Sett, de <Stat value="52,34" ci="51,57 – 53,11" /> à <Stat value="50,28" ci="49,32 – 51,24" />, chez Teemo, de <Stat value="52,27" ci="51,49 – 53,04" /> à <Stat value="50,60" ci="49,56 – 51,65" />, et chez Nasus, de <Stat value="51,90" ci="51,05 – 52,76" /> à <Stat value="50,74" ci="49,94 – 51,54" /> : dans chacun de ces cas, les intervalles des buckets extrêmes ne se recouvrent pas. Singed fait exception, avec <Stat value="53,88" ci="51,98 – 55,78" /> en Fer–Bronze et <Stat value="51,74" ci="50,59 – 52,89" /> en Diamant+ : ces intervalles se recouvrent et ne se distinguent donc pas.
+
+Zilean n'apparaît au poste que dans les buckets supérieurs, <Stat value="51,60" ci="46,55 – 56,63" /> en Platine–Émeraude et <Stat value="54,89" ci="51,48 – 58,24" /> en Diamant+. Ce sont les échantillons les plus réduits de l'étude, et leurs intervalles sont trop larges pour que l'écart entre ces buckets soit lisible : ces cellules sont signalées, elles ne fondent aucune affirmation.
+
+| Champion | Fer–Bronze | Argent–Or | Platine–Émeraude | Diamant+ |
+| --- | --- | --- | --- | --- |
+| Illaoi | 53,35 % `[52,36 – 54,33]` (9 804) | 52,96 % `[51,87 – 54,05]` (8 061) | 51,04 % `[49,90 – 52,18]` (7 392) | 50,04 % `[48,78 – 51,31]` (5 991) |
+| Singed | 53,88 % `[51,98 – 55,78]` (2 641) | 52,16 % `[50,60 – 53,71]` (3 957) | 51,41 % `[50,13 – 52,69]` (5 880) | 51,74 % `[50,59 – 52,89]` (7 288) |
+| Sett | 52,34 % `[51,57 – 53,11]` (16 222) | 51,85 % `[50,99 – 52,70]` (13 108) | 51,03 % `[50,17 – 51,89]` (12 966) | 50,28 % `[49,32 – 51,24]` (10 459) |
+| Zilean | échantillon insuffisant | échantillon insuffisant | 51,60 % `[46,55 – 56,63]` (374) | 54,89 % `[51,48 – 58,24]` (829) |
+| Teemo | 52,27 % `[51,49 – 53,04]` (15 966) | 51,78 % `[50,99 – 52,58]` (15 016) | 50,55 % `[49,71 – 51,40]` (13 516) | 50,60 % `[49,56 – 51,65]` (8 796) |
+| Nasus | 51,90 % `[51,05 – 52,76]` (13 209) | 51,51 % `[50,71 – 52,31]` (14 971) | 51,01 % `[50,25 – 51,77]` (16 588) | 50,74 % `[49,94 – 51,54]` (15 006) |
+
+## Le tableau complet
+
+Trier par winrate, pick rate, ban rate ou volume ; filtrer par bucket de rank, région et poste. Les agrégats recombinent parties et victoires des cellules, jamais une moyenne de pourcentages, et recalculent l'intervalle de confiance sur l'échantillon obtenu.
+
+<TierTable />
+
+## Ce qu'il faut retenir
+
+Au poste Top, les winrates les mieux établis et les champions les plus choisis ne coïncident qu'en partie. Illaoi et Singed tiennent <Stat value="52,07" ci="51,51 – 52,62" /> et <Stat value="52,01" ci="51,32 – 52,71" /> pour des présences de 3,85 % et 2,43 %, quand Yone, le plus joué du poste, affleure l'équilibre à <Stat value="50,35" ci="50,00 – 50,69" /> et que Darius reste en dessous à <Stat value="49,26" ci="48,86 – 49,66" />. La lecture par bucket ajoute une réserve : Illaoi va de <Stat value="53,35" ci="52,36 – 54,33" /> en Fer–Bronze à <Stat value="50,04" ci="48,78 – 51,31" /> en Diamant+, et le bucket reste celui du joueur échantillonné, pas le rang des joueurs présents. Ces chiffres décrivent les parties où ces champions ont été joués au poste Top et leur issue, sans que la mesure permette d'en attribuer la cause.
+
+## Limites
+
+Ces chiffres décrivent des **corrélations, pas des recommandations de jeu** : un winrate peut refléter le champion, la population qui le choisit ou les compositions dans lesquelles il apparaît. Cette étude ne mesure ni les builds, ni les runes, ni les matchups.
+
+Le bucket d'une partie est celui du joueur échantillonné qui l'a fait découvrir au collecteur, pas le rang moyen des dix joueurs. Les biais d'échantillonnage connus sont décrits dans la [méthodologie](/methodologie).
+
+*Le texte de cette étude est rédigé automatiquement à partir des données ci-dessus ; chaque chiffre est calculé et vérifié par le code, jamais saisi par le rédacteur.*

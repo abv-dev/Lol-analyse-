@@ -32,7 +32,7 @@
    ],
    "patch_cible": "16.18",
    "jour_prefere": 0,
-   "statut": "en_attente",
+   "statut": "publie",
    "tentatives": 0,
    "gabarit": "meta-role",
    "generateur": "wr-ranking",
@@ -44,7 +44,9 @@
     "Top",
     "Tous ranks",
     "EUW · KR · NA"
-   ]
+   ],
+   "publie_le": "2026-09-22",
+   "chemin": "site/content/etudes/meta-top/16-18"
   },
   {
    "id": "meta-role-jungle-16-18",

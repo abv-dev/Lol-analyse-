@@ -1,0 +1,2368 @@
+{
+ "topic": "meta-role-top-16-18",
+ "patch": "16.18",
+ "generated_at": "2026-09-22T07:26:33Z",
+ "writer_model": "claude-opus-5",
+ "facts": {
+  "param.min_games": {
+   "spec": {
+    "kind": "param",
+    "value": 1500
+   },
+   "value": 1500,
+   "display": "1 500",
+   "champion_id": null,
+   "meaning": "parties minimum au poste Top"
+  },
+  "illaoi.top.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 420,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 0.5206733230926779,
+   "display": "52,07 %",
+   "champion_id": 420,
+   "meaning": "winrate de Illaoi (au poste Top)"
+  },
+  "illaoi.top.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 420,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 0.5151320698028474,
+   "display": "51,51",
+   "champion_id": 420,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Illaoi (au poste Top)"
+  },
+  "illaoi.top.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 420,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 0.5262094940759535,
+   "display": "52,62",
+   "champion_id": 420,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Illaoi (au poste Top)"
+  },
+  "illaoi.top.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 420,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 31248,
+   "display": "31 248",
+   "champion_id": 420,
+   "meaning": "parties de Illaoi (au poste Top)"
+  },
+  "illaoi.top.pick_rate": {
+   "spec": {
+    "kind": "pick_rate",
+    "champion_id": 420,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 0.03846404766154395,
+   "display": "3,85 %",
+   "champion_id": 420,
+   "meaning": "pick rate de Illaoi (au poste Top)"
+  },
+  "singed.top.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 27,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 0.5201355863604169,
+   "display": "52,01 %",
+   "champion_id": 27,
+   "meaning": "winrate de Singed (au poste Top)"
+  },
+  "singed.top.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 27,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 0.513167587885044,
+   "display": "51,32",
+   "champion_id": 27,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Singed (au poste Top)"
+  },
+  "singed.top.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 27,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 0.5270957597830705,
+   "display": "52,71",
+   "champion_id": 27,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Singed (au poste Top)"
+  },
+  "singed.top.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 27,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 19766,
+   "display": "19 766",
+   "champion_id": 27,
+   "meaning": "parties de Singed (au poste Top)"
+  },
+  "singed.top.pick_rate": {
+   "spec": {
+    "kind": "pick_rate",
+    "champion_id": 27,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 0.024330528868346062,
+   "display": "2,43 %",
+   "champion_id": 27,
+   "meaning": "pick rate de Singed (au poste Top)"
+  },
+  "sett.top.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 875,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 0.5148895839256943,
+   "display": "51,49 %",
+   "champion_id": 875,
+   "meaning": "winrate de Sett (au poste Top)"
+  },
+  "sett.top.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 875,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 0.5106239044021835,
+   "display": "51,06",
+   "champion_id": 875,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Sett (au poste Top)"
+  },
+  "sett.top.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 875,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 0.5191530951785635,
+   "display": "51,92",
+   "champion_id": 875,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Sett (au poste Top)"
+  },
+  "sett.top.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 875,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 52755,
+   "display": "52 755",
+   "champion_id": 875,
+   "meaning": "parties de Sett (au poste Top)"
+  },
+  "sett.top.pick_rate": {
+   "spec": {
+    "kind": "pick_rate",
+    "champion_id": 875,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 0.06493762270816536,
+   "display": "6,49 %",
+   "champion_id": 875,
+   "meaning": "pick rate de Sett (au poste Top)"
+  },
+  "zilean.top.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 26,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 0.535667107001321,
+   "display": "53,57 %",
+   "champion_id": 26,
+   "meaning": "winrate de Zilean (au poste Top)"
+  },
+  "zilean.top.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 26,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 0.5104868815666846,
+   "display": "51,05",
+   "champion_id": 26,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Zilean (au poste Top)"
+  },
+  "zilean.top.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 26,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 0.5606667948415958,
+   "display": "56,07",
+   "champion_id": 26,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Zilean (au poste Top)"
+  },
+  "zilean.top.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 26,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 1514,
+   "display": "1 514",
+   "champion_id": 26,
+   "meaning": "parties de Zilean (au poste Top)"
+  },
+  "zilean.top.pick_rate": {
+   "spec": {
+    "kind": "pick_rate",
+    "champion_id": 26,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 0.001863625453135482,
+   "display": "0,19 %",
+   "champion_id": 26,
+   "meaning": "pick rate de Zilean (au poste Top)"
+  },
+  "teemo.top.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 17,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 0.5142229894547229,
+   "display": "51,42 %",
+   "champion_id": 17,
+   "meaning": "winrate de Teemo (au poste Top)"
+  },
+  "teemo.top.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 17,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 0.5099788228095316,
+   "display": "51,00",
+   "champion_id": 17,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Teemo (au poste Top)"
+  },
+  "teemo.top.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 17,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 0.5184651058469658,
+   "display": "51,85",
+   "champion_id": 17,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Teemo (au poste Top)"
+  },
+  "teemo.top.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 17,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 53294,
+   "display": "53 294",
+   "champion_id": 17,
+   "meaning": "parties de Teemo (au poste Top)"
+  },
+  "teemo.top.pick_rate": {
+   "spec": {
+    "kind": "pick_rate",
+    "champion_id": 17,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 0.06560109306433447,
+   "display": "6,56 %",
+   "champion_id": 17,
+   "meaning": "pick rate de Teemo (au poste Top)"
+  },
+  "nasus.top.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 75,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 0.5126309097600964,
+   "display": "51,26 %",
+   "champion_id": 75,
+   "meaning": "winrate de Nasus (au poste Top)"
+  },
+  "nasus.top.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 75,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 0.5086231900692102,
+   "display": "50,86",
+   "champion_id": 75,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Nasus (au poste Top)"
+  },
+  "nasus.top.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 75,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 0.5166370060695247,
+   "display": "51,66",
+   "champion_id": 75,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Nasus (au poste Top)"
+  },
+  "nasus.top.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 75,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 59774,
+   "display": "59 774",
+   "champion_id": 75,
+   "meaning": "parties de Nasus (au poste Top)"
+  },
+  "nasus.top.pick_rate": {
+   "spec": {
+    "kind": "pick_rate",
+    "champion_id": 75,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 0.0735775084780187,
+   "display": "7,36 %",
+   "champion_id": 75,
+   "meaning": "pick rate de Nasus (au poste Top)"
+  },
+  "anivia.top.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 34,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 0.5220358814352574,
+   "display": "52,20 %",
+   "champion_id": 34,
+   "meaning": "winrate de Anivia (au poste Top)"
+  },
+  "anivia.top.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 34,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 0.5083528136755622,
+   "display": "50,84",
+   "champion_id": 34,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Anivia (au poste Top)"
+  },
+  "anivia.top.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 34,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 0.5356859591145728,
+   "display": "53,57",
+   "champion_id": 34,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Anivia (au poste Top)"
+  },
+  "anivia.top.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 34,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 5128,
+   "display": "5 128",
+   "champion_id": 34,
+   "meaning": "parties de Anivia (au poste Top)"
+  },
+  "anivia.top.pick_rate": {
+   "spec": {
+    "kind": "pick_rate",
+    "champion_id": 34,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 0.006312200345890854,
+   "display": "0,63 %",
+   "champion_id": 34,
+   "meaning": "pick rate de Anivia (au poste Top)"
+  },
+  "malphite.top.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 54,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 0.5122611131223443,
+   "display": "51,23 %",
+   "champion_id": 54,
+   "meaning": "winrate de Malphite (au poste Top)"
+  },
+  "malphite.top.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 54,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 0.5079839738191463,
+   "display": "50,80",
+   "champion_id": 54,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Malphite (au poste Top)"
+  },
+  "malphite.top.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 54,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 0.5165364576686149,
+   "display": "51,65",
+   "champion_id": 54,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Malphite (au poste Top)"
+  },
+  "malphite.top.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 54,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 52483,
+   "display": "52 483",
+   "champion_id": 54,
+   "meaning": "parties de Malphite (au poste Top)"
+  },
+  "malphite.top.pick_rate": {
+   "spec": {
+    "kind": "pick_rate",
+    "champion_id": 54,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 0.06460281020931936,
+   "display": "6,46 %",
+   "champion_id": 54,
+   "meaning": "pick rate de Malphite (au poste Top)"
+  },
+  "yone.top.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 777,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 0.5034672361525339,
+   "display": "50,35 %",
+   "champion_id": 777,
+   "meaning": "winrate de Yone (au poste Top)"
+  },
+  "yone.top.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 777,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 0.5000340244876058,
+   "display": "50,00",
+   "champion_id": 777,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Yone (au poste Top)"
+  },
+  "yone.top.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 777,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 0.5069001208879736,
+   "display": "50,69",
+   "champion_id": 777,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Yone (au poste Top)"
+  },
+  "yone.top.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 777,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 81477,
+   "display": "81 477",
+   "champion_id": 777,
+   "meaning": "parties de Yone (au poste Top)"
+  },
+  "yone.top.pick_rate": {
+   "spec": {
+    "kind": "pick_rate",
+    "champion_id": 777,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 0.10029234547233797,
+   "display": "10,03 %",
+   "champion_id": 777,
+   "meaning": "pick rate de Yone (au poste Top)"
+  },
+  "garen.top.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 86,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 0.5099564899799918,
+   "display": "51,00 %",
+   "champion_id": 86,
+   "meaning": "winrate de Garen (au poste Top)"
+  },
+  "garen.top.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 86,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 0.5060516284007959,
+   "display": "50,61",
+   "champion_id": 86,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Garen (au poste Top)"
+  },
+  "garen.top.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 86,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 0.5138601369273308,
+   "display": "51,39",
+   "champion_id": 86,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Garen (au poste Top)"
+  },
+  "garen.top.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 86,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 62974,
+   "display": "62 974",
+   "champion_id": 86,
+   "meaning": "parties de Garen (au poste Top)"
+  },
+  "garen.top.pick_rate": {
+   "spec": {
+    "kind": "pick_rate",
+    "champion_id": 86,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 0.07751647905267757,
+   "display": "7,75 %",
+   "champion_id": 86,
+   "meaning": "pick rate de Garen (au poste Top)"
+  },
+  "darius.top.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 122,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 0.49260704298464475,
+   "display": "49,26 %",
+   "champion_id": 122,
+   "meaning": "winrate de Darius (au poste Top)"
+  },
+  "darius.top.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 122,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 0.488597924609269,
+   "display": "48,86",
+   "champion_id": 122,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Darius (au poste Top)"
+  },
+  "darius.top.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 122,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 0.4966171124112178,
+   "display": "49,66",
+   "champion_id": 122,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Darius (au poste Top)"
+  },
+  "darius.top.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 122,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 59719,
+   "display": "59 719",
+   "champion_id": 122,
+   "meaning": "parties de Darius (au poste Top)"
+  },
+  "darius.top.pick_rate": {
+   "spec": {
+    "kind": "pick_rate",
+    "champion_id": 122,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 0.07350980742126675,
+   "display": "7,35 %",
+   "champion_id": 122,
+   "meaning": "pick rate de Darius (au poste Top)"
+  },
+  "mordekaiser.top.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 82,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 0.5033846522494458,
+   "display": "50,34 %",
+   "champion_id": 82,
+   "meaning": "winrate de Mordekaiser (au poste Top)"
+  },
+  "mordekaiser.top.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 82,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 0.49900550637533997,
+   "display": "49,90",
+   "champion_id": 82,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Mordekaiser (au poste Top)"
+  },
+  "mordekaiser.top.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 82,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 0.5077632789037207,
+   "display": "50,78",
+   "champion_id": 82,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Mordekaiser (au poste Top)"
+  },
+  "mordekaiser.top.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 82,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 50079,
+   "display": "50 079",
+   "champion_id": 82,
+   "meaning": "parties de Mordekaiser (au poste Top)"
+  },
+  "mordekaiser.top.pick_rate": {
+   "spec": {
+    "kind": "pick_rate",
+    "champion_id": 82,
+    "scope": {
+     "role": "TOP"
+    }
+   },
+   "value": 0.061643658565106875,
+   "display": "6,16 %",
+   "champion_id": 82,
+   "meaning": "pick rate de Mordekaiser (au poste Top)"
+  },
+  "illaoi.top-ferbronze.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 420,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.5334557323541411,
+   "display": "53,35 %",
+   "champion_id": 420,
+   "meaning": "winrate de Illaoi (Fer–Bronze)"
+  },
+  "illaoi.top-ferbronze.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 420,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.5235694413486643,
+   "display": "52,36",
+   "champion_id": 420,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Illaoi (Fer–Bronze)"
+  },
+  "illaoi.top-ferbronze.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 420,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.5433158159991718,
+   "display": "54,33",
+   "champion_id": 420,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Illaoi (Fer–Bronze)"
+  },
+  "illaoi.top-ferbronze.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 420,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 9804,
+   "display": "9 804",
+   "champion_id": 420,
+   "meaning": "parties de Illaoi (Fer–Bronze)"
+  },
+  "illaoi.top-argentor.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 420,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "SILVER_GOLD"
+     ]
+    }
+   },
+   "value": 0.5295868998883513,
+   "display": "52,96 %",
+   "champion_id": 420,
+   "meaning": "winrate de Illaoi (Argent–Or)"
+  },
+  "illaoi.top-argentor.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 420,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "SILVER_GOLD"
+     ]
+    }
+   },
+   "value": 0.5186795222146627,
+   "display": "51,87",
+   "champion_id": 420,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Illaoi (Argent–Or)"
+  },
+  "illaoi.top-argentor.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 420,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "SILVER_GOLD"
+     ]
+    }
+   },
+   "value": 0.5404660917984055,
+   "display": "54,05",
+   "champion_id": 420,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Illaoi (Argent–Or)"
+  },
+  "illaoi.top-argentor.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 420,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "SILVER_GOLD"
+     ]
+    }
+   },
+   "value": 8061,
+   "display": "8 061",
+   "champion_id": 420,
+   "meaning": "parties de Illaoi (Argent–Or)"
+  },
+  "illaoi.top-platineemeraude.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 420,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "PLAT_EMERALD"
+     ]
+    }
+   },
+   "value": 0.5104166666666666,
+   "display": "51,04 %",
+   "champion_id": 420,
+   "meaning": "winrate de Illaoi (Platine–Émeraude)"
+  },
+  "illaoi.top-platineemeraude.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 420,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "PLAT_EMERALD"
+     ]
+    }
+   },
+   "value": 0.4990184665004386,
+   "display": "49,90",
+   "champion_id": 420,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Illaoi (Platine–Émeraude)"
+  },
+  "illaoi.top-platineemeraude.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 420,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "PLAT_EMERALD"
+     ]
+    }
+   },
+   "value": 0.5218040458340207,
+   "display": "52,18",
+   "champion_id": 420,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Illaoi (Platine–Émeraude)"
+  },
+  "illaoi.top-platineemeraude.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 420,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "PLAT_EMERALD"
+     ]
+    }
+   },
+   "value": 7392,
+   "display": "7 392",
+   "champion_id": 420,
+   "meaning": "parties de Illaoi (Platine–Émeraude)"
+  },
+  "illaoi.top-diamant.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 420,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "DIAMOND_PLUS"
+     ]
+    }
+   },
+   "value": 0.500417292605575,
+   "display": "50,04 %",
+   "champion_id": 420,
+   "meaning": "winrate de Illaoi (Diamant+)"
+  },
+  "illaoi.top-diamant.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 420,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "DIAMOND_PLUS"
+     ]
+    }
+   },
+   "value": 0.48776007437125535,
+   "display": "48,78",
+   "champion_id": 420,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Illaoi (Diamant+)"
+  },
+  "illaoi.top-diamant.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 420,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "DIAMOND_PLUS"
+     ]
+    }
+   },
+   "value": 0.5130739760426456,
+   "display": "51,31",
+   "champion_id": 420,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Illaoi (Diamant+)"
+  },
+  "illaoi.top-diamant.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 420,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "DIAMOND_PLUS"
+     ]
+    }
+   },
+   "value": 5991,
+   "display": "5 991",
+   "champion_id": 420,
+   "meaning": "parties de Illaoi (Diamant+)"
+  },
+  "singed.top-ferbronze.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 27,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.5388110564180235,
+   "display": "53,88 %",
+   "champion_id": 27,
+   "meaning": "winrate de Singed (Fer–Bronze)"
+  },
+  "singed.top-ferbronze.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 27,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.519756686319734,
+   "display": "51,98",
+   "champion_id": 27,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Singed (Fer–Bronze)"
+  },
+  "singed.top-ferbronze.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 27,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.5577526854863959,
+   "display": "55,78",
+   "champion_id": 27,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Singed (Fer–Bronze)"
+  },
+  "singed.top-ferbronze.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 27,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 2641,
+   "display": "2 641",
+   "champion_id": 27,
+   "meaning": "parties de Singed (Fer–Bronze)"
+  },
+  "singed.top-argentor.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 27,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "SILVER_GOLD"
+     ]
+    }
+   },
+   "value": 0.5216072782410918,
+   "display": "52,16 %",
+   "champion_id": 27,
+   "meaning": "winrate de Singed (Argent–Or)"
+  },
+  "singed.top-argentor.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 27,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "SILVER_GOLD"
+     ]
+    }
+   },
+   "value": 0.5060295727203213,
+   "display": "50,60",
+   "champion_id": 27,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Singed (Argent–Or)"
+  },
+  "singed.top-argentor.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 27,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "SILVER_GOLD"
+     ]
+    }
+   },
+   "value": 0.5371430717234968,
+   "display": "53,71",
+   "champion_id": 27,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Singed (Argent–Or)"
+  },
+  "singed.top-argentor.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 27,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "SILVER_GOLD"
+     ]
+    }
+   },
+   "value": 3957,
+   "display": "3 957",
+   "champion_id": 27,
+   "meaning": "parties de Singed (Argent–Or)"
+  },
+  "singed.top-platineemeraude.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 27,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "PLAT_EMERALD"
+     ]
+    }
+   },
+   "value": 0.5141156462585034,
+   "display": "51,41 %",
+   "champion_id": 27,
+   "meaning": "winrate de Singed (Platine–Émeraude)"
+  },
+  "singed.top-platineemeraude.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 27,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "PLAT_EMERALD"
+     ]
+    }
+   },
+   "value": 0.501335733692783,
+   "display": "50,13",
+   "champion_id": 27,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Singed (Platine–Émeraude)"
+  },
+  "singed.top-platineemeraude.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 27,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "PLAT_EMERALD"
+     ]
+    }
+   },
+   "value": 0.5268771270992328,
+   "display": "52,69",
+   "champion_id": 27,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Singed (Platine–Émeraude)"
+  },
+  "singed.top-platineemeraude.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 27,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "PLAT_EMERALD"
+     ]
+    }
+   },
+   "value": 5880,
+   "display": "5 880",
+   "champion_id": 27,
+   "meaning": "parties de Singed (Platine–Émeraude)"
+  },
+  "singed.top-diamant.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 27,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "DIAMOND_PLUS"
+     ]
+    }
+   },
+   "value": 0.5174259055982436,
+   "display": "51,74 %",
+   "champion_id": 27,
+   "meaning": "winrate de Singed (Diamant+)"
+  },
+  "singed.top-diamant.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 27,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "DIAMOND_PLUS"
+     ]
+    }
+   },
+   "value": 0.5059474571715004,
+   "display": "50,59",
+   "champion_id": 27,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Singed (Diamant+)"
+  },
+  "singed.top-diamant.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 27,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "DIAMOND_PLUS"
+     ]
+    }
+   },
+   "value": 0.5288859935328816,
+   "display": "52,89",
+   "champion_id": 27,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Singed (Diamant+)"
+  },
+  "singed.top-diamant.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 27,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "DIAMOND_PLUS"
+     ]
+    }
+   },
+   "value": 7288,
+   "display": "7 288",
+   "champion_id": 27,
+   "meaning": "parties de Singed (Diamant+)"
+  },
+  "sett.top-ferbronze.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 875,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.523424978424362,
+   "display": "52,34 %",
+   "champion_id": 875,
+   "meaning": "winrate de Sett (Fer–Bronze)"
+  },
+  "sett.top-ferbronze.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 875,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.5157345462095912,
+   "display": "51,57",
+   "champion_id": 875,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Sett (Fer–Bronze)"
+  },
+  "sett.top-ferbronze.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 875,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.5311043189382528,
+   "display": "53,11",
+   "champion_id": 875,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Sett (Fer–Bronze)"
+  },
+  "sett.top-ferbronze.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 875,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 16222,
+   "display": "16 222",
+   "champion_id": 875,
+   "meaning": "parties de Sett (Fer–Bronze)"
+  },
+  "sett.top-argentor.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 875,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "SILVER_GOLD"
+     ]
+    }
+   },
+   "value": 0.518462007934086,
+   "display": "51,85 %",
+   "champion_id": 875,
+   "meaning": "winrate de Sett (Argent–Or)"
+  },
+  "sett.top-argentor.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 875,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "SILVER_GOLD"
+     ]
+    }
+   },
+   "value": 0.5099041581242788,
+   "display": "50,99",
+   "champion_id": 875,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Sett (Argent–Or)"
+  },
+  "sett.top-argentor.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 875,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "SILVER_GOLD"
+     ]
+    }
+   },
+   "value": 0.5270090398822758,
+   "display": "52,70",
+   "champion_id": 875,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Sett (Argent–Or)"
+  },
+  "sett.top-argentor.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 875,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "SILVER_GOLD"
+     ]
+    }
+   },
+   "value": 13108,
+   "display": "13 108",
+   "champion_id": 875,
+   "meaning": "parties de Sett (Argent–Or)"
+  },
+  "sett.top-platineemeraude.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 875,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "PLAT_EMERALD"
+     ]
+    }
+   },
+   "value": 0.5103347215795156,
+   "display": "51,03 %",
+   "champion_id": 875,
+   "meaning": "winrate de Sett (Platine–Émeraude)"
+  },
+  "sett.top-platineemeraude.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 875,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "PLAT_EMERALD"
+     ]
+    }
+   },
+   "value": 0.5017285006304293,
+   "display": "50,17",
+   "champion_id": 875,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Sett (Platine–Émeraude)"
+  },
+  "sett.top-platineemeraude.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 875,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "PLAT_EMERALD"
+     ]
+    }
+   },
+   "value": 0.5189348205713681,
+   "display": "51,89",
+   "champion_id": 875,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Sett (Platine–Émeraude)"
+  },
+  "sett.top-platineemeraude.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 875,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "PLAT_EMERALD"
+     ]
+    }
+   },
+   "value": 12966,
+   "display": "12 966",
+   "champion_id": 875,
+   "meaning": "parties de Sett (Platine–Émeraude)"
+  },
+  "sett.top-diamant.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 875,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "DIAMOND_PLUS"
+     ]
+    }
+   },
+   "value": 0.5028205373362654,
+   "display": "50,28 %",
+   "champion_id": 875,
+   "meaning": "winrate de Sett (Diamant+)"
+  },
+  "sett.top-diamant.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 875,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "DIAMOND_PLUS"
+     ]
+    }
+   },
+   "value": 0.49323904169120725,
+   "display": "49,32",
+   "champion_id": 875,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Sett (Diamant+)"
+  },
+  "sett.top-diamant.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 875,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "DIAMOND_PLUS"
+     ]
+    }
+   },
+   "value": 0.5123999618464273,
+   "display": "51,24",
+   "champion_id": 875,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Sett (Diamant+)"
+  },
+  "sett.top-diamant.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 875,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "DIAMOND_PLUS"
+     ]
+    }
+   },
+   "value": 10459,
+   "display": "10 459",
+   "champion_id": 875,
+   "meaning": "parties de Sett (Diamant+)"
+  },
+  "zilean.top-platineemeraude.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 26,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "PLAT_EMERALD"
+     ]
+    }
+   },
+   "value": 0.516042780748663,
+   "display": "51,60 %",
+   "champion_id": 26,
+   "meaning": "winrate de Zilean (Platine–Émeraude)"
+  },
+  "zilean.top-platineemeraude.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 26,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "PLAT_EMERALD"
+     ]
+    }
+   },
+   "value": 0.4654899612399551,
+   "display": "46,55",
+   "champion_id": 26,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Zilean (Platine–Émeraude)"
+  },
+  "zilean.top-platineemeraude.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 26,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "PLAT_EMERALD"
+     ]
+    }
+   },
+   "value": 0.5662693910488433,
+   "display": "56,63",
+   "champion_id": 26,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Zilean (Platine–Émeraude)"
+  },
+  "zilean.top-platineemeraude.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 26,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "PLAT_EMERALD"
+     ]
+    }
+   },
+   "value": 374,
+   "display": "374",
+   "champion_id": 26,
+   "meaning": "parties de Zilean (Platine–Émeraude)"
+  },
+  "zilean.top-diamant.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 26,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "DIAMOND_PLUS"
+     ]
+    }
+   },
+   "value": 0.548854041013269,
+   "display": "54,89 %",
+   "champion_id": 26,
+   "meaning": "winrate de Zilean (Diamant+)"
+  },
+  "zilean.top-diamant.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 26,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "DIAMOND_PLUS"
+     ]
+    }
+   },
+   "value": 0.5148328396872559,
+   "display": "51,48",
+   "champion_id": 26,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Zilean (Diamant+)"
+  },
+  "zilean.top-diamant.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 26,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "DIAMOND_PLUS"
+     ]
+    }
+   },
+   "value": 0.5824245664398312,
+   "display": "58,24",
+   "champion_id": 26,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Zilean (Diamant+)"
+  },
+  "zilean.top-diamant.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 26,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "DIAMOND_PLUS"
+     ]
+    }
+   },
+   "value": 829,
+   "display": "829",
+   "champion_id": 26,
+   "meaning": "parties de Zilean (Diamant+)"
+  },
+  "teemo.top-ferbronze.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 17,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.5226731805085807,
+   "display": "52,27 %",
+   "champion_id": 17,
+   "meaning": "winrate de Teemo (Fer–Bronze)"
+  },
+  "teemo.top-ferbronze.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 17,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.5149209519485545,
+   "display": "51,49",
+   "champion_id": 17,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Teemo (Fer–Bronze)"
+  },
+  "teemo.top-ferbronze.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 17,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.5304145012472009,
+   "display": "53,04",
+   "champion_id": 17,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Teemo (Fer–Bronze)"
+  },
+  "teemo.top-ferbronze.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 17,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 15966,
+   "display": "15 966",
+   "champion_id": 17,
+   "meaning": "parties de Teemo (Fer–Bronze)"
+  },
+  "teemo.top-argentor.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 17,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "SILVER_GOLD"
+     ]
+    }
+   },
+   "value": 0.5178476291955247,
+   "display": "51,78 %",
+   "champion_id": 17,
+   "meaning": "winrate de Teemo (Argent–Or)"
+  },
+  "teemo.top-argentor.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 17,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "SILVER_GOLD"
+     ]
+    }
+   },
+   "value": 0.5098519263862087,
+   "display": "50,99",
+   "champion_id": 17,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Teemo (Argent–Or)"
+  },
+  "teemo.top-argentor.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 17,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "SILVER_GOLD"
+     ]
+    }
+   },
+   "value": 0.5258342026231773,
+   "display": "52,58",
+   "champion_id": 17,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Teemo (Argent–Or)"
+  },
+  "teemo.top-argentor.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 17,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "SILVER_GOLD"
+     ]
+    }
+   },
+   "value": 15016,
+   "display": "15 016",
+   "champion_id": 17,
+   "meaning": "parties de Teemo (Argent–Or)"
+  },
+  "teemo.top-platineemeraude.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 17,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "PLAT_EMERALD"
+     ]
+    }
+   },
+   "value": 0.5055489789878662,
+   "display": "50,55 %",
+   "champion_id": 17,
+   "meaning": "winrate de Teemo (Platine–Émeraude)"
+  },
+  "teemo.top-platineemeraude.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 17,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "PLAT_EMERALD"
+     ]
+    }
+   },
+   "value": 0.4971197704551229,
+   "display": "49,71",
+   "champion_id": 17,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Teemo (Platine–Émeraude)"
+  },
+  "teemo.top-platineemeraude.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 17,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "PLAT_EMERALD"
+     ]
+    }
+   },
+   "value": 0.5139750342034136,
+   "display": "51,40",
+   "champion_id": 17,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Teemo (Platine–Émeraude)"
+  },
+  "teemo.top-platineemeraude.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 17,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "PLAT_EMERALD"
+     ]
+    }
+   },
+   "value": 13516,
+   "display": "13 516",
+   "champion_id": 17,
+   "meaning": "parties de Teemo (Platine–Émeraude)"
+  },
+  "teemo.top-diamant.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 17,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "DIAMOND_PLUS"
+     ]
+    }
+   },
+   "value": 0.5060254661209641,
+   "display": "50,60 %",
+   "champion_id": 17,
+   "meaning": "winrate de Teemo (Diamant+)"
+  },
+  "teemo.top-diamant.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 17,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "DIAMOND_PLUS"
+     ]
+    }
+   },
+   "value": 0.4955768567970775,
+   "display": "49,56",
+   "champion_id": 17,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Teemo (Diamant+)"
+  },
+  "teemo.top-diamant.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 17,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "DIAMOND_PLUS"
+     ]
+    }
+   },
+   "value": 0.5164688147637151,
+   "display": "51,65",
+   "champion_id": 17,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Teemo (Diamant+)"
+  },
+  "teemo.top-diamant.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 17,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "DIAMOND_PLUS"
+     ]
+    }
+   },
+   "value": 8796,
+   "display": "8 796",
+   "champion_id": 17,
+   "meaning": "parties de Teemo (Diamant+)"
+  },
+  "nasus.top-ferbronze.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 75,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.5190400484518132,
+   "display": "51,90 %",
+   "champion_id": 75,
+   "meaning": "winrate de Nasus (Fer–Bronze)"
+  },
+  "nasus.top-ferbronze.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 75,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.510515192195493,
+   "display": "51,05",
+   "champion_id": 75,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Nasus (Fer–Bronze)"
+  },
+  "nasus.top-ferbronze.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 75,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 0.5275538334238377,
+   "display": "52,76",
+   "champion_id": 75,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Nasus (Fer–Bronze)"
+  },
+  "nasus.top-ferbronze.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 75,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "IRON_BRONZE"
+     ]
+    }
+   },
+   "value": 13209,
+   "display": "13 209",
+   "champion_id": 75,
+   "meaning": "parties de Nasus (Fer–Bronze)"
+  },
+  "nasus.top-argentor.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 75,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "SILVER_GOLD"
+     ]
+    }
+   },
+   "value": 0.5150624540778839,
+   "display": "51,51 %",
+   "champion_id": 75,
+   "meaning": "winrate de Nasus (Argent–Or)"
+  },
+  "nasus.top-argentor.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 75,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "SILVER_GOLD"
+     ]
+    }
+   },
+   "value": 0.5070539856827506,
+   "display": "50,71",
+   "champion_id": 75,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Nasus (Argent–Or)"
+  },
+  "nasus.top-argentor.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 75,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "SILVER_GOLD"
+     ]
+    }
+   },
+   "value": 0.5230631946052814,
+   "display": "52,31",
+   "champion_id": 75,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Nasus (Argent–Or)"
+  },
+  "nasus.top-argentor.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 75,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "SILVER_GOLD"
+     ]
+    }
+   },
+   "value": 14971,
+   "display": "14 971",
+   "champion_id": 75,
+   "meaning": "parties de Nasus (Argent–Or)"
+  },
+  "nasus.top-platineemeraude.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 75,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "PLAT_EMERALD"
+     ]
+    }
+   },
+   "value": 0.5100675186882083,
+   "display": "51,01 %",
+   "champion_id": 75,
+   "meaning": "winrate de Nasus (Platine–Émeraude)"
+  },
+  "nasus.top-platineemeraude.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 75,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "PLAT_EMERALD"
+     ]
+    }
+   },
+   "value": 0.5024587246033448,
+   "display": "50,25",
+   "champion_id": 75,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Nasus (Platine–Émeraude)"
+  },
+  "nasus.top-platineemeraude.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 75,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "PLAT_EMERALD"
+     ]
+    }
+   },
+   "value": 0.5176716509688274,
+   "display": "51,77",
+   "champion_id": 75,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Nasus (Platine–Émeraude)"
+  },
+  "nasus.top-platineemeraude.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 75,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "PLAT_EMERALD"
+     ]
+    }
+   },
+   "value": 16588,
+   "display": "16 588",
+   "champion_id": 75,
+   "meaning": "parties de Nasus (Platine–Émeraude)"
+  },
+  "nasus.top-diamant.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 75,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "DIAMOND_PLUS"
+     ]
+    }
+   },
+   "value": 0.5073970411835266,
+   "display": "50,74 %",
+   "champion_id": 75,
+   "meaning": "winrate de Nasus (Diamant+)"
+  },
+  "nasus.top-diamant.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 75,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "DIAMOND_PLUS"
+     ]
+    }
+   },
+   "value": 0.4993971273621257,
+   "display": "49,94",
+   "champion_id": 75,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Nasus (Diamant+)"
+  },
+  "nasus.top-diamant.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 75,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "DIAMOND_PLUS"
+     ]
+    }
+   },
+   "value": 0.5153931687651888,
+   "display": "51,54",
+   "champion_id": 75,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Nasus (Diamant+)"
+  },
+  "nasus.top-diamant.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 75,
+    "scope": {
+     "role": "TOP",
+     "buckets": [
+      "DIAMOND_PLUS"
+     ]
+    }
+   },
+   "value": 15006,
+   "display": "15 006",
+   "champion_id": 75,
+   "meaning": "parties de Nasus (Diamant+)"
+  },
+  "global.matches": {
+   "spec": {
+    "kind": "matches",
+    "scope": {}
+   },
+   "value": 812395,
+   "display": "812 395",
+   "champion_id": null,
+   "meaning": "matchs du patch"
+  },
+  "yone.global.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 777,
+    "scope": {}
+   },
+   "value": 0.5061533776400409,
+   "display": "50,62 %",
+   "champion_id": 777,
+   "meaning": "winrate de Yone (toutes régions, tous ranks)"
+  },
+  "yone.global.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 777,
+    "scope": {}
+   },
+   "value": 0.5037587465877101,
+   "display": "50,38",
+   "champion_id": 777,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Yone (toutes régions, tous ranks)"
+  },
+  "yone.global.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 777,
+    "scope": {}
+   },
+   "value": 0.5085477264024599,
+   "display": "50,85",
+   "champion_id": 777,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Yone (toutes régions, tous ranks)"
+  },
+  "yone.global.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 777,
+    "scope": {}
+   },
+   "value": 167469,
+   "display": "167 469",
+   "champion_id": 777,
+   "meaning": "parties de Yone (toutes régions, tous ranks)"
+  },
+  "yasuo.global.wr": {
+   "spec": {
+    "kind": "winrate",
+    "champion_id": 157,
+    "scope": {}
+   },
+   "value": 0.5020594007182694,
+   "display": "50,21 %",
+   "champion_id": 157,
+   "meaning": "winrate de Yasuo (toutes régions, tous ranks)"
+  },
+  "yasuo.global.wr_lo": {
+   "spec": {
+    "kind": "ci_low",
+    "champion_id": 157,
+    "scope": {}
+   },
+   "value": 0.49933007182501726,
+   "display": "49,93",
+   "champion_id": 157,
+   "meaning": "borne basse de l'IC à 95 % du winrate de Yasuo (toutes régions, tous ranks)"
+  },
+  "yasuo.global.wr_hi": {
+   "spec": {
+    "kind": "ci_high",
+    "champion_id": 157,
+    "scope": {}
+   },
+   "value": 0.5047886068872588,
+   "display": "50,48",
+   "champion_id": 157,
+   "meaning": "borne haute de l'IC à 95 % du winrate de Yasuo (toutes régions, tous ranks)"
+  },
+  "yasuo.global.games": {
+   "spec": {
+    "kind": "games",
+    "champion_id": 157,
+    "scope": {}
+   },
+   "value": 128921,
+   "display": "128 921",
+   "champion_id": 157,
+   "meaning": "parties de Yasuo (toutes régions, tous ranks)"
+  }
+ },
+ "charts": {
+  "meilleurs": {
+   "title": "Meilleurs winrates au poste Top",
+   "subtitle": "au poste Top",
+   "rows": [
+    {
+     "label": "Illaoi",
+     "wr": "illaoi.top.wr",
+     "lo": "illaoi.top.wr_lo",
+     "hi": "illaoi.top.wr_hi",
+     "games": "illaoi.top.games"
+    },
+    {
+     "label": "Singed",
+     "wr": "singed.top.wr",
+     "lo": "singed.top.wr_lo",
+     "hi": "singed.top.wr_hi",
+     "games": "singed.top.games"
+    },
+    {
+     "label": "Sett",
+     "wr": "sett.top.wr",
+     "lo": "sett.top.wr_lo",
+     "hi": "sett.top.wr_hi",
+     "games": "sett.top.games"
+    },
+    {
+     "label": "Zilean",
+     "wr": "zilean.top.wr",
+     "lo": "zilean.top.wr_lo",
+     "hi": "zilean.top.wr_hi",
+     "games": "zilean.top.games"
+    },
+    {
+     "label": "Teemo",
+     "wr": "teemo.top.wr",
+     "lo": "teemo.top.wr_lo",
+     "hi": "teemo.top.wr_hi",
+     "games": "teemo.top.games"
+    },
+    {
+     "label": "Nasus",
+     "wr": "nasus.top.wr",
+     "lo": "nasus.top.wr_lo",
+     "hi": "nasus.top.wr_hi",
+     "games": "nasus.top.games"
+    },
+    {
+     "label": "Anivia",
+     "wr": "anivia.top.wr",
+     "lo": "anivia.top.wr_lo",
+     "hi": "anivia.top.wr_hi",
+     "games": "anivia.top.games"
+    },
+    {
+     "label": "Malphite",
+     "wr": "malphite.top.wr",
+     "lo": "malphite.top.wr_lo",
+     "hi": "malphite.top.wr_hi",
+     "games": "malphite.top.games"
+    }
+   ]
+  }
+ }
+}

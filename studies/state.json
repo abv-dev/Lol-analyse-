@@ -20,6 +20,17 @@
    "attempts": 2,
    "cost_usd": 4.0948,
    "writer_model": "claude-opus-5"
+  },
+  {
+   "topic": "meta-role-top-16-18",
+   "gabarit": "meta-role",
+   "patch": "16.18",
+   "path": "site/content/etudes/meta-top/16-18",
+   "date": "2026-09-22",
+   "mode": "daily",
+   "attempts": 2,
+   "cost_usd": 7.4394,
+   "writer_model": "claude-opus-5"
   }
  ]
 }
